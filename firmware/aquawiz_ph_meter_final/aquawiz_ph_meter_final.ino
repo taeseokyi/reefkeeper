@@ -38,6 +38,7 @@
 // ============================================================
 #define SEQ_MAX_STEPS  30
 #define SEQ_CMD_LEN    24
+#define CMD_BUF_SIZE   128
 #define KH_HIST_MAX    5
 #define KH_TIME_LEN    4
 
@@ -279,9 +280,9 @@ void loop() {
     // ② 보정 처리
     if (voltageReady) ph.calibration(voltage, temperature);
 
-    // ③ 모터 타이머
+    // ③ 모터 타이머 (millis 오버플로우 안전)
     for (int i = 0; i < 4; i++) {
-        if (motorTimers[i].active && now >= motorTimers[i].endTime) {
+        if (motorTimers[i].active && (long)(now - motorTimers[i].endTime) >= 0) {
             digitalWrite(motorTimers[i].pinA, LOW);
             digitalWrite(motorTimers[i].pinB, LOW);
             motorTimers[i].active = false;
@@ -290,20 +291,20 @@ void loop() {
         }
     }
 
-    // ④ 에어 교대
+    // ④ 에어 교대 (millis 오버플로우 안전)
     if (air.active) {
-        if (now >= air.totalEnd) {
+        if ((long)(now - air.totalEnd) >= 0) {
             stopAir(); BTPRINTLNF("[에어] 완료");
             if (seq.active && seq.stepRunning) advanceSeq();
-        } else if (now >= air.switchTime) {
+        } else if ((long)(now - air.switchTime) >= 0) {
             air.refTurn = !air.refTurn;
             air.switchTime = now + air.period;
             applyAir();
         }
     }
 
-    // ⑤ 대기 타이머
-    if (waitState.active && now >= waitState.endTime) {
+    // ⑤ 대기 타이머 (millis 오버플로우 안전)
+    if (waitState.active && (long)(now - waitState.endTime) >= 0) {
         waitState.active = false; BTPRINTLNF("[대기] 완료");
         if (seq.active && seq.stepRunning) advanceSeq();
     }
@@ -596,12 +597,11 @@ void executeOneCmd(const char* rawCmd) {
 // 명령 처리
 // ============================================================
 void handleCommand() {
-    char cmdBuf[SEQ_CMD_LEN + 10];
+    static char cmdBuf[CMD_BUF_SIZE];
     if (!Serial.available()) return;
-    // String 대신 char 배열 직접 읽기 (동적 메모리 할당 제거)
     int i = 0;
     unsigned long t = millis();
-    while (millis() - t < 100) {
+    while (millis() - t < 200) {
         if (Serial.available()) {
             char c = Serial.read();
             if (c == '\n' || c == '\r') break;
@@ -613,7 +613,6 @@ void handleCommand() {
     while (i > 0 && (cmdBuf[i-1]==' '||cmdBuf[i-1]=='\r')) cmdBuf[--i]='\0';
     if (cmdBuf[0] == '\0') return;
 
-    // 소문자
     char cmdL[SEQ_CMD_LEN+10];
     strncpy(cmdL, cmdBuf, sizeof(cmdL)-1); cmdL[sizeof(cmdL)-1]='\0';
     for (int i=0; cmdL[i]; i++) if(cmdL[i]>='A'&&cmdL[i]<='Z') cmdL[i]+=32;
