@@ -91,10 +91,8 @@
   <path d="M638,190 L562,190" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
   <path d="M518,190 L510,190 Q510,145 510,115 L460,115 L450,115" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
 
-  <rect x="568" y="170" width="68" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="602" y="180" text-anchor="middle" font-size="8" fill="#C62828" font-weight="bold">f: 측정 이송</text>
-  <rect x="578" y="193" width="55" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="605" y="203" text-anchor="middle" font-size="8" fill="#C62828" font-weight="bold">b: 반환</text>
+  <text x="600" y="170" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">f: 측정 이송</text>
+  <text x="600" y="205" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">b: 반환</text>
 
   <!-- ===== M3: KCL ↔ pH 비이커 (중단 진입) ===== -->
   <rect x="50" y="205" width="120" height="50" rx="8" fill="#FFF8E1" stroke="#E65100" stroke-width="2"/>
@@ -112,10 +110,8 @@
   <line x1="223" y1="237" x2="170" y2="237" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
   <path d="M638,233 L267,233" fill="none" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
 
-  <rect x="380" y="213" width="140" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="450" y="223" text-anchor="middle" font-size="8" fill="#E65100" font-weight="bold">f: KCL 공급 (프로브 보관)</text>
-  <rect x="390" y="236" width="120" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="450" y="246" text-anchor="middle" font-size="8" fill="#E65100" font-weight="bold">b: KCL 배출 (측정 전)</text>
+  <text x="450" y="215" text-anchor="middle" font-size="10" fill="#E65100" font-weight="bold">f: KCL 공급 (프로브 보관)</text>
+  <text x="450" y="250" text-anchor="middle" font-size="10" fill="#E65100" font-weight="bold">b: KCL 배출 (측정 전)</text>
 
   <!-- ===== M4: 위즈 탱크 ↔ pH 비이커 (하단 진입) ===== -->
   <rect x="50" y="300" width="120" height="50" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
@@ -133,10 +129,8 @@
   <line x1="223" y1="332" x2="170" y2="332" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
   <path d="M650,268 L650,310 Q650,328 638,328 L267,328" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
 
-  <rect x="380" y="308" width="120" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="440" y="318" text-anchor="middle" font-size="8" fill="#2E7D32" font-weight="bold">f: 참조수 이송 (측정)</text>
-  <rect x="395" y="333" width="90" height="12" rx="2" fill="white" opacity="0.9"/>
-  <text x="440" y="343" text-anchor="middle" font-size="8" fill="#2E7D32" font-weight="bold">b: 참조수 반환</text>
+  <text x="440" y="310" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">f: 참조수 이송 (측정)</text>
+  <text x="440" y="345" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">b: 참조수 반환</text>
 
   <!-- Separator -->
   <line x1="30" y1="380" x2="830" y2="380" stroke="#ccc" stroke-width="1"/>
