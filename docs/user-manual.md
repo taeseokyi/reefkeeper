@@ -282,19 +282,4 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 
 ---
 
-## 컴파일에 필요한 라이브러리
-
-### 설치 필요 (Arduino Library Manager)
-
-| 검색어 | 정확한 이름 | 제작자 |
-|--------|-------------|--------|
-| DFRobot_PH | DFRobot_PH | DFRobot |
-| ADS1X15 | Adafruit ADS1X15 | Adafruit |
-| OneWire | OneWire | Paul Stoffregen |
-| DallasTemperature | DallasTemperature | Miles Burton |
-
-### 설치 불필요 (Arduino IDE 내장)
-
-| 라이브러리 | 이유 |
-|------------|------|
-| `EEPROM.h` | Arduino IDE 기본 내장 |
+펌웨어 빌드, 필수 라이브러리, 업로드 절차는 [README — 빌드 및 업로드](../README.md#빌드-및-업로드)를 참조하세요.
