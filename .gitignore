@@ -1,0 +1,9 @@
+# Fritzing source (large binary)
+*.fzz
+
+# Trash
+휴지통/
+
+# OS
+.DS_Store
+Thumbs.db
