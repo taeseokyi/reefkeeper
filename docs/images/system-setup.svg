@@ -173,7 +173,7 @@
   <path d="M810,150 L727,150 L727,230" fill="none" stroke="#E65100" stroke-width="1.5" stroke-dasharray="4,3"/>
 
   <!-- Controller to pH probe -->
-  <path d="M810,120 L790,120 L790,295 L560,295 L545,295" fill="none" stroke="#78909C" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M810,120 L790,120 L790,295 L584,295" fill="none" stroke="#78909C" stroke-width="1.5" stroke-dasharray="4,3"/>
 
   <!-- Legend -->
   <rect x="30" y="580" width="940" height="210" rx="8" fill="#FAFAFA" stroke="#CCC" stroke-width="1"/>
