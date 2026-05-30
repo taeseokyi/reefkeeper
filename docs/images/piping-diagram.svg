@@ -59,9 +59,6 @@
   <rect x="50" y="85" width="120" height="50" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
   <text x="110" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#1565C0">수조</text>
 
-  <circle cx="245" cy="110" r="20" fill="#1565C0"/>
-  <text x="245" y="114" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M1</text>
-
   <rect x="320" y="85" width="130" height="50" rx="8" fill="#BBDEFB" stroke="#1565C0" stroke-width="2"/>
   <text x="385" y="108" text-anchor="middle" font-size="12" font-weight="bold" fill="#1565C0">수조물 비이커</text>
   <text x="385" y="125" text-anchor="middle" font-size="10" fill="#666">200ml</text>
@@ -73,16 +70,15 @@
   <line x1="223" y1="117" x2="170" y2="117" stroke="#1565C0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-b-rev)"/>
   <line x1="318" y1="117" x2="267" y2="117" stroke="#1565C0" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-b-rev)"/>
 
-  <text x="245" y="145" text-anchor="middle" font-size="10" fill="#1565C0">펌프1 (양방향)</text>
-  <rect x="172" y="90" width="50" height="11" rx="2" fill="white" opacity="0.9"/>
-  <text x="197" y="99" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">f: 샘플링</text>
-  <rect x="178" y="121" width="40" height="11" rx="2" fill="white" opacity="0.9"/>
-  <text x="197" y="130" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">b: 반환</text>
+  <!-- M1 원 (라인 위에 그려짐) -->
+  <circle cx="245" cy="110" r="22" fill="#1565C0" stroke="white" stroke-width="2"/>
+  <text x="245" y="116" text-anchor="middle" font-size="14" fill="white" font-weight="bold">M1</text>
+
+  <text x="245" y="148" text-anchor="middle" font-size="10" fill="#1565C0">펌프1 (양방향)</text>
+  <text x="197" y="88" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">f: 샘플링</text>
+  <text x="197" y="135" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">b: 반환</text>
 
   <!-- ===== M2: 수조물 비이커 ↔ pH 비이커 (상단 진입) ===== -->
-  <circle cx="540" cy="183" r="20" fill="#C62828"/>
-  <text x="540" y="187" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M2</text>
-  <text x="540" y="160" text-anchor="middle" font-size="10" fill="#C62828">펌프2 (양방향)</text>
 
   <!-- M2 forward: 수조물 → M2 → pH (y=178) -->
   <path d="M450,100 L480,100 Q500,100 500,130 L500,178 L518,178" fill="none" stroke="#C62828" stroke-width="2.5" marker-end="url(#arr-r)"/>
@@ -90,6 +86,11 @@
   <!-- M2 backward -->
   <path d="M638,190 L562,190" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
   <path d="M518,190 L510,190 Q510,145 510,115 L460,115 L450,115" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
+
+  <!-- M2 원 (라인 위에 그려짐) -->
+  <circle cx="540" cy="183" r="22" fill="#C62828" stroke="white" stroke-width="2"/>
+  <text x="540" y="189" text-anchor="middle" font-size="14" fill="white" font-weight="bold">M2</text>
+  <text x="540" y="160" text-anchor="middle" font-size="10" fill="#C62828">펌프2 (양방향)</text>
 
   <text x="605" y="172" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">f: 측정 이송</text>
   <text x="605" y="198" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">b: 반환</text>
@@ -99,16 +100,17 @@
   <text x="110" y="278" text-anchor="middle" font-size="12" font-weight="bold" fill="#E65100">KCL 3% 비이커</text>
   <text x="110" y="295" text-anchor="middle" font-size="10" fill="#666">200ml (저장수)</text>
 
-  <circle cx="245" cy="270" r="20" fill="#E65100"/>
-  <text x="245" y="274" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M3</text>
-  <text x="245" y="305" text-anchor="middle" font-size="10" fill="#E65100">펌프3 (양방향)</text>
-
   <!-- M3 forward -->
   <line x1="170" y1="263" x2="223" y2="263" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
   <path d="M267,263 L638,263" fill="none" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
   <!-- M3 backward -->
   <line x1="223" y1="277" x2="170" y2="277" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
   <path d="M638,273 L267,273" fill="none" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
+
+  <!-- M3 원 (라인 위에 그려짐) -->
+  <circle cx="245" cy="270" r="22" fill="#E65100" stroke="white" stroke-width="2"/>
+  <text x="245" y="276" text-anchor="middle" font-size="14" fill="white" font-weight="bold">M3</text>
+  <text x="245" y="308" text-anchor="middle" font-size="10" fill="#E65100">펌프3 (양방향)</text>
 
   <text x="400" y="253" text-anchor="middle" font-size="10" fill="#E65100" font-weight="bold">f: KCL 공급 (프로브 보관)</text>
   <text x="400" y="288" text-anchor="middle" font-size="10" fill="#E65100" font-weight="bold">b: KCL 배출 (측정 전)</text>
@@ -118,16 +120,17 @@
   <text x="110" y="373" text-anchor="middle" font-size="12" font-weight="bold" fill="#2E7D32">위즈 탱크</text>
   <text x="110" y="390" text-anchor="middle" font-size="10" fill="#666">참조 해수 3L</text>
 
-  <circle cx="245" cy="375" r="20" fill="#2E7D32"/>
-  <text x="245" y="379" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M4</text>
-  <text x="245" y="410" text-anchor="middle" font-size="10" fill="#2E7D32">펌프4 (양방향)</text>
-
   <!-- M4 forward -->
   <line x1="170" y1="368" x2="223" y2="368" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
   <path d="M267,368 L620,368 Q638,368 638,340 L638,310" fill="none" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
   <!-- M4 backward -->
   <line x1="223" y1="382" x2="170" y2="382" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
   <path d="M650,310 L650,360 Q650,378 638,378 L267,378" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
+
+  <!-- M4 원 (라인 위에 그려짐) -->
+  <circle cx="245" cy="375" r="22" fill="#2E7D32" stroke="white" stroke-width="2"/>
+  <text x="245" y="381" text-anchor="middle" font-size="14" fill="white" font-weight="bold">M4</text>
+  <text x="245" y="413" text-anchor="middle" font-size="10" fill="#2E7D32">펌프4 (양방향)</text>
 
   <text x="440" y="360" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">f: 참조수 이송 (측정)</text>
   <text x="440" y="395" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="bold">b: 참조수 반환</text>
