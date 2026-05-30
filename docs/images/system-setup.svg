@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 780" font-family="'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif" font-size="12">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" font-family="'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif" font-size="12">
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
@@ -175,46 +175,43 @@
   <path d="M810,120 L790,120 L790,295 L560,295 L545,295" fill="none" stroke="#78909C" stroke-width="1.5" stroke-dasharray="4,3"/>
 
   <!-- Legend -->
-  <rect x="30" y="580" width="940" height="190" rx="8" fill="#FAFAFA" stroke="#CCC" stroke-width="1"/>
+  <rect x="30" y="580" width="940" height="210" rx="8" fill="#FAFAFA" stroke="#CCC" stroke-width="1"/>
   <text x="500" y="605" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">자동 측정 시퀀스 (모든 펌프 양방향)</text>
 
-  <text x="55" y="630" font-size="11" fill="#333" font-weight="bold">1</text>
-  <rect x="70" y="617" width="10" height="16" rx="2" fill="#2196F3"/>
-  <text x="90" y="630" font-size="11" fill="#333">펌프1(f): 수조 → 수조물 비이커 (샘플링)</text>
+  <!-- 준비 -->
+  <text x="55" y="628" font-size="10" font-weight="bold" fill="#7B1FA2">준비</text>
+  <rect x="85" y="616" width="400" height="18" rx="3" fill="#F3E5F5" opacity="0.5"/>
+  <text x="95" y="628" font-size="11" fill="#333">M3(b) KCL 배출 → M1(f) 수조수 샘플링 → M4(f) 참조수 이송</text>
 
-  <text x="55" y="650" font-size="11" fill="#333" font-weight="bold">2</text>
-  <rect x="70" y="637" width="10" height="16" rx="2" fill="#FB8C00"/>
-  <text x="90" y="650" font-size="11" fill="#333">펌프3(b): KCL 저장수 배출</text>
+  <!-- 폭기 -->
+  <text x="55" y="653" font-size="10" font-weight="bold" fill="#0288D1">폭기</text>
+  <rect x="85" y="641" width="400" height="18" rx="3" fill="#E1F5FE" opacity="0.5"/>
+  <text x="95" y="653" font-size="11" fill="#333">Air1(참조수) + Air2(수조수) 동시 탈기 30분 → CO₂ 평형</text>
 
-  <text x="55" y="670" font-size="11" fill="#333" font-weight="bold">3</text>
-  <rect x="70" y="657" width="10" height="16" rx="2" fill="#90CAF9"/>
-  <text x="90" y="670" font-size="11" fill="#333">에어 교대 탈기 30분</text>
+  <!-- 측정 -->
+  <text x="55" y="678" font-size="10" font-weight="bold" fill="#C62828">측정</text>
+  <rect x="85" y="666" width="400" height="18" rx="3" fill="#FFEBEE" opacity="0.5"/>
+  <text x="95" y="678" font-size="11" fill="#333">ref(참조 pH) → M4(b) 반환 → M2(f) 수조수 이송 → tank(수조 pH)</text>
 
-  <text x="55" y="690" font-size="11" fill="#333" font-weight="bold">4</text>
-  <rect x="70" y="677" width="10" height="16" rx="2" fill="#43A047"/>
-  <text x="90" y="690" font-size="11" fill="#333">펌프4(f): 참조수 → pH 비이커 → ref → 펌프4(b): 반환</text>
+  <!-- 계산 -->
+  <text x="55" y="703" font-size="10" font-weight="bold" fill="#333">계산</text>
+  <rect x="85" y="691" width="400" height="18" rx="3" fill="#EEEEEE" opacity="0.5"/>
+  <text x="95" y="703" font-size="11" fill="#333">calckh: KH_tank = KH_ref x 10^(-dPH)</text>
 
-  <text x="530" y="630" font-size="11" fill="#333" font-weight="bold">5</text>
-  <rect x="545" y="617" width="10" height="16" rx="2" fill="#e53935"/>
-  <text x="565" y="630" font-size="11" fill="#333">펌프2(f): 수조물 → pH 비이커 → tank → 펌프2(b): 반환</text>
-
-  <text x="530" y="650" font-size="11" fill="#333" font-weight="bold">6</text>
-  <rect x="545" y="637" width="10" height="16" rx="2" fill="#333"/>
-  <text x="565" y="650" font-size="11" fill="#333">calckh: dKH 계산</text>
-
-  <text x="530" y="670" font-size="11" fill="#333" font-weight="bold">7</text>
-  <rect x="545" y="657" width="10" height="16" rx="2" fill="#2196F3"/>
-  <text x="565" y="670" font-size="11" fill="#333">펌프1(b): 수조물 비이커 → 수조 (반환)</text>
-
-  <text x="530" y="690" font-size="11" fill="#333" font-weight="bold">8</text>
-  <rect x="545" y="677" width="10" height="16" rx="2" fill="#FB8C00"/>
-  <text x="565" y="690" font-size="11" fill="#333">펌프3(f): KCL 저장수 공급 (프로브 보관)</text>
+  <!-- 정리 -->
+  <text x="55" y="728" font-size="10" font-weight="bold" fill="#2E7D32">정리</text>
+  <rect x="85" y="716" width="400" height="18" rx="3" fill="#E8F5E9" opacity="0.5"/>
+  <text x="95" y="728" font-size="11" fill="#333">M2(b) 수조수 반환 → M1(b) 수조 원복 → M3(f) KCL 프로브 보관</text>
 
   <!-- line style legend -->
-  <line x1="70" y1="720" x2="100" y2="720" stroke="#666" stroke-width="2"/>
-  <text x="108" y="724" font-size="10" fill="#666">실선 = 정방향 (f)</text>
-  <line x1="250" y1="720" x2="280" y2="720" stroke="#666" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="288" y="724" font-size="10" fill="#666">점선 = 역방향 (b)</text>
+  <text x="540" y="628" font-size="11" font-weight="bold" fill="#455A64">범례</text>
+  <line x1="540" y1="645" x2="570" y2="645" stroke="#666" stroke-width="2"/>
+  <text x="578" y="649" font-size="10" fill="#666">실선 = 정방향 (f)</text>
+  <line x1="540" y1="665" x2="570" y2="665" stroke="#666" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="578" y="669" font-size="10" fill="#666">점선 = 역방향 (b)</text>
 
-  <text x="500" y="755" text-anchor="middle" font-size="10" fill="#999">seq:settime:14|m1f:30|m3b:5|air:1800:5|m4f:10|ref|m4b:10|m2f:10|tank|m2b:10|calckh|m1b:30|m3f:5</text>
+  <rect x="540" y="690" width="12" height="12" rx="2" fill="#0288D1" opacity="0.3"/>
+  <text x="560" y="700" font-size="10" fill="#666">폭기: 참조수(pH 비이커) + 수조수(수조물 비이커) 동시</text>
+
+  <text x="500" y="775" text-anchor="middle" font-size="10" fill="#999">seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5</text>
 </svg>
