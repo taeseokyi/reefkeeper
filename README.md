@@ -25,6 +25,8 @@ DeltaPH = pH_ref - pH_tank
 | 솔레노이드 밸브 | x 2 | 참조/수조 에어 교대 공급 |
 | 전원 | 12V DC + Buck Converter (5V, 6V) | 전원 공급 |
 
+구매 링크 포함 상세 준비물 목록은 [준비물 목록](docs/parts-list.md)을 참조하세요.
+
 ### 회로도
 
 Fritzing 브레드보드 도면은 `hardware/fritzing/` 디렉토리에 있습니다.
@@ -86,6 +88,7 @@ reefkeeper/
 └── docs/
     ├── user-manual.md                   # 사용 설명서
     ├── system-setup.md                  # 자동화 환경 구성
+    ├── parts-list.md                    # 준비물 목록 (구매 링크)
     └── images/
         ├── system-setup.svg             # 시스템 구성도
         ├── piping-diagram.svg           # 호스 연결도
