@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif" font-size="12">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#1565C0"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#E65100"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
+    </marker>
+    <marker id="arr-air" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0288D1"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a1a">배관 연결도</text>
+  <line x1="120" y1="38" x2="680" y2="38" stroke="#ccc" stroke-width="1"/>
+
+  <!-- Section: 액체 배관 -->
+  <text x="50" y="70" font-size="14" font-weight="bold" fill="#455A64">액체 배관 (연동 펌프)</text>
+
+  <!-- 수조 -->
+  <rect x="50" y="90" width="120" height="50" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="110" y="120" text-anchor="middle" font-size="13" font-weight="bold" fill="#1565C0">수조</text>
+
+  <!-- Pump 1 -->
+  <circle cx="255" cy="115" r="18" fill="#1565C0"/>
+  <text x="255" y="119" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M1</text>
+  <text x="255" y="150" text-anchor="middle" font-size="10" fill="#1565C0">펌프1</text>
+
+  <!-- Line: 수조 → M1 -->
+  <line x1="170" y1="115" x2="235" y2="115" stroke="#1565C0" stroke-width="2.5" marker-end="url(#arr-b)"/>
+
+  <!-- 수조물 비이커 -->
+  <rect x="320" y="90" width="130" height="50" rx="8" fill="#BBDEFB" stroke="#1565C0" stroke-width="2"/>
+  <text x="385" y="113" text-anchor="middle" font-size="12" font-weight="bold" fill="#1565C0">수조물 비이커</text>
+  <text x="385" y="130" text-anchor="middle" font-size="10" fill="#666">200ml</text>
+
+  <!-- Line: M1 → 수조물 비이커 -->
+  <line x1="275" y1="115" x2="318" y2="115" stroke="#1565C0" stroke-width="2.5" marker-end="url(#arr-b)"/>
+
+  <!-- Pump 2 -->
+  <circle cx="535" cy="115" r="18" fill="#C62828"/>
+  <text x="535" y="119" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M2</text>
+  <text x="535" y="150" text-anchor="middle" font-size="10" fill="#C62828">펌프2</text>
+
+  <!-- Line: 수조물 비이커 → M2 -->
+  <line x1="450" y1="115" x2="515" y2="115" stroke="#C62828" stroke-width="2.5" marker-end="url(#arr-r)"/>
+
+  <!-- pH 측정 비이커 -->
+  <rect x="600" y="90" width="140" height="50" rx="8" fill="#FFCDD2" stroke="#C62828" stroke-width="2"/>
+  <text x="670" y="113" text-anchor="middle" font-size="12" font-weight="bold" fill="#C62828">pH 측정 비이커</text>
+  <text x="670" y="130" text-anchor="middle" font-size="10" fill="#666">200ml + pH 프로브</text>
+
+  <!-- Line: M2 → pH 비이커 -->
+  <line x1="555" y1="115" x2="598" y2="115" stroke="#C62828" stroke-width="2.5" marker-end="url(#arr-r)"/>
+
+  <!-- KCL 비이커 -->
+  <rect x="50" y="190" width="120" height="50" rx="8" fill="#FFF8E1" stroke="#E65100" stroke-width="2"/>
+  <text x="110" y="213" text-anchor="middle" font-size="12" font-weight="bold" fill="#E65100">KCL 3% 비이커</text>
+  <text x="110" y="230" text-anchor="middle" font-size="10" fill="#666">200ml (저장수)</text>
+
+  <!-- Pump 3 -->
+  <circle cx="255" cy="215" r="18" fill="#E65100"/>
+  <text x="255" y="219" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M3</text>
+  <text x="255" y="250" text-anchor="middle" font-size="10" fill="#E65100">펌프3</text>
+
+  <!-- Line: KCL → M3 -->
+  <line x1="170" y1="215" x2="235" y2="215" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
+
+  <!-- Line: M3 → pH 비이커 (curved) -->
+  <path d="M275,215 L500,215 Q560,215 560,175 L560,115 L598,115" fill="none" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
+
+  <!-- Bidirectional label for M3 -->
+  <rect x="340" y="195" width="140" height="18" rx="4" fill="#FFF3E0" stroke="#E65100" stroke-width="1"/>
+  <text x="410" y="208" text-anchor="middle" font-size="9" fill="#E65100">정방향: 공급 / 역방향: 배출</text>
+
+  <!-- 위즈 탱크 -->
+  <rect x="50" y="280" width="120" height="50" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="110" y="300" text-anchor="middle" font-size="12" font-weight="bold" fill="#2E7D32">위즈 탱크</text>
+  <text x="110" y="318" text-anchor="middle" font-size="10" fill="#666">참조 해수 3L</text>
+
+  <!-- Pump 4 -->
+  <circle cx="255" cy="305" r="18" fill="#2E7D32"/>
+  <text x="255" y="309" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M4</text>
+  <text x="255" y="340" text-anchor="middle" font-size="10" fill="#2E7D32">펌프4</text>
+
+  <!-- Line: 위즈 탱크 → M4 -->
+  <line x1="170" y1="305" x2="235" y2="305" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
+
+  <!-- Line: M4 → pH 비이커 (curved) -->
+  <path d="M275,305 L520,305 Q580,305 580,255 L580,115 L598,115" fill="none" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
+
+  <!-- Separator -->
+  <line x1="30" y1="365" x2="770" y2="365" stroke="#ccc" stroke-width="1"/>
+
+  <!-- Section: 에어 배관 -->
+  <text x="50" y="395" font-size="14" font-weight="bold" fill="#455A64">에어 배관 (솔레노이드 밸브)</text>
+
+  <!-- 기포기 -->
+  <rect x="50" y="415" width="120" height="50" rx="8" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+  <text x="110" y="445" text-anchor="middle" font-size="13" font-weight="bold" fill="#0288D1">기포기</text>
+
+  <!-- SOL1 -->
+  <rect x="240" y="410" width="70" height="26" rx="6" fill="#0288D1"/>
+  <text x="275" y="427" text-anchor="middle" font-size="10" fill="white" font-weight="bold">SOL1</text>
+  <text x="275" y="453" text-anchor="middle" font-size="9" fill="#0288D1">D12</text>
+
+  <!-- Line: 기포기 → SOL1 -->
+  <path d="M170,430 L200,430 L200,423 L238,423" fill="none" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
+
+  <!-- pH 측정 비이커 (air target) -->
+  <rect x="410" y="410" width="130" height="26" rx="6" fill="#FFCDD2" stroke="#C62828" stroke-width="1.5"/>
+  <text x="475" y="427" text-anchor="middle" font-size="11" fill="#C62828">pH 측정 비이커</text>
+  <text x="475" y="453" text-anchor="middle" font-size="9" fill="#C62828">Air1</text>
+
+  <!-- Line: SOL1 → pH 비이커 -->
+  <line x1="310" y1="423" x2="408" y2="423" stroke="#0288D1" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-air)"/>
+
+  <!-- SOL2 -->
+  <rect x="240" y="460" width="70" height="26" rx="6" fill="#0288D1"/>
+  <text x="275" y="477" text-anchor="middle" font-size="10" fill="white" font-weight="bold">SOL2</text>
+  <text x="275" y="500" text-anchor="middle" font-size="9" fill="#0288D1">D13</text>
+
+  <!-- Line: 기포기 → SOL2 -->
+  <path d="M170,440 L200,440 L200,473 L238,473" fill="none" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
+
+  <!-- 수조물 비이커 (air target) -->
+  <rect x="410" y="460" width="130" height="26" rx="6" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="475" y="477" text-anchor="middle" font-size="11" fill="#1565C0">수조물 비이커</text>
+  <text x="475" y="500" text-anchor="middle" font-size="9" fill="#1565C0">Air2</text>
+
+  <!-- Line: SOL2 → 수조물 비이커 -->
+  <line x1="310" y1="473" x2="408" y2="473" stroke="#0288D1" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-air)"/>
+
+  <!-- Note -->
+  <rect x="570" y="420" width="200" height="55" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1"/>
+  <text x="670" y="440" text-anchor="middle" font-size="10" fill="#795548">SOL1/SOL2 동시 개방 불가</text>
+  <text x="670" y="455" text-anchor="middle" font-size="10" fill="#795548">기포기 1대 → 교대 공급</text>
+  <text x="670" y="470" text-anchor="middle" font-size="10" fill="#795548">(5초 주기 참조/수조 교대)</text>
+</svg>
