@@ -84,8 +84,8 @@
   <path d="M450,100 L480,100 Q500,100 500,130 L500,178 L518,178" fill="none" stroke="#C62828" stroke-width="2.5" marker-end="url(#arr-r)"/>
   <path d="M562,178 L638,178" fill="none" stroke="#C62828" stroke-width="2.5" marker-end="url(#arr-r)"/>
   <!-- M2 backward -->
-  <path d="M638,190 L562,190" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
-  <path d="M518,190 L510,190 Q510,145 510,115 L460,115 L450,115" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r-rev)"/>
+  <path d="M638,190 L562,190" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+  <path d="M518,190 L510,190 Q510,145 510,115 L460,115 L450,115" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
 
   <!-- M2 원 (라인 위에 그려짐) -->
   <circle cx="540" cy="183" r="22" fill="#C62828" stroke="white" stroke-width="2"/>
@@ -104,8 +104,8 @@
   <line x1="170" y1="263" x2="223" y2="263" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
   <path d="M267,263 L638,263" fill="none" stroke="#E65100" stroke-width="2.5" marker-end="url(#arr-o)"/>
   <!-- M3 backward -->
-  <line x1="223" y1="277" x2="170" y2="277" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
-  <path d="M638,273 L267,273" fill="none" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o-rev)"/>
+  <line x1="223" y1="277" x2="170" y2="277" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o)"/>
+  <path d="M638,273 L267,273" fill="none" stroke="#E65100" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-o)"/>
 
   <!-- M3 원 (라인 위에 그려짐) -->
   <circle cx="245" cy="270" r="22" fill="#E65100" stroke="white" stroke-width="2"/>
@@ -124,8 +124,8 @@
   <line x1="170" y1="368" x2="223" y2="368" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
   <path d="M267,368 L620,368 Q638,368 638,340 L638,310" fill="none" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr-g)"/>
   <!-- M4 backward -->
-  <line x1="223" y1="382" x2="170" y2="382" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
-  <path d="M650,310 L650,360 Q650,378 638,378 L267,378" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g-rev)"/>
+  <line x1="223" y1="382" x2="170" y2="382" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g)"/>
+  <path d="M650,310 L650,360 Q650,378 638,378 L267,378" fill="none" stroke="#2E7D32" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-g)"/>
 
   <!-- M4 원 (라인 위에 그려짐) -->
   <circle cx="245" cy="375" r="22" fill="#2E7D32" stroke="white" stroke-width="2"/>
