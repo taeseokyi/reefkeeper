@@ -187,27 +187,27 @@
   <!-- 준비 -->
   <text x="55" y="628" font-size="10" font-weight="bold" fill="#7B1FA2">준비</text>
   <rect x="85" y="616" width="400" height="18" rx="3" fill="#F3E5F5" opacity="0.5"/>
-  <text x="95" y="628" font-size="11" fill="#333">M3(b) KCL 배출 → M1(f) 수조수 샘플링 → M4(f) 참조수 이송</text>
+  <text x="95" y="628" font-size="11" fill="#333" font-weight="bold">M3(b) KCL 배출 → M1(f) 수조수 샘플링 → M4(f) 참조수 이송</text>
 
   <!-- 폭기 -->
   <text x="55" y="653" font-size="10" font-weight="bold" fill="#0288D1">폭기</text>
   <rect x="85" y="641" width="400" height="18" rx="3" fill="#E1F5FE" opacity="0.5"/>
-  <text x="95" y="653" font-size="11" fill="#333">Air1(참조수) + Air2(수조수) 동시 탈기 30분 → CO₂ 평형</text>
+  <text x="95" y="653" font-size="11" fill="#333" font-weight="bold">Air1(참조수) + Air2(수조수) 동시 탈기 30분 → CO₂ 평형</text>
 
   <!-- 측정 -->
   <text x="55" y="678" font-size="10" font-weight="bold" fill="#C62828">측정</text>
   <rect x="85" y="666" width="400" height="18" rx="3" fill="#FFEBEE" opacity="0.5"/>
-  <text x="95" y="678" font-size="11" fill="#333">ref(참조 pH) → M4(b) 반환 → M2(f) 수조수 이송 → tank(수조 pH)</text>
+  <text x="95" y="678" font-size="11" fill="#333" font-weight="bold">ref(참조 pH) → M4(b) 반환 → M2(f) 수조수 이송 → tank(수조 pH)</text>
 
   <!-- 계산 -->
   <text x="55" y="703" font-size="10" font-weight="bold" fill="#333">계산</text>
   <rect x="85" y="691" width="400" height="18" rx="3" fill="#EEEEEE" opacity="0.5"/>
-  <text x="95" y="703" font-size="11" fill="#333">calckh: KH_tank = KH_ref x 10^(-dPH)</text>
+  <text x="95" y="703" font-size="11" fill="#333" font-weight="bold">calckh: KH_tank = KH_ref x 10^(-dPH)</text>
 
   <!-- 정리 -->
   <text x="55" y="728" font-size="10" font-weight="bold" fill="#2E7D32">정리</text>
   <rect x="85" y="716" width="400" height="18" rx="3" fill="#E8F5E9" opacity="0.5"/>
-  <text x="95" y="728" font-size="11" fill="#333">M2(b) 수조수 반환 → M1(b) 수조 원복 → M3(f) KCL 프로브 보관</text>
+  <text x="95" y="728" font-size="11" fill="#333" font-weight="bold">M2(b) 수조수 반환 → M1(b) 수조 원복 → M3(f) KCL 프로브 보관</text>
 
   <!-- line style legend -->
   <text x="540" y="628" font-size="11" font-weight="bold" fill="#455A64">범례</text>
@@ -219,5 +219,6 @@
   <rect x="540" y="690" width="12" height="12" rx="2" fill="#0288D1" opacity="0.3"/>
   <text x="560" y="700" font-size="10" fill="#666">폭기: 참조수(pH 비이커) + 수조수(수조물 비이커) 동시</text>
 
-  <text x="500" y="775" text-anchor="middle" font-size="10" fill="#999">seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5</text>
+  <rect x="100" y="748" width="800" height="25" rx="4" fill="#263238"/>
+  <text x="500" y="766" text-anchor="middle" font-size="12" fill="#80CBC4" font-weight="bold" font-family="monospace, 'Malgun Gothic'">seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5</text>
 </svg>
