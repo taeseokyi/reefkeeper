@@ -43,10 +43,9 @@
   <text x="110" y="120" text-anchor="middle" font-size="13" font-weight="bold" fill="#1565C0">수조</text>
 
   <!-- Pump 1 -->
-  <circle cx="255" cy="115" r="18" fill="#1565C0"/>
-  <text x="255" y="112" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M1</text>
-  <text x="255" y="125" text-anchor="middle" font-size="8" fill="white">양방향</text>
-  <text x="255" y="150" text-anchor="middle" font-size="10" fill="#1565C0">펌프1</text>
+  <circle cx="255" cy="115" r="20" fill="#1565C0"/>
+  <text x="255" y="119" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M1</text>
+  <text x="255" y="150" text-anchor="middle" font-size="10" fill="#1565C0">펌프1 (양방향)</text>
 
   <!-- 수조물 비이커 -->
   <rect x="330" y="90" width="130" height="50" rx="8" fill="#BBDEFB" stroke="#1565C0" stroke-width="2"/>
@@ -68,10 +67,9 @@
   <!-- ===== Line 1 continued: ↔ M2 ↔ pH 비이커 ===== -->
 
   <!-- Pump 2 -->
-  <circle cx="545" cy="115" r="18" fill="#C62828"/>
-  <text x="545" y="112" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M2</text>
-  <text x="545" y="125" text-anchor="middle" font-size="8" fill="white">양방향</text>
-  <text x="545" y="150" text-anchor="middle" font-size="10" fill="#C62828">펌프2</text>
+  <circle cx="545" cy="115" r="20" fill="#C62828"/>
+  <text x="545" y="119" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M2</text>
+  <text x="545" y="150" text-anchor="middle" font-size="10" fill="#C62828">펌프2 (양방향)</text>
 
   <!-- pH 측정 비이커 -->
   <rect x="620" y="90" width="140" height="50" rx="8" fill="#FFCDD2" stroke="#C62828" stroke-width="2"/>
@@ -98,10 +96,9 @@
   <text x="110" y="235" text-anchor="middle" font-size="10" fill="#666">200ml (저장수)</text>
 
   <!-- Pump 3 -->
-  <circle cx="255" cy="220" r="18" fill="#E65100"/>
-  <text x="255" y="217" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M3</text>
-  <text x="255" y="230" text-anchor="middle" font-size="8" fill="white">양방향</text>
-  <text x="255" y="255" text-anchor="middle" font-size="10" fill="#E65100">펌프3</text>
+  <circle cx="255" cy="220" r="20" fill="#E65100"/>
+  <text x="255" y="224" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M3</text>
+  <text x="255" y="255" text-anchor="middle" font-size="10" fill="#E65100">펌프3 (양방향)</text>
 
   <!-- Bidirectional lines: KCL ↔ M3 -->
   <line x1="170" y1="213" x2="235" y2="213" stroke="#E65100" stroke-width="2" marker-end="url(#arr-o)"/>
@@ -125,10 +122,9 @@
   <text x="110" y="328" text-anchor="middle" font-size="10" fill="#666">참조 해수 3L</text>
 
   <!-- Pump 4 -->
-  <circle cx="255" cy="315" r="18" fill="#2E7D32"/>
-  <text x="255" y="312" text-anchor="middle" font-size="10" fill="white" font-weight="bold">M4</text>
-  <text x="255" y="325" text-anchor="middle" font-size="8" fill="white">양방향</text>
-  <text x="255" y="350" text-anchor="middle" font-size="10" fill="#2E7D32">펌프4</text>
+  <circle cx="255" cy="315" r="20" fill="#2E7D32"/>
+  <text x="255" y="319" text-anchor="middle" font-size="12" fill="white" font-weight="bold">M4</text>
+  <text x="255" y="350" text-anchor="middle" font-size="10" fill="#2E7D32">펌프4 (양방향)</text>
 
   <!-- Bidirectional lines: 위즈 탱크 ↔ M4 -->
   <line x1="170" y1="308" x2="235" y2="308" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr-g)"/>

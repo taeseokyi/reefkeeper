@@ -125,20 +125,24 @@
   <text x="242" y="306" text-anchor="middle" font-size="10" fill="white" font-weight="bold">펌프1</text>
 
   <!-- Pump 2: 수조물 비이커 ↔ pH 비이커 (red, bidirectional) -->
-  <path d="M450,385 L490,385"
+  <path d="M450,365 Q470,365 470,345 L470,330 Q470,320 480,320 L490,320"
         fill="none" stroke="#e53935" stroke-width="2" marker-end="url(#arrow-red)"/>
-  <path d="M490,395 L450,395"
-        fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3" marker-start="url(#arrow-red)"/>
-  <rect x="453" y="373" width="55" height="18" rx="4" fill="#e53935"/>
-  <text x="480" y="386" text-anchor="middle" font-size="10" fill="white" font-weight="bold">펌프2</text>
+  <path d="M490,340 Q480,340 480,355 L480,370 Q480,380 470,380 L450,380"
+        fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
+  <rect x="448" y="390" width="55" height="16" rx="4" fill="#e53935"/>
+  <text x="475" y="402" text-anchor="middle" font-size="9" fill="white" font-weight="bold">펌프2</text>
+  <text x="458" y="360" font-size="7" fill="#e53935">f</text>
+  <text x="458" y="385" font-size="7" fill="#e53935">b</text>
 
   <!-- Pump 3: KCL 비이커 ↔ pH 비이커 (orange, bidirectional) -->
-  <path d="M640,365 L600,365"
+  <path d="M640,365 Q620,365 620,345 L620,330 Q620,320 610,320 L600,320"
         fill="none" stroke="#FB8C00" stroke-width="2" marker-end="url(#arrow-orange)"/>
-  <path d="M600,375 L640,375"
-        fill="none" stroke="#FB8C00" stroke-width="2" stroke-dasharray="5,3" marker-start="url(#arrow-orange)"/>
-  <rect x="605" y="353" width="55" height="18" rx="4" fill="#FB8C00"/>
-  <text x="632" y="366" text-anchor="middle" font-size="10" fill="white" font-weight="bold">펌프3</text>
+  <path d="M600,340 Q610,340 610,355 L610,370 Q610,380 620,380 L640,380"
+        fill="none" stroke="#FB8C00" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-orange)"/>
+  <rect x="600" y="390" width="55" height="16" rx="4" fill="#FB8C00"/>
+  <text x="627" y="402" text-anchor="middle" font-size="9" fill="white" font-weight="bold">펌프3</text>
+  <text x="635" y="360" font-size="7" fill="#FB8C00">f</text>
+  <text x="635" y="385" font-size="7" fill="#FB8C00">b</text>
 
   <!-- Pump 4: 위즈탱크(참조수) ↔ pH 비이커 (green, bidirectional) -->
   <path d="M540,540 L540,430"
