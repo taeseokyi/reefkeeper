@@ -137,7 +137,7 @@
   <rect x="445" y="390" width="60" height="18" rx="4" fill="#e53935"/>
   <text x="475" y="403" text-anchor="middle" font-size="10" fill="white" font-weight="bold">펌프2</text>
   <text x="475" y="312" text-anchor="middle" font-size="10" fill="#e53935" font-weight="bold">f</text>
-  <text x="457" y="395" text-anchor="middle" font-size="10" fill="#e53935" font-weight="bold">b</text>
+  <text x="475" y="418" text-anchor="middle" font-size="10" fill="#e53935" font-weight="bold">b</text>
 
   <!-- Pump 3: KCL 비이커 ↔ pH 비이커 (orange, separated f/b paths) -->
   <!-- f: KCL → pH (위쪽 경로, y=320) -->
