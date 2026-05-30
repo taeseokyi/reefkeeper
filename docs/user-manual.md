@@ -118,10 +118,10 @@ setref:8.5
 seq:settime:14|ref|wait:30|tank|calckh
 ```
 
-도징 + 탈기 + 측정 통합 예시:
+도징 + 탈기 + 측정 + 정리 통합 예시:
 
 ```
-seq:settime:14|m1f:30|m2f:30|wait:60|air:1800:5|ref|tank|calckh
+seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5
 ```
 
 `seqstop` 명령으로 시퀀스를 즉시 중단할 수 있습니다.
@@ -296,4 +296,3 @@ seq:settime:14|m1f:30|m2f:30|wait:60|air:1800:5|ref|tank|calckh
 | 라이브러리 | 이유 |
 |------------|------|
 | `EEPROM.h` | Arduino IDE 기본 내장 |
-| `SoftwareSerial.h` | Arduino IDE 기본 내장 |
