@@ -7,23 +7,23 @@
 
 ### 주요 특징
 
-- **원버튼 자동 측정** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 13단계 자동 시퀀스
-- **탄산염 화학법** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
-- **16비트 고정밀 ADC** — ADS1115 + 64회 오버샘플링으로 pH 0.001 단위 분해능
-- **Nernst 온도 보상** — DS18B20 실시간 수온 측정, pH 전극 온도 보정
-- **블루투스 제어** — HC-06으로 스마트폰에서 원격 제어/모니터링
-- **밀폐 참조수** — 락앤락 김치통으로 증발/오염 차단, 경도 장기 안정 유지
-- **3D 프린팅 하우징** — OpenSCAD 파라메트릭 설계, 부품 실측 후 즉시 출력
+- **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 13단계 자동 시퀀스
+- **[탄산염 화학법](#측정-원리)** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
+- **[16비트 고정밀 ADC](docs/parts-list.md)** — ADS1115 + 64회 오버샘플링으로 pH 0.001 단위 분해능
+- **[Nernst 온도 보상](docs/user-manual.md#22-온도-오프셋-설정)** — DS18B20 실시간 수온 측정, pH 전극 온도 보정
+- **[블루투스 제어](docs/user-manual.md)** — HC-06으로 스마트폰에서 원격 제어/모니터링
+- **[밀폐 참조수](docs/system-setup.md#위즈-탱크)** — 락앤락 김치통으로 증발/오염 차단, 경도 장기 안정 유지
+- **[3D 프린팅 하우징](docs/system-setup.md#하우징-3d-프린팅)** — OpenSCAD 파라메트릭 설계, 부품 실측 후 즉시 출력
 
 ## 한눈에 보기
 
 | 시스템 구성도 | 호스 연결도 |
 |:---:|:---:|
-| [![구성도](docs/images/system-setup.svg)](docs/system-setup.md) | [![호스](docs/images/piping-diagram.svg)](docs/system-setup.md#호스-연결) |
+| [![구성도](docs/images/system-setup.svg)](docs/system-setup.md#시스템-구성도) | [![호스](docs/images/piping-diagram.svg)](docs/system-setup.md#호스-연결) |
 
 | 회로도 (Fritzing) | 하우징 (3D 프린팅) |
 |:---:|:---:|
-| [![회로도](hardware/fritzing/고정밀%20ph%20측정기-bread_bb.png)](#회로도) | ![제어기](hardware/housing/controller-box.png) ![펌프](hardware/housing/pump-air-box.png) |
+| [![회로도](hardware/fritzing/고정밀%20ph%20측정기-bread_bb.png)](#회로도) | [![제어기](hardware/housing/controller-box.png)](docs/system-setup.md#하우징-3d-프린팅) [![펌프](hardware/housing/pump-air-box.png)](docs/system-setup.md#하우징-3d-프린팅) |
 
 ## 측정 원리
 
@@ -49,7 +49,8 @@ KH_tank = KH_ref × 10^(-ΔpH)
 | 전원 | 12V DC + Buck Converter (5V, 6V) | 전원 공급 |
 
 - 구매 링크 포함 상세 목록: [준비물 목록](docs/parts-list.md)
-- 3D 프린팅 하우징 / 구성 요소 상세: [자동화 환경 구성](docs/system-setup.md)
+- 구성 요소 상세 / 펌프 역할: [자동화 환경 구성 — 구성 요소](docs/system-setup.md#구성-요소)
+- 3D 프린팅 하우징: [자동화 환경 구성 — 하우징](docs/system-setup.md#하우징-3d-프린팅)
 
 ### 회로도
 
@@ -82,7 +83,7 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 | OneWire | Paul Stoffregen |
 | DallasTemperature | Miles Burton |
 
-1. Arduino IDE에서 `firmware/aquawiz_ph_meter_final/aquawiz_ph_meter_final.ino` 열기
+1. Arduino IDE에서 [`firmware/aquawiz_ph_meter_final/aquawiz_ph_meter_final.ino`](firmware/aquawiz_ph_meter_final/aquawiz_ph_meter_final.ino) 열기
 2. 보드: **Arduino Nano**, 프로세서: **ATmega328P** 선택
 3. **HC-06을 D0/D1에서 분리** 후 업로드 → 완료 후 재연결
 
@@ -102,7 +103,7 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5
 ```
 
-각 단계의 상세 설명은 [자동화 환경 구성](docs/system-setup.md#자동-측정-시퀀스)을 참조하세요.
+각 단계의 상세 설명은 [자동화 환경 구성 — 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스)를 참조하세요.
 
 ### 주요 명령어
 
