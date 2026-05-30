@@ -75,9 +75,9 @@
 
   <text x="245" y="145" text-anchor="middle" font-size="10" fill="#1565C0">펌프1 (양방향)</text>
   <rect x="172" y="90" width="50" height="11" rx="2" fill="white" opacity="0.9"/>
-  <text x="197" y="99" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="bold">f: 샘플링</text>
+  <text x="197" y="99" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">f: 샘플링</text>
   <rect x="178" y="121" width="40" height="11" rx="2" fill="white" opacity="0.9"/>
-  <text x="197" y="130" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="bold">b: 반환</text>
+  <text x="197" y="130" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">b: 반환</text>
 
   <!-- ===== M2: 수조물 비이커 ↔ pH 비이커 (상단 진입) ===== -->
   <circle cx="540" cy="183" r="20" fill="#C62828"/>
