@@ -110,10 +110,11 @@
 
   <!-- Air pump unit -->
   <rect x="810" y="400" width="170" height="90" rx="8" fill="#E1F5FE" stroke="#0277BD" stroke-width="1.5"/>
-  <text x="895" y="425" text-anchor="middle" font-size="13" font-weight="bold" fill="#0277BD">기포기</text>
-  <text x="895" y="445" text-anchor="middle" font-size="10" fill="#0277BD">2구 에어 분배</text>
-  <text x="850" y="465" font-size="10" fill="#0277BD">SOL1 → pH 비이커</text>
-  <text x="850" y="480" font-size="10" fill="#0277BD">SOL2 → 수조물 비이커</text>
+  <text x="895" y="420" text-anchor="middle" font-size="13" font-weight="bold" fill="#0277BD">기포기</text>
+  <text x="895" y="438" text-anchor="middle" font-size="10" fill="#0277BD">3-way 솔레노이드 직렬</text>
+  <text x="850" y="455" font-size="9" fill="#0277BD">기포기 → SOL1 → SOL2</text>
+  <text x="850" y="470" font-size="9" fill="#0277BD">SOL1 ON → pH 비이커</text>
+  <text x="850" y="485" font-size="9" fill="#0277BD">SOL1 OFF → SOL2 → 수조물</text>
 
   <!-- === PUMP LINES === -->
 
