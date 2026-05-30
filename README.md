@@ -130,10 +130,10 @@ reefkeeper/
 
 ### 자동 시퀀스
 
-도징 + 탈기 + 측정을 한 번에 실행:
+샘플링 + 탈기 + 측정 + 반환을 한 번에 실행 (모든 펌프 양방향):
 
 ```
-seq:settime:14|m1f:30|m2f:30|wait:60|air:1800:5|ref|tank|calckh
+seq:settime:14|m1f:30|m3b:5|air:1800:5|m4f:10|ref|m4b:10|m2f:10|tank|m2b:10|calckh|m1b:30|m3f:5
 ```
 
 ### 주요 명령어
