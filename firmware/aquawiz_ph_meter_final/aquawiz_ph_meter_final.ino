@@ -36,7 +36,7 @@
 // ============================================================
 // 시퀀스/이력 설정
 // ============================================================
-#define SEQ_MAX_STEPS  30
+#define SEQ_MAX_STEPS  15
 #define SEQ_CMD_LEN    24
 #define CMD_BUF_SIZE   128
 #define KH_HIST_MAX    5
