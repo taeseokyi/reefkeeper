@@ -11,7 +11,7 @@
 
 - **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 13단계 자동 시퀀스
 - **[탄산염 화학법](#측정-원리)** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
-- **[16비트 고정밀 ADC](docs/parts-list.md)** — ADS1115 + 64회 오버샘플링으로 pH 0.001 단위 분해능
+- **[16비트 고정밀 ADC](docs/parts-list.md#디바이스마트-주문번호-2026052420462117683)** — ADS1115 + 64회 오버샘플링으로 pH 0.001 단위 분해능
 - **[Nernst 온도 보상](docs/user-manual.md#22-온도-오프셋-설정)** — DS18B20 실시간 수온 측정, pH 전극 온도 보정
 - **[블루투스 제어](docs/user-manual.md#14-블루투스-터미널-앱)** — HC-06으로 스마트폰에서 원격 제어/모니터링 (<a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> 앱 추천)
 - **[밀폐 참조수](docs/system-setup.md#위즈-탱크)** — 락앤락 김치통으로 증발/오염 차단, 경도 장기 안정 유지
