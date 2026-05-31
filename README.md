@@ -31,6 +31,16 @@
 |:---:|:---:|
 | [![회로도](hardware/fritzing/고정밀%20ph%20측정기-bread_bb.png)](#회로도) | [![제어기](hardware/housing/controller-box.png)](docs/system-setup.md#하우징-3d-프린팅) [![펌프](hardware/housing/pump-air-box.png)](docs/system-setup.md#하우징-3d-프린팅) |
 
+## 측정 정확도
+
+| 항목 | 성능 |
+|------|------|
+| 측정 분해능 | ±0.001 dKH (16비트 ADC + 64회 오버샘플링) |
+| 시스템 정확도 | ±0.07 dKH (±1.2%) |
+| Nernst 온도 보정 | 오차 0% (보정 온도 EEPROM 저장) |
+
+상세 분석은 [자동화 환경 구성 — 측정 정확도](docs/system-setup.md#측정-정확도)를 참조하세요.
+
 ## 측정 원리
 
 ```
