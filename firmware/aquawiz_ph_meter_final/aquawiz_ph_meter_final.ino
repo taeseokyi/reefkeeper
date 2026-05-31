@@ -609,10 +609,14 @@ void handleCommand() {
             if (i < (int)sizeof(cmdBuf) - 1) cmdBuf[i++] = c;
         }
     }
+    bool truncated = (i >= (int)sizeof(cmdBuf) - 1);
     cmdBuf[i] = '\0';
-    // 앞뒤 공백 제거
     while (i > 0 && (cmdBuf[i-1]==' '||cmdBuf[i-1]=='\r')) cmdBuf[--i]='\0';
     if (cmdBuf[0] == '\0') return;
+    if (truncated) {
+        BTPRINTF("[WARN] 명령이 "); BTPRINT(CMD_BUF_SIZE-1);
+        BTPRINTLNF("자 초과→잘림! seq를 나눠 실행하세요");
+    }
 
     char cmdL[SEQ_CMD_LEN+10];
     strncpy(cmdL, cmdBuf, sizeof(cmdL)-1); cmdL[sizeof(cmdL)-1]='\0';
