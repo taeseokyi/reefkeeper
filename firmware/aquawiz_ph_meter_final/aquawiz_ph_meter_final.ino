@@ -32,6 +32,7 @@
 // ============================================================
 #define REF_DKH_ADDR      0x10
 #define TEMP_OFFSET_ADDR  0x14
+#define CAL_TEMP_ADDR     0x18
 
 // ============================================================
 // 시퀀스/이력 설정
@@ -120,6 +121,7 @@ float voltage     = 0.0;
 float phValue     = 0.0;
 float temperature = 25.0;
 float tempOffset  = 0.0;
+float calTemp     = 25.0;
 float refVoltage  = 0.0;
 float refDKH      = 0.0;
 float refPH       = 0.0;
@@ -148,7 +150,7 @@ bool       seqAdvancePending = false;
 // Nernst 온도 보상
 // ============================================================
 float nernstPH(float phRaw, float tempC) {
-    return 7.0 + (phRaw - 7.0) * 298.15 / (273.15 + tempC);
+    return 7.0 + (phRaw - 7.0) * (273.15 + calTemp) / (273.15 + tempC);
 }
 
 // ============================================================
@@ -219,6 +221,11 @@ void setup() {
     if (isnan(tempOffset) || tempOffset < -10.0 || tempOffset > 10.0) {
         tempOffset = 0.0; BTPRINTLNF("[OK] 온도오프셋: 0.0");
     } else { BTPRINTF("[OK] 온도오프셋: "); BTPRINTFD(tempOffset,2); BTPRINTLNF(" C"); }
+
+    EEPROM.get(CAL_TEMP_ADDR, calTemp);
+    if (isnan(calTemp) || calTemp < 0.0 || calTemp > 50.0) {
+        calTemp = 25.0; BTPRINTLNF("[OK] 보정온도: 25.0C (기본)");
+    } else { BTPRINTF("[OK] 보정온도: "); BTPRINTFD(calTemp,1); BTPRINTLNF("C"); }
 
     BTPRINTLNF("[INFO] ref 매번 측정 필요");
 
@@ -646,7 +653,12 @@ void handleCommand() {
         else {
             if (!voltageReady) { BTPRINTLNF("[WARN] 미준비"); return; }
             ph.calibration(voltage, temperature, cmdBuf);
-            if (strcmp(cmdL,"exitph")==0) { BTPRINTLNF("[보정] 완료"); startMeasure(MODE_TANK); }
+            if (strcmp(cmdL,"exitph")==0) {
+                calTemp = temperature;
+                EEPROM.put(CAL_TEMP_ADDR, calTemp);
+                BTPRINTF("[보정] 완료 보정온도:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
+                startMeasure(MODE_TANK);
+            }
         }
         return;
     }
@@ -704,7 +716,7 @@ void printStatus() {
     char ts[KH_TIME_LEN]; getTimeStr(ts);
     BTPRINTLNF("=== 상태 ===");
     BTPRINTF("시각:"); BTPRINTLN(ts);
-    BTPRINTF("온도:"); BTPRINTFD(temperature,2); BTPRINTF("C 오프셋:"); BTPRINTLNFD(tempOffset,2);
+    BTPRINTF("온도:"); BTPRINTFD(temperature,2); BTPRINTF("C 오프셋:"); BTPRINTFD(tempOffset,2); BTPRINTF(" 보정T:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
     BTPRINTF("수조pH:"); BTPRINTLNFD(tankPH,3);
     BTPRINTF("참조pH:"); BTPRINTLNFD(refPH,3);
     BTPRINTF("dPH:"); BTPRINTLNFD(deltaPH,4);
