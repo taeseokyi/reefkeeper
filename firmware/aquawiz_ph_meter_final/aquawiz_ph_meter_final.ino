@@ -287,10 +287,7 @@ void loop() {
         }
     }
 
-    // ② 보정 처리
-    if (voltageReady) ph.calibration(voltage, temperature);
-
-    // ③ 모터 타이머 (millis 오버플로우 안전)
+    // ② 모터 타이머 (millis 오버플로우 안전)
     for (int i = 0; i < 4; i++) {
         if (motorTimers[i].active && (long)(now - motorTimers[i].endTime) >= 0) {
             digitalWrite(motorTimers[i].pinA, LOW);
@@ -301,7 +298,7 @@ void loop() {
         }
     }
 
-    // ④ 에어 교대 (millis 오버플로우 안전)
+    // ③ 에어 교대 (millis 오버플로우 안전)
     if (air.active) {
         if ((long)(now - air.totalEnd) >= 0) {
             stopAir(); BTPRINTLNF("[에어] 완료");
@@ -313,19 +310,19 @@ void loop() {
         }
     }
 
-    // ⑤ 대기 타이머 (millis 오버플로우 안전)
+    // ④ 대기 타이머 (millis 오버플로우 안전)
     if (waitState.active && (long)(now - waitState.endTime) >= 0) {
         waitState.active = false; BTPRINTLNF("[대기] 완료");
         if (seq.active && seq.stepRunning) advanceSeq();
     }
 
-    // ⑥ 시퀀스 다음 단계 (재귀 방지, loop에서 처리)
+    // ⑤ 시퀀스 다음 단계 (재귀 방지, loop에서 처리)
     if (seqAdvancePending) {
         seqAdvancePending = false;
         executeSeqStep();
     }
 
-    // ⑦ 명령 처리
+    // ⑥ 명령 처리
     handleCommand();
 }
 
