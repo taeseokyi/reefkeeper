@@ -194,11 +194,13 @@
   <!-- M2 → pH 비이커 -->
   <path d="M391,120 L391,170 Q391,210 430,210 L494,210 L494,260" fill="none" stroke="#C62828" stroke-width="2" opacity="0.7"/>
 
-  <!-- M3 → KCL 비이커 -->
-  <path d="M441,120 L441,180 Q441,220 500,220 L582,220 L582,260" fill="none" stroke="#E65100" stroke-width="2" opacity="0.7"/>
+  <!-- M3: KCL 비이커 ↔ pH 비이커 -->
+  <path d="M441,120 L441,180 Q441,210 470,210 L494,210 L494,260" fill="none" stroke="#E65100" stroke-width="2" opacity="0.7"/>
+  <path d="M494,260 Q520,240 560,240 L582,240 L582,260" fill="none" stroke="#E65100" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.5"/>
 
-  <!-- M4 → 위즈탱크 (참조수) -->
-  <path d="M491,120 L491,175 Q491,195 510,195 L625,195 L625,310" fill="none" stroke="#2E7D32" stroke-width="2" opacity="0.7"/>
+  <!-- M4: 위즈탱크(참조수) ↔ pH 비이커 -->
+  <path d="M491,120 L491,175 Q491,200 494,200 L494,260" fill="none" stroke="#2E7D32" stroke-width="2" opacity="0.7"/>
+  <path d="M494,370 L494,410 Q494,420 510,420 L625,420 L625,310" fill="none" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.5"/>
 
   <!-- 기포기 → S1 (에어) -->
   <path d="M150,465 Q200,465 200,200 Q200,80 530,80" fill="none" stroke="#90CAF9" stroke-width="2" stroke-dasharray="5,3"/>
