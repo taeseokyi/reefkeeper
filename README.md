@@ -9,10 +9,10 @@
 
 ### 주요 특징
 
+- **[±0.07 dKH 정확도](docs/system-setup.md#측정-정확도)** — 16비트 ADC + 64회 오버샘플링 + Nernst 온도 보정, 분해능 ±0.001 dKH
 - **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 13단계 자동 시퀀스
 - **[탄산염 화학법](#측정-원리)** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
-- **[16비트 고정밀 ADC](docs/parts-list.md#디바이스마트-주문번호-2026052420462117683)** — ADS1115 + 64회 오버샘플링으로 pH 0.001 단위 분해능
-- **[Nernst 온도 보상](docs/user-manual.md#22-온도-오프셋-설정)** — DS18B20 실시간 수온 측정, pH 전극 온도 보정
+- **[Nernst 온도 보정](docs/system-setup.md#nernst-온도-보정)** — 보정 온도 EEPROM 저장, 15~35°C 전 범위 오차 0%
 - **[블루투스 제어](docs/user-manual.md#14-블루투스-터미널-앱)** — HC-06으로 스마트폰에서 원격 제어/모니터링 (<a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> 앱 추천)
 - **[밀폐 참조수](docs/system-setup.md#위즈-탱크)** — 락앤락 김치통으로 증발/오염 차단, 경도 장기 안정 유지
 - **[3D 프린팅 하우징](docs/system-setup.md#하우징-3d-프린팅)** — OpenSCAD 파라메트릭 설계, 부품 실측 후 즉시 출력
@@ -33,13 +33,15 @@
 
 ## 측정 정확도
 
-| 항목 | 성능 |
-|------|------|
-| 측정 분해능 | ±0.001 dKH (16비트 ADC + 64회 오버샘플링) |
-| 시스템 정확도 | ±0.07 dKH (±1.2%) |
-| Nernst 온도 보정 | 오차 0% (보정 온도 EEPROM 저장) |
+> **dKH 8.5 기준, 시스템 정확도 ±0.07 dKH (±1.2%)** — pH 프로브 반복성이 전체 오차의 97%를 차지하며, 전자 회로와 펌웨어 계산 로직은 프로브 성능을 100% 활용할 수 있는 수준입니다.
 
-상세 분석은 [자동화 환경 구성 — 측정 정확도](docs/system-setup.md#측정-정확도)를 참조하세요.
+| 항목 | 성능 | 핵심 기술 |
+|------|------|----------|
+| 측정 분해능 | **±0.001 dKH** | 16비트 ADC (ADS1115) + 64회 오버샘플링 |
+| 시스템 정확도 | **±0.07 dKH (±1.2%)** | Nernst 보정 + 동일 온도 차등 측정 |
+| 온도 보정 오차 | **0%** | 보정 온도 EEPROM 저장, 15~35°C 전 범위 |
+
+[상세 오차 분석 →](docs/system-setup.md#측정-정확도)
 
 ## 측정 원리
 
