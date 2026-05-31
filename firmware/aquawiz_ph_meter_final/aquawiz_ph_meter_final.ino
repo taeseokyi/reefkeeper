@@ -36,7 +36,7 @@
 // ============================================================
 // 시퀀스/이력 설정
 // ============================================================
-#define SEQ_MAX_STEPS  15
+#define SEQ_MAX_STEPS  20
 #define SEQ_CMD_LEN    24
 #define CMD_BUF_SIZE   128
 #define KH_HIST_MAX    5
@@ -504,6 +504,11 @@ bool parseSeq(const char* cmdLine) {
         p = sep + 1;
     }
     if (seq.total == 0) { BTPRINTLNF("[ERR] 명령 없음"); return false; }
+    if (*p && seq.total >= SEQ_MAX_STEPS) {
+        BTPRINTF("[ERR] seq 최대 "); BTPRINT(SEQ_MAX_STEPS);
+        BTPRINTLNF("단계 초과! 명령을 나눠 실행하세요");
+        seq.total = 0; return false;
+    }
     return true;
 }
 
