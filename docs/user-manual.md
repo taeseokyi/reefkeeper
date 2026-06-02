@@ -156,6 +156,40 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 - ppm, meq/L, 상태 표시는 제거되었습니다. dKH 값으로 직접 판단하세요.
 - 산호 수조 권장 범위: **8 ~ 12 dKH**
 
+### 3.4 calcref — 참조 dKH 역산
+
+참조 해수의 dKH를 직접 측정하기 어려운 경우, 수조수의 dKH(상용 테스트킷 실측값)를 기준으로 참조수의 dKH를 역으로 계산합니다.
+
+```
+1. setref:8.5          ← 수조 dKH 실측값 (상용 테스트킷)
+2. ref                 ← 참조수 pH 측정
+3. tank                ← 수조수 pH 측정
+4. calcref             ← 참조 dKH 역산 + EEPROM 저장
+```
+
+**계산 공식:**
+
+```
+newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
+```
+
+**출력 예시:**
+
+```
+===[calcref]===
+  시각:14
+  참조pH:8.350
+  수조pH:8.201
+  dPH:-0.1490
+  새refDKH:11.985 dKH
+  수조dKH:8.50 dKH
+  온도:25.0C
+===============
+[OK] refDKH 저장:11.985 dKH
+```
+
+> 이후 `calckh`로 측정하면 저장된 refDKH를 기준으로 수조 dKH를 자동 계산합니다. 이력은 저장하지 않습니다.
+
 ---
 
 ## 4. 명령어 전체 참조
@@ -168,6 +202,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 | `ref` | 참조수 pH 측정 → RAM 저장 (전원 OFF 시 소멸, 매번 측정 필요) |
 | `tank` | 수조수 pH 측정 |
 | `calckh` | dKH 계산 + 출력 + 이력 저장 (최대 5개) |
+| `calcref` | 수조 dKH 기준으로 참조 dKH 역산 + EEPROM 저장 (아래 참고) |
 | `setref:xx.x` | 참조 dKH 설정 [EEPROM] (예: `setref:8.5`, 범위: 0.5~30.0) |
 | `settemp:xx.x` | 온도 오프셋 설정 [EEPROM] (예: `settemp:-0.3`, 범위: +/-10.0) |
 | `khhist` | dKH 이력 조회 (최신순 5개, 번호/시각/dKH) |
