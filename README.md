@@ -134,7 +134,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 
 | 분류 | 명령어 |
 |------|--------|
-| pH 측정 | `ref`, `tank`, `calckh`, `status`, `khhist` |
+| pH 측정 | `ref`, `tank`, `calckh`, `calcref`, `status`, `khhist` |
 | pH 보정 | `enterph`, `calph`, `exitph` |
 | 설정 | `settime:HH`, `setref:x`, `settemp:x` |
 | 모터 | `m1f:초`, `m1b:초`, `m1s` (m1~m4) |
