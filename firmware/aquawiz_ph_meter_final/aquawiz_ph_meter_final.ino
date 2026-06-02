@@ -431,6 +431,40 @@ void calcAndSaveKH() {
 }
 
 // ============================================================
+// 참조 dKH 역산 (수조 dKH 기준)
+// setref에 저장된 값을 수조 dKH로 간주하여 참조 dKH를 계산
+// ============================================================
+void calcRefDKH() {
+    if (refVoltage <= 0.0) { BTPRINTLNF("[ERR] ref 없음"); return; }
+    if (refDKH    <= 0.0) { BTPRINTLNF("[ERR] setref 없음 (수조dKH 입력)"); return; }
+    if (!tankMeasDone)    { BTPRINTLNF("[ERR] tank 미측정"); return; }
+
+    float knownTankDKH = refDKH;
+    deltaPH = tankPH - refPH;
+    float newRefDKH = knownTankDKH * pow(10.0, -deltaPH);
+
+    if (newRefDKH < 0.5 || newRefDKH > 30.0) {
+        BTPRINTF("[WARN] refDKH 이상:"); BTPRINTLN(newRefDKH);
+        return;
+    }
+
+    char ts[KH_TIME_LEN]; getTimeStr(ts);
+    BTPRINTLNF("===[calcref]===");
+    BTPRINTF("  시각:"); BTPRINTLN(ts);
+    BTPRINTF("  참조pH:"); BTPRINTLNFD(refPH,3);
+    BTPRINTF("  수조pH:"); BTPRINTLNFD(tankPH,3);
+    BTPRINTF("  dPH:"); BTPRINTLNFD(deltaPH,4);
+    BTPRINTF("  새refDKH:"); BTPRINTFD(newRefDKH,3); BTPRINTLNF(" dKH");
+    BTPRINTF("  수조dKH:"); BTPRINTFD(knownTankDKH,2); BTPRINTLNF(" dKH");
+    BTPRINTF("  온도:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
+    BTPRINTLNF("===============");
+
+    refDKH = newRefDKH;
+    EEPROM.put(REF_DKH_ADDR, refDKH);
+    BTPRINTF("[OK] refDKH 저장:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH");
+}
+
+// ============================================================
 // 모터 제어
 // ============================================================
 void motorRunTimed(int idx, int pinA, int pinB, bool fwd, long sec) {
@@ -576,10 +610,11 @@ void executeOneCmd(const char* rawCmd) {
         if (seq.active && seq.stepRunning) advanceSeq(); return;
     }
 
-    // ref / tank / calckh
-    if (strcmp(cmd,"ref")==0)    { refMeasDone=false;  startMeasure(MODE_REF);  return; }
-    if (strcmp(cmd,"tank")==0)   { tankMeasDone=false; startMeasure(MODE_TANK); return; }
-    if (strcmp(cmd,"calckh")==0) { calcAndSaveKH(); return; }
+    // ref / tank / calckh / calcref
+    if (strcmp(cmd,"ref")==0)     { refMeasDone=false;  startMeasure(MODE_REF);  return; }
+    if (strcmp(cmd,"tank")==0)    { tankMeasDone=false; startMeasure(MODE_TANK); return; }
+    if (strcmp(cmd,"calckh")==0)  { calcAndSaveKH(); return; }
+    if (strcmp(cmd,"calcref")==0) { calcRefDKH(); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
 
     // 모터: m1f:초, m1b:초, m1s
     struct { int idx; int pa; int pb; const char* pf; } mdef[4] = {
@@ -754,7 +789,7 @@ void printStatus() {
 // ============================================================
 void printHelp() {
     BTPRINTLNF("=== 명령어 ===");
-    BTPRINTLNF("[pH] settime:HH | ref | tank | calckh");
+    BTPRINTLNF("[pH] settime:HH | ref | tank | calckh | calcref");
     BTPRINTLNF("     setref:x | settemp:x | khhist | status");
     BTPRINTLNF("     resetref | help");
     BTPRINTLNF("[보정] enterph | calph | exitph");
