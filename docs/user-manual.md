@@ -239,7 +239,7 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 | `settemp:xx.x` | 온도 오프셋 설정 [EEPROM] (예: `settemp:-0.3`, 범위: +/-10.0) |
 | `khhist` | dKH 이력 조회 (최신순 5개, 번호/시각/dKH) |
 | `status` | 현재 전체 상태 출력 (아래 참고) |
-| `resetref` | 참조 dKH EEPROM 초기화 + 참조 전압 RAM 초기화 |
+
 | `help` | 명령어 도움말 출력 |
 
 ### 4.2 pH 보정 명령
