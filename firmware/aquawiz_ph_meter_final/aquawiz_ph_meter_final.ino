@@ -690,6 +690,8 @@ void handleCommand() {
             phCalMode = true;
             calphPending = false;
             voltageReady = false;
+            tankMeasDone = false;
+            refMeasDone = false;
             char enterCmd[] = "ENTERPH";
             ph.calibration(voltage, temperature, enterCmd);
             BTPRINTLNF("[보정] 진입→안정화 후 calph 실행");
