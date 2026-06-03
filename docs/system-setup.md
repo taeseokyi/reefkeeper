@@ -125,7 +125,7 @@ OpenSCAD 파라메트릭 설계 — 부품 실측 후 상단 파라미터만 수
    tank: pH 비이커의 수조수 pH 측정 (64회 오버샘플링, ~8초)
 
 ⑨ dKH 계산
-   calckh: KH_tank = KH_ref x 10^(-DeltaPH)
+   calkh: KH_tank = KH_ref x 10^(-DeltaPH)
 
 ── 정리 ──────────────────────────────────────────
 
@@ -143,7 +143,7 @@ OpenSCAD 파라메트릭 설계 — 부품 실측 후 상단 파라미터만 수
 ### 시퀀스 명령 예시
 
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5
+seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 ```
 
 | 단계 | 명령 | 구간 | 동작 |
@@ -157,7 +157,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 | 7 | `m4b:10` | 측정 | 펌프4(b): 참조수 → 위즈 탱크 반환 |
 | 8 | `m2f:10` | 측정 | 펌프2(f): 수조물 비이커 → pH 비이커 |
 | 9 | `tank` | 측정 | 수조수 pH 측정 |
-| 10 | `calckh` | 측정 | dKH 계산 + 이력 저장 |
+| 10 | `calkh` | 측정 | dKH 계산 + 이력 저장 |
 | 11 | `m2b:10` | 정리 | 펌프2(b): 수조수 → 수조물 비이커 반환 |
 | 12 | `m1b:30` | 정리 | 펌프1(b): 수조물 비이커 → 수조 반환 |
 | 13 | `m3f:5` | 정리 | 펌프3(f): KCL 3% 저장수 공급 (프로브 보관) |
@@ -165,7 +165,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:
 > **팁:** seq 명령은 시리얼 버퍼 크기(128바이트)의 제한이 있습니다. 명령이 길어지면 작업 절차를 나누어 순차적으로 실행할 수 있습니다. 예시:
 > ```
 > seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10
-> seq:m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5
+> seq:m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 > ```
 
 ## 온도 환경
