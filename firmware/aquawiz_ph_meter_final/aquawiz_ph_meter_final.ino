@@ -253,7 +253,6 @@ void setup() {
     memset(seq.steps, 0, sizeof(seq.steps));
 
     printHelp();
-    startMeasure(MODE_TANK);
 }
 
 // ============================================================
