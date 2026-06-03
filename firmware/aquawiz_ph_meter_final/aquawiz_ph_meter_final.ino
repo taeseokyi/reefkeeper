@@ -697,17 +697,15 @@ void handleCommand() {
             if (!voltageReady) { BTPRINTLNF("[WARN] calph 먼저 실행"); return; }
             char exitCmd[] = "EXITPH";
             ph.calibration(voltage, temperature, exitCmd);
-            if (true) {
-                if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
-                    BTPRINTF("[WARN] 이전 보정T:"); BTPRINTFD(calTemp,1);
-                    BTPRINTF("C→현재:"); BTPRINTFD(temperature,1);
-                    BTPRINTLNF("C 차이>2C! 2점 보정은 연속 실행 권장");
-                }
-                calTemp = temperature;
-                EEPROM.put(CAL_TEMP_ADDR, calTemp);
-                BTPRINTF("[보정] 완료 보정온도:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
-                phCalMode = false;
+            if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
+                BTPRINTF("[WARN] 이전 보정T:"); BTPRINTFD(calTemp,1);
+                BTPRINTF("C→현재:"); BTPRINTFD(temperature,1);
+                BTPRINTLNF("C 차이>2C! 2점 보정은 연속 실행 권장");
             }
+            calTemp = temperature;
+            EEPROM.put(CAL_TEMP_ADDR, calTemp);
+            BTPRINTF("[보정] 완료 보정온도:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
+            phCalMode = false;
         }
         return;
     }
