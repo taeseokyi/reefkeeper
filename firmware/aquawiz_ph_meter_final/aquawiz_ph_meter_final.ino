@@ -769,7 +769,6 @@ void printStatus() {
     BTPRINTF("dPH:"); BTPRINTLNFD(deltaPH,4);
     BTPRINTF("refKH:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("수조KH:"); BTPRINTFD(tankDKH,3); BTPRINTLNF(" dKH");
-    BTPRINTF("refV:"); BTPRINTFD(refVoltage,3); BTPRINTLNF(" mV");
     BTPRINTF("KH이력:"); BTPRINT(khHistCount); BTPRINTLNF("개");
     const char* mn[4] = {"M1","M2","M3","M4"};
     for (int i=0; i<4; i++) {
