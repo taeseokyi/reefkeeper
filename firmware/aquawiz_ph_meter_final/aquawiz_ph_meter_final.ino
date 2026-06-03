@@ -713,11 +713,6 @@ void handleCommand() {
     // 일반
     if (strcmp(cmdL,"status")==0)   { printStatus(); return; }
     if (strcmp(cmdL,"khhist")==0)   { printKHHist(); return; }
-    if (strcmp(cmdL,"resetref")==0) {
-        refVoltage=0.0; refDKH=0.0;
-        EEPROM.put(REF_DKH_ADDR,refDKH);
-        BTPRINTLNF("[OK] 참조 초기화"); return;
-    }
     if (strcmp(cmdL,"help")==0) { printHelp(); return; }
 
     executeOneCmd(cmdBuf);
@@ -770,7 +765,7 @@ void printHelp() {
     BTPRINTLNF("=== 명령어 ===");
     BTPRINTLNF("[pH] settime:HH | ref | tank | calckh | calcref");
     BTPRINTLNF("     setref:x | settemp:x | khhist | status");
-    BTPRINTLNF("     resetref | help");
+    BTPRINTLNF("     help");
     BTPRINTLNF("[보정] enterph | calph | exitph");
     BTPRINTLNF("[모터] m1f:초 m1b:초 m1s (m2~m4동일)");
     BTPRINTLNF("[에어] air:총초:주기초 | airoff");
