@@ -125,7 +125,7 @@ setref:8.5
 | 1 | `settime:HH` | 현재 시(0~23) 설정 (이력 타임스탬프용, 예: `settime:14`) |
 | 2 | `ref` | 참조수 pH 측정 (약 8초, 64회 오버샘플링) — RAM 저장 |
 | 3 | `tank` | 수조수 pH 측정 (약 8초) |
-| 4 | `calckh` | dKH 계산 + 결과 출력 + 이력 저장 |
+| 4 | `calkh` | dKH 계산 + 결과 출력 + 이력 저장 |
 
 > 참조수 전압(refVoltage)은 RAM에만 저장됩니다. 전원 ON 후 매번 `ref` 명령을 실행해야 합니다.
 
@@ -134,18 +134,18 @@ setref:8.5
 `seq` 명령으로 최대 20단계를 순차 자동 실행합니다. 각 명령은 최대 24자입니다.
 
 ```
-seq:settime:14|ref|wait:30|tank|calckh
+seq:settime:14|ref|wait:30|tank|calkh
 ```
 
 도징 + 탈기 + 측정 + 정리 통합 예시:
 
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calckh|m2b:10|m1b:30|m3f:5
+seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 ```
 
 `seqstop` 명령으로 시퀀스를 즉시 중단할 수 있습니다.
 
-### 3.3 calckh 결과 출력
+### 3.3 calkh 결과 출력
 
 ```
 ===[dKH]===
@@ -188,7 +188,7 @@ KH이력:2개
 | [대기] | `wait` 타이머 — 동작 중이면 잔여 시간, 미사용 시 `-` |
 | [SEQ] | 시퀀스 진행 — 실행 중이면 현재/전체 단계 (예: `3/13`) |
 
-### 3.5 calcref — 참조 dKH 역산
+### 3.5 calref — 참조 dKH 역산
 
 참조 해수의 dKH를 직접 측정하기 어려운 경우, 수조수의 dKH(상용 테스트킷 실측값)를 기준으로 참조수의 dKH를 역으로 계산합니다.
 
@@ -196,7 +196,7 @@ KH이력:2개
 1. setref:8.5          ← 수조 dKH 실측값 (상용 테스트킷)
 2. ref                 ← 참조수 pH 측정
 3. tank                ← 수조수 pH 측정
-4. calcref             ← 참조 dKH 역산 + EEPROM 저장
+4. calref             ← 참조 dKH 역산 + EEPROM 저장
 ```
 
 **계산 공식:**
@@ -208,7 +208,7 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 **출력 예시:**
 
 ```
-===[calcref]===
+===[calref]===
   시각:14
   참조pH:8.350
   수조pH:8.201
@@ -220,7 +220,7 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 [OK] refDKH 저장:11.985 dKH
 ```
 
-> 이후 `calckh`로 측정하면 저장된 refDKH를 기준으로 수조 dKH를 자동 계산합니다. 이력은 저장하지 않습니다.
+> 이후 `calkh`로 측정하면 저장된 refDKH를 기준으로 수조 dKH를 자동 계산합니다. 이력은 저장하지 않습니다.
 
 ---
 
@@ -233,8 +233,8 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 | `settime:HH` | 현재 시 설정 (0~23, 예: `settime:14`) — 이력 타임스탬프용 |
 | `ref` | 참조수 pH 측정 → RAM 저장 (전원 OFF 시 소멸, 매번 측정 필요) |
 | `tank` | 수조수 pH 측정 |
-| `calckh` | dKH 계산 + 출력 + 이력 저장 (최대 5개) |
-| `calcref` | 수조 dKH 기준으로 참조 dKH 역산 + EEPROM 저장 (아래 참고) |
+| `calkh` | dKH 계산 + 출력 + 이력 저장 (최대 5개) |
+| `calref` | 수조 dKH 기준으로 참조 dKH 역산 + EEPROM 저장 (아래 참고) |
 | `setref:xx.x` | 참조 dKH 설정 [EEPROM] (예: `setref:8.5`, 범위: 0.5~30.0) |
 | `settemp:xx.x` | 온도 오프셋 설정 [EEPROM] (예: `settemp:-0.3`, 범위: +/-10.0) |
 | `khhist` | dKH 이력 조회 (최신순 5개, 번호/시각/dKH) |
@@ -329,7 +329,7 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 | 온도 오프셋 (`settemp`) | `0x14~0x17` | 전원 OFF 후에도 유지 |
 | pH 보정 온도 (`exitph`) | `0x18~0x1B` | Nernst 보정 기준 온도, 보정 시 자동 저장 |
 | 참조수 pH 전압 (`ref`) | RAM만 | 전원 ON 후 매번 측정 필요 |
-| dKH 측정 이력 (`calckh`) | RAM만 | 전원 OFF 시 소멸 |
+| dKH 측정 이력 (`calkh`) | RAM만 | 전원 OFF 시 소멸 |
 
 ---
 
@@ -342,7 +342,7 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 | `[WARN] DS18B20 오류→25C` | 온도 센서 일시 오류, 25도로 pH 계산 진행 |
 | `[WARN] ref 없음→ref 실행` | `ref` 명령으로 참조수 측정 필요 |
 | `[WARN] refDKH 없음→setref` | `setref:xx.x` 명령으로 참조 dKH 입력 필요 |
-| `[ERR] tank 미측정` | `tank` 명령 실행 후 `calckh` 실행 |
+| `[ERR] tank 미측정` | `tank` 명령 실행 후 `calkh` 실행 |
 | `[WARN] dKH 이상` | pH 보정 재실행 또는 참조 dKH 확인 |
 | `[WARN] 실행중→seqstop` | `seqstop` 후 새 시퀀스 실행 |
 | `[ERR] 모터시간 1~3600초` | 1~3600초 범위로 재입력 |

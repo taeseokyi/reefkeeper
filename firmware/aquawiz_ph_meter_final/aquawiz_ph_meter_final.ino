@@ -448,7 +448,7 @@ void calcRefDKH() {
     }
 
     char ts[KH_TIME_LEN]; getTimeStr(ts);
-    BTPRINTLNF("===[calcref]===");
+    BTPRINTLNF("===[calref]===");
     BTPRINTF("  시각:"); BTPRINTLN(ts);
     BTPRINTF("  참조pH:"); BTPRINTLNFD(refPH,3);
     BTPRINTF("  수조pH:"); BTPRINTLNFD(tankPH,3);
@@ -612,11 +612,11 @@ void executeOneCmd(const char* rawCmd) {
         if (seq.active && seq.stepRunning) advanceSeq(); return;
     }
 
-    // ref / tank / calckh / calcref
+    // ref / tank / calkh / calref
     if (strcmp(cmd,"ref")==0)     { refMeasDone=false;  startMeasure(MODE_REF);  return; }
     if (strcmp(cmd,"tank")==0)    { tankMeasDone=false; startMeasure(MODE_TANK); return; }
-    if (strcmp(cmd,"calckh")==0)  { calcAndSaveKH(); return; }
-    if (strcmp(cmd,"calcref")==0) { calcRefDKH(); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
+    if (strcmp(cmd,"calkh")==0)  { calcAndSaveKH(); return; }
+    if (strcmp(cmd,"calref")==0) { calcRefDKH(); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
 
     // 모터: m1f:초, m1b:초, m1s
     struct { int idx; int pa; int pb; const char* pf; } mdef[4] = {
@@ -799,7 +799,7 @@ void printStatus() {
 // ============================================================
 void printHelp() {
     BTPRINTLNF("=== 명령어 ===");
-    BTPRINTLNF("[pH] settime:HH | ref | tank | calckh | calcref");
+    BTPRINTLNF("[pH] settime:HH | ref | tank | calkh | calref");
     BTPRINTLNF("     setref:x | settemp:x | khhist | status");
     BTPRINTLNF("     help");
     BTPRINTLNF("[보정] enterph | calph | exitph");
