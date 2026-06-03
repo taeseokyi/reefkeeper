@@ -561,7 +561,7 @@ bool parseSeq(const char* cmdLine) {
     if (seq.total == 0) { BTPRINTLNF("[ERR] 명령 없음"); return false; }
     if (*p && seq.total >= SEQ_MAX_STEPS) {
         BTPRINTF("[ERR] seq 최대 "); BTPRINT(SEQ_MAX_STEPS);
-        BTPRINTLNF("단계 초과! 명령을 나눠 실행하세요");
+        BTPRINTLNF("단계 초과!");
         seq.total = 0; return false;
     }
     return true;
@@ -676,7 +676,7 @@ void handleCommand() {
     if (cmdBuf[0] == '\0') return;
     if (truncated) {
         BTPRINTF("[ERR] 명령이 "); BTPRINT(CMD_BUF_SIZE-1);
-        BTPRINTLNF("자 초과! 잘린 명령은 실행하지 않습니다. seq를 나눠 실행하세요");
+        BTPRINTLNF("자 초과! seq를 나눠 실행하세요");
         return;
     }
 
@@ -702,9 +702,8 @@ void handleCommand() {
             char exitCmd[] = "EXITPH";
             ph.calibration(voltage, temperature, exitCmd);
             if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
-                BTPRINTF("[WARN] 이전 보정T:"); BTPRINTFD(calTemp,1);
-                BTPRINTF("C→현재:"); BTPRINTFD(temperature,1);
-                BTPRINTLNF("C 차이>2C! 2점 보정은 연속 실행 권장");
+                BTPRINTF("[WARN] 보정T차이>2C! ");
+                BTPRINTFD(calTemp,1); BTPRINTF("→"); BTPRINTLNFD(temperature,1);
             }
             calTemp = temperature;
             EEPROM.put(CAL_TEMP_ADDR, calTemp);
@@ -808,6 +807,5 @@ void printHelp() {
     BTPRINTLNF("[에어] air:총초:주기초 | airoff");
     BTPRINTLNF("[대기] wait:초");
     BTPRINTLNF("[SEQ] seq:cmd1|cmd2|... | seqstop");
-    BTPRINTLNF("[예시] seq:settime:14|ref|wait:30|tank|calckh");
     BTPRINTLNF("=============");
 }
