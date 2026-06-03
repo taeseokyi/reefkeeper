@@ -146,6 +146,7 @@ WaitState  waitState;
 SeqState   seq;
 bool       seqAdvancePending = false;
 bool       phCalMode = false;
+bool       calphPending = false;
 
 // ============================================================
 // Nernst 온도 보상
@@ -368,6 +369,13 @@ void onSamplingComplete() {
         currentMode = MODE_IDLE;
         if (seq.active && seq.stepRunning) advanceSeq();
         return;
+    } else if (currentMode == MODE_CALIBRATION && calphPending) {
+        BTPRINTF("[CAL] V:"); BTPRINTFD(voltage,3);
+        BTPRINTF(" pH:"); BTPRINTFD(phValue,3);
+        BTPRINTF(" T:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
+        calphPending = false;
+        char calCmd[] = "CALPH";
+        ph.calibration(voltage, temperature, calCmd);
     }
     BTPRINTLNF("---");
     currentMode = MODE_IDLE;
@@ -664,14 +672,18 @@ void handleCommand() {
     if (strcmp(cmdL,"enterph")==0||strcmp(cmdL,"calph")==0||strcmp(cmdL,"exitph")==0) {
         if (strcmp(cmdL,"enterph")==0) {
             phCalMode = true;
-            BTPRINTLNF("[보정] 진입→버퍼삽입→calph");
-            startMeasure(MODE_CALIBRATION);
+            calphPending = false;
+            BTPRINTLNF("[보정] 진입→안정화 후 calph 실행");
         } else if (!phCalMode) {
             BTPRINTLNF("[ERR] enterph 먼저 실행");
-        } else {
-            if (!voltageReady) { BTPRINTLNF("[WARN] 미준비"); return; }
-            ph.calibration(voltage, temperature, cmdBuf);
-            if (strcmp(cmdL,"exitph")==0) {
+        } else if (strcmp(cmdL,"calph")==0) {
+            calphPending = true;
+            startMeasure(MODE_CALIBRATION);
+        } else if (strcmp(cmdL,"exitph")==0) {
+            if (!voltageReady) { BTPRINTLNF("[WARN] calph 먼저 실행"); return; }
+            char exitCmd[] = "EXITPH";
+            ph.calibration(voltage, temperature, exitCmd);
+            if (true) {
                 if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
                     BTPRINTF("[WARN] 이전 보정T:"); BTPRINTFD(calTemp,1);
                     BTPRINTF("C→현재:"); BTPRINTFD(temperature,1);
