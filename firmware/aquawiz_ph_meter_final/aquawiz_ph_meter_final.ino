@@ -297,7 +297,7 @@ void loop() {
 
     // ② 보정 모드 모니터링 (2초마다 전압/pH 표시)
     static unsigned long calMonTime = 0;
-    if (phCalMode && currentMode == MODE_IDLE && (long)(now - calMonTime) >= 0) {
+    if (phCalMode && !voltageReady && currentMode == MODE_IDLE && (long)(now - calMonTime) >= 0) {
         calMonTime = now + 2000UL;
         int16_t raw = ads.readADC_SingleEnded(0);
         if (raw < 0) raw = 0;
