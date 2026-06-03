@@ -60,7 +60,7 @@ DeltaPH = pH_ref - pH_tank
 
 안드로이드 스마트폰에서 블루투스 시리얼 통신으로 AquaWiz를 제어합니다.
 
-**추천 앱:** <a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> (Kai Morich, 무료)
+**추천 앱:** ![](images/bt-terminal-icon.png) <a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> (Kai Morich, 무료)
 
 - HC-05, HC-06 등 Bluetooth Classic SPP 지원
 - 시리얼 터미널 방식으로 명령 입력/응답 확인
