@@ -372,7 +372,7 @@ void onSamplingComplete() {
         BTPRINTF("[수조수] V:"); BTPRINTFD(voltage,3);
         BTPRINTF(" pH:"); BTPRINTFD(tankPH,3);
         BTPRINTF(" T:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
-        tankMeasDone = true;
+        tankMeasDone = true; BTPRINTLNF("[OK]");
         if (seq.active && seq.stepRunning) advanceSeq();
 
     } else if (currentMode == MODE_REF) {
@@ -380,8 +380,7 @@ void onSamplingComplete() {
         BTPRINTF("[참조수] V:"); BTPRINTFD(refVoltage,3);
         BTPRINTF(" pH:"); BTPRINTFD(refPH,3);
         BTPRINTF(" T:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
-        BTPRINTLNF("[OK] 참조 RAM 저장");
-        refMeasDone = true;
+        refMeasDone = true; BTPRINTLNF("[OK]");
         currentMode = MODE_IDLE;
         if (seq.active && seq.stepRunning) advanceSeq();
         return;
