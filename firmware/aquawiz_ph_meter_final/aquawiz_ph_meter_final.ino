@@ -454,7 +454,7 @@ void calcRefDKH() {
     BTPRINTF("  수조pH:"); BTPRINTLNFD(tankPH,3);
     BTPRINTF("  dPH:"); BTPRINTLNFD(deltaPH,4);
     BTPRINTF("  새refDKH:"); BTPRINTFD(newRefDKH,3); BTPRINTLNF(" dKH");
-    BTPRINTF("  수조dKH:"); BTPRINTFD(knownTankDKH,2); BTPRINTLNF(" dKH");
+    BTPRINTF("  수조dKH:"); BTPRINTFD(knownTankDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("  온도:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
     BTPRINTLNF("===============");
 
@@ -750,13 +750,13 @@ void printStatus() {
     char ts[KH_TIME_LEN]; getTimeStr(ts);
     BTPRINTLNF("=== 상태 ===");
     BTPRINTF("시각:"); BTPRINTLN(ts);
-    BTPRINTF("온도:"); BTPRINTFD(temperature,2); BTPRINTF("C 오프셋:"); BTPRINTFD(tempOffset,2); BTPRINTF(" 보정T:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
+    BTPRINTF("온도:"); BTPRINTFD(temperature,1); BTPRINTF("C 오프셋:"); BTPRINTFD(tempOffset,2); BTPRINTF(" 보정T:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
     BTPRINTF("수조pH:"); BTPRINTLNFD(tankPH,3);
     BTPRINTF("참조pH:"); BTPRINTLNFD(refPH,3);
     BTPRINTF("dPH:"); BTPRINTLNFD(deltaPH,4);
     BTPRINTF("refKH:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("수조KH:"); BTPRINTFD(tankDKH,3); BTPRINTLNF(" dKH");
-    BTPRINTF("refV:"); BTPRINTFD(refVoltage,2); BTPRINTLNF(" mV");
+    BTPRINTF("refV:"); BTPRINTFD(refVoltage,3); BTPRINTLNF(" mV");
     BTPRINTF("KH이력:"); BTPRINT(khHistCount); BTPRINTLNF("개");
     const char* mn[4] = {"M1","M2","M3","M4"};
     for (int i=0; i<4; i++) {
