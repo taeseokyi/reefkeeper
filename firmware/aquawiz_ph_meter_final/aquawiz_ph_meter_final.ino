@@ -122,7 +122,6 @@ float phValue     = 0.0;
 float temperature = 25.0;
 float tempOffset  = 0.0;
 float calTemp     = 25.0;
-float refVoltage  = 0.0;
 float refDKH      = 0.0;
 float refPH       = 0.0;
 float tankPH      = 0.0;
@@ -376,8 +375,8 @@ void onSamplingComplete() {
         if (seq.active && seq.stepRunning) advanceSeq();
 
     } else if (currentMode == MODE_REF) {
-        refVoltage = voltage; refPH = phValue;
-        BTPRINTF("[참조수] V:"); BTPRINTFD(refVoltage,3);
+        refPH = phValue;
+        BTPRINTF("[참조수] V:"); BTPRINTFD(voltage,3);
         BTPRINTF(" pH:"); BTPRINTFD(refPH,3);
         BTPRINTF(" T:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
         refMeasDone = true; BTPRINTLNF("[OK]");
@@ -400,7 +399,7 @@ void onSamplingComplete() {
 // dKH 계산 + 이력 저장
 // ============================================================
 void calcAndSaveKH() {
-    if (refVoltage <= 0.0) { BTPRINTLNF("[ERR] ref 없음"); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
+    if (!refMeasDone) { BTPRINTLNF("[ERR] ref 없음"); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
     if (refDKH    <= 0.0) { BTPRINTLNF("[ERR] refDKH 없음"); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
     if (!tankMeasDone)    { BTPRINTLNF("[ERR] tank 미측정"); if(seq.active&&seq.stepRunning)advanceSeq(); return; }
 
@@ -435,7 +434,7 @@ void calcAndSaveKH() {
 // setref에 저장된 값을 수조 dKH로 간주하여 참조 dKH를 계산
 // ============================================================
 void calcRefDKH() {
-    if (refVoltage <= 0.0) { BTPRINTLNF("[ERR] ref 없음"); return; }
+    if (!refMeasDone) { BTPRINTLNF("[ERR] ref 없음"); return; }
     if (refDKH    <= 0.0) { BTPRINTLNF("[ERR] setref 없음 (수조dKH 입력)"); return; }
     if (!tankMeasDone)    { BTPRINTLNF("[ERR] tank 미측정"); return; }
 
