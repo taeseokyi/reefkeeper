@@ -7,7 +7,9 @@
 
 ![셋팅 구성](docs/images/setup-demo.svg)
 
-![제어기 실물](docs/images/reefkeeper-제어기.jpg)
+| 제어기 | 펌프 + 위즈 탱크 |
+|:---:|:---:|
+| ![제어기](docs/images/reefkeeper-제어기.jpg) | ![펌프+위즈탱크](docs/images/펌프-Ph수조파트.jpg) |
 
 ### 주요 특징
 
