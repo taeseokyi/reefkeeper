@@ -7,6 +7,8 @@
 
 ![셋팅 구성](docs/images/setup-demo.svg)
 
+![제어기 실물](docs/images/reefkeeper-제어기.jpg)
+
 ### 주요 특징
 
 - **[±0.07 dKH 정확도](docs/system-setup.md#측정-정확도)** — 16비트 ADC + 64회 오버샘플링 + Nernst 온도 보정, 분해능 ±0.001 dKH

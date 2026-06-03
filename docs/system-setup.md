@@ -2,6 +2,10 @@
 
 > 관련 문서: [프로젝트 개요 (README)](../README.md) | [사용 설명서](user-manual.md) | [준비물 목록](parts-list.md)
 
+## 제어기 실물
+
+![제어기 실물](images/reefkeeper-제어기.jpg)
+
 ## 시스템 구성도
 
 ![시스템 구성도](images/system-setup.svg)
