@@ -672,6 +672,11 @@ void handleCommand() {
             if (!voltageReady) { BTPRINTLNF("[WARN] 미준비"); return; }
             ph.calibration(voltage, temperature, cmdBuf);
             if (strcmp(cmdL,"exitph")==0) {
+                if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
+                    BTPRINTF("[WARN] 이전 보정T:"); BTPRINTFD(calTemp,1);
+                    BTPRINTF("C→현재:"); BTPRINTFD(temperature,1);
+                    BTPRINTLNF("C 차이>2C! 2점 보정은 연속 실행 권장");
+                }
                 calTemp = temperature;
                 EEPROM.put(CAL_TEMP_ADDR, calTemp);
                 BTPRINTF("[보정] 완료 보정온도:"); BTPRINTFD(calTemp,1); BTPRINTLNF("C");
