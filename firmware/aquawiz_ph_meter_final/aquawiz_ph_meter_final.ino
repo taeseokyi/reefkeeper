@@ -187,7 +187,7 @@ void printKHHist() {
         KHRecord &r = khHist[idx];
         if (!r.valid) continue;
         char dkhStr[8];
-        dtostrf(r.dkh, 5, 2, dkhStr);
+        dtostrf(r.dkh, 6, 3, dkhStr);
         char buf[20];
         snprintf(buf, sizeof(buf), "%2d  %s  %s", i+1, r.timestamp, dkhStr);
         BTPRINTLN(buf);
