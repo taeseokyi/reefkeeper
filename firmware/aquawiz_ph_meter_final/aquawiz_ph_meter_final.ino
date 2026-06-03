@@ -215,7 +215,7 @@ void setup() {
     EEPROM.get(REF_DKH_ADDR, refDKH);
     if (isnan(refDKH) || refDKH < 0.5 || refDKH > 30.0) {
         refDKH = 0.0; BTPRINTLNF("[WARN] refDKH 없음 → setref:xx.x");
-    } else { BTPRINTF("[OK] refDKH: "); BTPRINTFD(refDKH,2); BTPRINTLNF(" dKH"); }
+    } else { BTPRINTF("[OK] refDKH: "); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH"); }
 
     EEPROM.get(TEMP_OFFSET_ADDR, tempOffset);
     if (isnan(tempOffset) || tempOffset < -10.0 || tempOffset > 10.0) {
@@ -389,7 +389,7 @@ void printKH() {
         BTPRINTLNF("  pH보정 또는 refDKH 확인"); return;
     }
     BTPRINTF("[참조] pH:"); BTPRINTFD(refPH,3);
-    BTPRINTF(" dKH:"); BTPRINTLNFD(refDKH,2);
+    BTPRINTF(" dKH:"); BTPRINTLNFD(refDKH,3);
     BTPRINTF("[수조] pH:"); BTPRINTFD(tankPH,3);
     BTPRINTF(" dPH:"); BTPRINTLNFD(deltaPH,4);
     BTPRINTF("  dKH:"); BTPRINTFD(tankDKH,3); BTPRINTLNF(" dKH");
@@ -417,7 +417,7 @@ void calcAndSaveKH() {
     BTPRINTF("  참조pH:"); BTPRINTLNFD(refPH,3);
     BTPRINTF("  수조pH:"); BTPRINTLNFD(tankPH,3);
     BTPRINTF("  dPH:"); BTPRINTLNFD(deltaPH,4);
-    BTPRINTF("  refKH:"); BTPRINTFD(refDKH,2); BTPRINTLNF(" dKH");
+    BTPRINTF("  refKH:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("  수조KH:"); BTPRINTFD(tankDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("  온도:"); BTPRINTFD(temperature,1); BTPRINTLNF("C");
     BTPRINTLNF("===========");
@@ -700,7 +700,7 @@ void handleCommand() {
     // setref
     if (strncmp(cmdL,"setref:",7)==0) {
         float v = atof(cmdBuf+7);
-        if (v>=0.5&&v<=30.0) { refDKH=v; EEPROM.put(REF_DKH_ADDR,refDKH); BTPRINTF("[OK] refDKH:"); BTPRINTFD(refDKH,2); BTPRINTLNF(" dKH"); }
+        if (v>=0.5&&v<=30.0) { refDKH=v; EEPROM.put(REF_DKH_ADDR,refDKH); BTPRINTF("[OK] refDKH:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH"); }
         else BTPRINTLNF("[ERR] 0.5~30.0");
         return;
     }
@@ -754,7 +754,7 @@ void printStatus() {
     BTPRINTF("수조pH:"); BTPRINTLNFD(tankPH,3);
     BTPRINTF("참조pH:"); BTPRINTLNFD(refPH,3);
     BTPRINTF("dPH:"); BTPRINTLNFD(deltaPH,4);
-    BTPRINTF("refKH:"); BTPRINTFD(refDKH,2); BTPRINTLNF(" dKH");
+    BTPRINTF("refKH:"); BTPRINTFD(refDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("수조KH:"); BTPRINTFD(tankDKH,3); BTPRINTLNF(" dKH");
     BTPRINTF("refV:"); BTPRINTFD(refVoltage,2); BTPRINTLNF(" mV");
     BTPRINTF("KH이력:"); BTPRINT(khHistCount); BTPRINTLNF("개");
