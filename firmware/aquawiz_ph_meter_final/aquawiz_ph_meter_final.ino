@@ -699,7 +699,11 @@ void handleCommand() {
             calphPending = true;
             startMeasure(MODE_CALIBRATION);
         } else if (strcmp(cmdL,"exitph")==0) {
-            if (!voltageReady) { BTPRINTLNF("[WARN] calph 먼저 실행"); return; }
+            if (!voltageReady) {
+                phCalMode = false;
+                BTPRINTLNF("[보정] 취소");
+                return;
+            }
             char exitCmd[] = "EXITPH";
             ph.calibration(voltage, temperature, exitCmd);
             if (calTemp > 0.1 && abs(temperature - calTemp) > 2.0) {
