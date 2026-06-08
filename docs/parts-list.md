@@ -12,10 +12,9 @@
 | 4 | ![](images/parts/dm-1278835.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1278835" target="_blank">2A L298 모터드라이버 모듈 (아두이노 호환)</a> | 3 | 8,100원 |
 | 5 | ![](images/parts/dm-1376882.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1376882" target="_blank">블루투스 모듈 HC-06 (DIP) 펌웨어 v1.8</a> | 1 | 5,500원 |
 | 6 | ![](images/parts/dm-1321161.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1321161" target="_blank">5V 고정 출력 강하형 DC-DC 3A 컨버터</a> | 1 | 3,500원 |
-| 7 | ![](images/parts/dm-1321262.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1321262" target="_blank">FND 전압표시 XL4015 강하형 DC-DC 5A 가변 컨버터</a> | 1 | 4,300원 |
-| 8 | ![](images/parts/dm-1345967.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1345967" target="_blank">PWM 12V 2A DC모터 속도 제어 컨트롤러</a> | 4 | 8,000원 |
+| 7 | ![](images/parts/dm-1345967.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1345967" target="_blank">PWM 12V 2A DC모터 속도 제어 컨트롤러</a> | 4 | 8,000원 |
 | 9 | ![](images/parts/dm-1322408.jpg) | <a href="https://www.devicemart.co.kr/goods/view?no=1322408" target="_blank">브레드보드 830핀 MB-102</a> | 2 | 2,800원 |
-| | | **디바이스마트 소계** | | **130,020원** |
+| | | **디바이스마트 소계** | | **125,720원** |
 
 > 결제일: 2026-05-24 / 결제방식: 카드
 
@@ -35,7 +34,7 @@
 | # | 부품명 | 사양 | 수량 | 용도 |
 |---|--------|------|------|------|
 | 11 | DS18B20 방수 온도센서 | PTFE 케이블, 1-Wire | 1 | Nernst 온도 보상 (위즈 탱크 침수) |
-| 12 | ![](images/parts/ali-solenoid.jpg) <a href="https://www.aliexpress.com/item/4000148723123.html" target="_blank">3-way 미니 솔레노이드 밸브 (SZH-GNP114 / ZHY-0519)</a> | DC 6V, 2위치 3방향 | 2 | 에어 교대 공급 (SOL1, SOL2 직렬) |
+| 12 | <a href="https://smartstore.naver.com/vim/products/4583133452" target="_blank">USB 5V 에어 펌프</a> | DC 5V, USB 전원 | 2 | 참조수/수조수 폭기 (L298N3 제어) |
 | 13 | 세라믹 콘덴서 100nF (104) | 50V 이상 | 4 | C1: Arduino, C2: ADS1115 VDD, C3: 아날로그 입력 RC필터, C4: DS18B20 |
 | 14 | 저항 330Ω (주황-주황-갈색-금) | 1/4W | 1 | ADS1115 아날로그 입력 RC 필터 직렬 저항 (R6) |
 | 15 | 저항 4.7kΩ (노랑-보라-빨강-금) | 1/4W | 1 | DS18B20 풀업 저항 (R2) |
@@ -49,7 +48,7 @@
 
 | # | 부품명 | 사양 | 수량 | 용도 |
 |---|--------|------|------|------|
-| 21 | 기포기 (에어펌프) | 수족관용 | 1 | 폭기용 에어 공급원 |
+| 21 | 실리콘 에어 스톤 | 수족관용 | 2 | 에어 펌프 출력단 기포 분산 |
 | 22 | 실리콘 호스 | 내경 2~4mm | 적량 | 펌프/에어 연결 |
 | 23 | 비이커 | 200ml | 3 | 수조물 / pH 측정 / KCL 3% |
 | 24 | 위즈 탱크 용기 | 다이소 락앤락 김치통 (3L 이상) | 1 | 참조 해수 + 비이커 수납 (아래 참고) |
@@ -60,7 +59,7 @@
 
 | 구매처 | 금액 |
 |--------|------|
-| 디바이스마트 | 130,020원 |
+| 디바이스마트 | 125,720원 |
 | AliExpress | 21,680원 |
 | 별도 구매 | 미정 |
-| **주문 합계** | **151,700원** |
+| **주문 합계** | **147,400원** |

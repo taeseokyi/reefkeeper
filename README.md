@@ -7,6 +7,8 @@
 
 ![셋팅 구성](docs/images/setup-demo.svg)
 
+![완성한 실물](docs/images/완성한%20실물.jpg)
+
 | 제어기 | 펌프 + 위즈 탱크 |
 |:---:|:---:|
 | ![제어기](docs/images/reefkeeper-제어기.jpg) | ![펌프+위즈탱크](docs/images/펌프-Ph수조파트.jpg) |
@@ -14,7 +16,7 @@
 ### 주요 특징
 
 - **[±0.07 dKH 정확도](docs/system-setup.md#측정-정확도)** — 16비트 ADC + 64회 오버샘플링 + Nernst 온도 보정, 분해능 ±0.001 dKH
-- **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 13단계 자동 시퀀스
+- **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 16단계 자동 시퀀스
 - **[탄산염 화학법](#측정-원리)** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
 - **[Nernst 온도 보정](docs/system-setup.md#nernst-온도-보정)** — 보정 온도 EEPROM 저장, 15~35°C 전 범위 오차 0%
 - **[블루투스 제어](docs/user-manual.md#14-블루투스-터미널-앱)** — HC-06으로 스마트폰에서 원격 제어/모니터링 (![](docs/images/bt-terminal-icon.png) <a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> 앱 추천)
@@ -25,7 +27,7 @@
 
 > 정밀한 pH 측정을 위해 Wi-Fi가 없는 Arduino Nano를 사용하여 전자기 간섭을 최소화하였습니다. Wi-Fi, 웹 대시보드, 데이터 로깅 등 부족한 기능은 ESP32를 시리얼/블루투스로 연결하면 해결 가능합니다.
 
-> 연동 펌프의 토출량은 설정한 시간(초)에 비례하지만, 호스 길이나 수두차에 따라 실제 물량이 달라질 수 있습니다. 각 펌프에 PWM 볼륨 컨트롤러가 장착되어 있어 모터 속도를 조절하면 토출량을 미세하게 조정할 수 있으므로, 매번 정량 보정을 하지 않아도 됩니다.
+> 연동 펌프의 토출량은 설정한 시간(초)에 비례하지만, 호스 길이나 수두차에 따라 실제 물량이 달라질 수 있습니다. 각 펌프에 PWM 속도 컨트롤러의 Motor− 출력을 L298N ENA/ENB에 연결하여 역 PWM으로 모터 속도를 제어하므로, 토출량을 미세하게 조정할 수 있습니다.
 
 ## 한눈에 보기
 
@@ -67,10 +69,10 @@ KH_tank = KH_ref × 10^(-ΔpH)
 | ADC | Adafruit ADS1115 (16-bit) | I2C 고정밀 ADC |
 | 온도 센서 | DS18B20 (PTFE) | Nernst 온도 보상 |
 | 블루투스 | HC-06 | 하드웨어 Serial (9600 baud) |
-| 모터 드라이버 | L298N x 3 | 펌프 4개 + 솔레노이드 2개 |
+| 모터 드라이버 | L298N x 3 | L298N1/N2: 도징 펌프 (12V), L298N3: 에어 펌프 (5V) |
 | 도징 펌프 | Kamoer NKP-DC-B06S x 4 | 참조수/수조수 도징 |
-| 솔레노이드 밸브 | x 2 | 참조/수조 에어 교대 공급 |
-| 전원 | 12V DC + Buck Converter (5V, 6V) | 전원 공급 |
+| 에어 펌프 | USB 5V 에어 펌프 x 2 | 참조수/수조수 폭기 (L298N3 제어) |
+| 전원 | 12V DC + Buck Converter (5V) | 전원 공급 |
 
 - 구매 링크 포함 상세 목록: [준비물 목록](docs/parts-list.md)
 - 구성 요소 상세 / 펌프 역할: [자동화 환경 구성 — 구성 요소](docs/system-setup.md#구성-요소)
@@ -87,7 +89,7 @@ Fritzing 소스: <a href="hardware/fritzing/고정밀%20ph%20측정기-bread.fzz
 ```
 D0  (RX)  ← HC-06 TX        D1  (TX)  → HC-06 RX (전압분배기)
 D4~D7     → L298N1 IN1~IN4  D8~D11    → L298N2 IN1~IN4
-D12       → SOL1 (참조 에어)  D13       → SOL2 (수조 에어)
+D12       → L298N3 IN2 (참조 에어, ron)  D13  → L298N3 IN4 (수조 에어, ton)
 A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 ```
 
@@ -95,11 +97,10 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 
 ```
 12V DC Jack
-  ├── L298N1, L298N2 (모터 전원, 12V → 펌프)
+  ├── L298N1, L298N2 (모터 전원, 12V → 도징 펌프)
   ├── Buck 12V→5V (Arduino, ADS1115, HC-06)
-  └── Buck 12V→6V (XL4015 가변)
-        ├── 도징 펌프 x4 (PWM 컨트롤러 경유)
-        └── L298N3 (솔레노이드 전원, 6V)
+  └── USB 5V → L298N3 (에어 펌프 제어)
+속도 제어: PWM 컨트롤러 Motor− → L298N ENA/ENB (역 PWM)
 접지: Star Ground Point (DGND/AGND 분리 후 한 점 결합)
 ```
 
@@ -129,7 +130,7 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 ### 자동 시퀀스 (원버튼 측정)
 
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
+seq:settime:14|m3b:5|m1f:30|m4f:10|ron|ton|wait:1800|airoff|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 ```
 
 각 단계의 상세 설명은 [자동화 환경 구성 — 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스)를 참조하세요.
@@ -144,7 +145,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calkh|m2b:1
 | pH 보정 | `enterph`, `calph`, `exitph` |
 | 설정 | `settime:HH`, `setref:x`, `settemp:x` |
 | 모터 | `m1f:초`, `m1b:초`, `m1s` (m1~m4) |
-| 에어 | `air:총초:주기초`, `airoff` |
+| 에어 | `ron`, `ton`, `airoff` |
 | 시퀀스 | `seq:cmd1\|cmd2\|...`, `seqstop` |
 
 전체 명령어 및 상세 설명은 [사용 설명서](docs/user-manual.md)를 참조하세요.
