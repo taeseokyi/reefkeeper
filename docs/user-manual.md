@@ -38,7 +38,7 @@ DeltaPH = pH_ref - pH_tank
 | ADC | Adafruit ADS1115 | 16비트 I2C ADC (A4/A5) |
 | 온도 센서 | DS18B20 | 1-Wire 온도 측정 (A0=D14) |
 | 블루투스 | HC-06 | 하드웨어 Serial D0/D1 (9600baud) |
-| 모터 드라이버 | L298N x 3 | 도징 펌프 4개 + 솔레노이드 2개 |
+| 모터 드라이버 | L298N x 3 | L298N1/N2: 도징 펌프 4개 (12V), L298N3: 에어 펌프 (5V) |
 
 ### 1.3 핀 배치
 
@@ -48,8 +48,8 @@ DeltaPH = pH_ref - pH_tank
 | D1 (TX) | HC-06 RX | 블루투스 송신 (전압분배기: R4 10k + R5 20k) |
 | D4~D7 | L298N1 IN1~IN4 | 모터1/2 제어 |
 | D8~D11 | L298N2 IN1~IN4 | 모터3/4 제어 |
-| D12 | L298N3 IN2 | 참조 에어 솔레노이드 |
-| D13 | L298N3 IN4 | 수조 에어 솔레노이드 |
+| D12 | L298N3 IN2 | 참조 에어 펌프 (`ron`) |
+| D13 | L298N3 IN4 | 수조 에어 펌프 (`ton`) |
 | A0 (D14) | DS18B20 DQ | 1-Wire 온도센서 |
 | A4 | ADS1115 SDA | I2C 데이터 |
 | A5 | ADS1115 SCL | I2C 클럭 |
@@ -140,7 +140,7 @@ seq:settime:14|ref|wait:30|tank|calkh
 도징 + 탈기 + 측정 + 정리 통합 예시:
 
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|air:1800:5|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
+seq:settime:14|m3b:5|m1f:30|m4f:10|ron|ton|wait:1800|airoff|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 ```
 
 `seqstop` 명령으로 시퀀스를 즉시 중단할 수 있습니다.
@@ -183,7 +183,7 @@ KH이력:2개
 | 온도 / 오프셋 / 보정T | 현재 수온, DS18B20 오프셋, pH 보정 시 온도 (Nernst 기준) |
 
 | [M1]~[M4] | 모터 상태 — 동작 중이면 잔여 시간 표시 |
-| [에어] | `air` 교대 공급 상태 — 동작 중이면 참조ON/수조ON + 잔여 시간 |
+| [에어] | 에어 상태 — `ron`/`ton` 동작 시 참조ON/수조ON 표시 |
 | [대기] | `wait` 타이머 — 동작 중이면 잔여 시간, 미사용 시 `-` |
 | [SEQ] | 시퀀스 진행 — 실행 중이면 현재/전체 단계 (예: `3/13`) |
 
@@ -266,12 +266,12 @@ newRefDKH = 수조dKH × 10^(-(tankPH − refPH))
 
 | 명령 | 설명 |
 |------|------|
-| `air:총초:주기초` | 교대 에어 공급 (예: `air:1800:5` → 30분, 5초 주기 참조/수조 교대) |
-| `airoff` | 에어 공급 즉시 중단 |
-| `ron` | SOL1(참조) 개별 ON — 테스트용 (`airoff`로 OFF) |
-| `ton` | SOL2(수조) 개별 ON — 테스트용 (`airoff`로 OFF) |
+| `ron` | 참조수 에어 ON (L298N3 채널A, D12) — `airoff`로 OFF |
+| `ton` | 수조수 에어 ON (L298N3 채널B, D13) — `airoff`로 OFF |
+| `airoff` | 에어 전체 OFF |
+| ~~`air:총초:주기초`~~ | ~~교대 에어 공급~~ (deprecated — `ron`/`ton`/`airoff` 사용) |
 
-> **주의:** `air` 명령은 SOL1/SOL2를 주기적으로 교대 제어합니다. `ron`/`ton`은 개별 솔레노이드를 수동으로 테스트할 때 사용하며, `air`와는 독립적으로 동작합니다.
+> USB 5V 에어 펌프 2개를 L298N3으로 독립 제어합니다. `ron`+`ton`으로 두 채널을 동시에 켜서 참조수·수조수를 동시 탈기합니다.
 
 ### 4.5 대기 명령
 
