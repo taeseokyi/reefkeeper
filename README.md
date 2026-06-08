@@ -89,7 +89,7 @@ Fritzing 소스: <a href="hardware/fritzing/고정밀%20ph%20측정기-bread.fzz
 ```
 D0  (RX)  ← HC-06 TX        D1  (TX)  → HC-06 RX (전압분배기)
 D4~D7     → L298N1 IN1~IN4  D8~D11    → L298N2 IN1~IN4
-D12       → L298N3 IN2 (참조 에어, ron)  D13  → L298N3 IN4 (수조 에어, ton)
+D12       → L298N3 IN2 (에어 펌프 양쪽 동시 ON, ron)  D13  → L298N3 IN4 (PWM 속도 제어기 ON, ton)
 A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 ```
 
@@ -130,10 +130,10 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 ### 자동 시퀀스 (원버튼 측정)
 
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|ron|ton|wait:1800|airoff|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
+seq:settime:14|m3b:5|m1f:30|m4f:10|ron|wait:1800|airoff|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
 ```
 
-각 단계의 상세 설명은 [자동화 환경 구성 — 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스)를 참조하세요.
+각 단계의 상세 설명은 [자동화 환경 구성 — 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스)를 참조하세요. (15단계)
 
 > **팁:** seq 명령은 시리얼 버퍼 크기(128바이트)의 제한이 있습니다. 명령이 길어지면 작업 절차를 나누어 두 번 또는 세 번 순차적으로 실행할 수 있습니다.
 
@@ -145,7 +145,7 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|ron|ton|wait:1800|airoff|ref|m4b:10|m2f:10|ta
 | pH 보정 | `enterph`, `calph`, `exitph` |
 | 설정 | `settime:HH`, `setref:x`, `settemp:x` |
 | 모터 | `m1f:초`, `m1b:초`, `m1s` (m1~m4) |
-| 에어 | `ron`, `ton`, `airoff` |
+| 에어/PWM | `ron` (에어 양쪽 ON), `ton` (PWM 제어기 ON), `airoff` (양쪽 OFF) |
 | 시퀀스 | `seq:cmd1\|cmd2\|...`, `seqstop` |
 
 전체 명령어 및 상세 설명은 [사용 설명서](docs/user-manual.md)를 참조하세요.
