@@ -20,6 +20,28 @@ PORT     = 'COM14'
 BAUD     = 9600
 AIR_SECS = 1800         # 탈기 시간(초) — 테스트 시 줄여서 사용
 DAT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dkh.dat')
+LOG_FILE = r'C:\dkh\measure_kh.log' if os.name == 'nt' else None
+
+
+def setup_logging():
+    """Windows에서 pythonw 로 실행될 때 모든 print 출력을 로그 파일로 보낸다.
+    pythonw 는 sys.stdout 이 None 이라, redirect 하지 않으면 첫 print() 에서 죽는다.
+    1MB 초과 시 새로 시작해 무한 증가를 막는다."""
+    if os.name != 'nt':
+        return
+    target = None
+    try:
+        mode = 'w' if (os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 1_000_000) else 'a'
+        target = open(LOG_FILE, mode, encoding='utf-8', buffering=1)  # 줄 단위 flush
+    except OSError:
+        try:
+            target = open(os.devnull, 'w')   # 로그 못 열어도 print 가 죽지 않게
+        except OSError:
+            target = None
+    if target is not None:
+        sys.stdout = target
+        sys.stderr = target
+        print(f"\n===== measure_kh_once {datetime.now():%Y-%m-%d %H:%M:%S} =====")
 
 
 # ─────────────────────────────────────────────
@@ -212,6 +234,7 @@ def main():
 
 
 if __name__ == '__main__':
+    setup_logging()
     try:
         main()
     except KeyboardInterrupt:
