@@ -7,7 +7,7 @@ import re
 import sys
 from datetime import datetime
 
-PORT     = 'COM14'
+PORT     = 'COM15'
 BAUD     = 9600
 AIR_SECS = 5         # 탈기 시간(초) — 테스트 시 줄여서 사용
 

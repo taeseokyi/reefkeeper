@@ -5,6 +5,13 @@
 .DS_Store
 Thumbs.db
 
+# Python
+__pycache__/
+*.pyc
+
+# 측정 데이터 (Windows가 원본)
+bin/dkh.dat
+
 # Node.js
 node_modules/
 package.json

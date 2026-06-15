@@ -21,7 +21,7 @@ import sys
 import os
 from datetime import datetime
 
-PORT     = 'COM14'
+PORT     = 'COM15'
 BAUD     = 9600
 AIR_SECS = 1200         # 탈기 시간(초) — 테스트 시 줄여서 사용
 STABLE_SECS   = 60      # 채움 후 안정화(초) — tank/ref 동일 (타이밍 대칭)
@@ -244,6 +244,10 @@ def run_measurement(ser):
     print("\n[정리] KCL 공급")
     send_motor(ser, 3, 'm3f:60')
     send(ser, 'airoff', stop_pattern='OFF')
+
+    # 측정 사이 기포기 ON 유지 — 밀폐 참조수 지속 탈기(ΔpH 폭기부족 오프셋 대응)
+    print("\n[정리] 기포기 ON (다음 측정까지 지속 폭기)")
+    send(ser, 'ron', stop_pattern='참조ON')
 
     # ── 파싱 ──────────────────────────────────
     ref_ph, tank_ph, ref_kh, tank_kh, temp = parse_results(kh_lines)

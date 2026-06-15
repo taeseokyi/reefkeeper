@@ -21,7 +21,7 @@ import sys
 import os
 from datetime import datetime, timedelta
 
-PORT     = 'COM14'
+PORT     = 'COM15'
 BAUD     = 9600
 AIR_SECS = 1800         # 탈기 시간(초) — 테스트 시 줄여서 사용
 STABLE_SECS   = 60      # 채움 후 안정화(초) — tank/ref 동일 (타이밍 대칭)
