@@ -177,6 +177,81 @@ OpenSCAD 파라메트릭 설계 — 부품 실측 후 상단 파라미터만 수
 결과는 `dkh.dat`에 `HH ref_pH tank_pH ref_kh tank_kh temp` 형식으로 기록되고
 (오류 시 0.0), 수렴 횟수는 로그(`measure_kh.log`)에 남습니다.
 
+> 위 기본값은 `measure_kh_loop.py` 기준입니다. `measure_kh_once.py`는 `AIR_SECS=1200`, `CONV_EPS=0.005`로 다릅니다.
+
+### 1회 측정 실행법 (`measure_kh_once.py`)
+
+1회만 측정하고 종료하는 스크립트입니다. Windows 작업 스케줄러가 정시(05:00/13:00/21:00)에 호출하지만, 수동 실행도 가능합니다.
+
+**동작:** 폭기(20분) → tank 측정 → ref 측정 → `calkh` → 정리 후, 마지막에 `ron`으로 기포기를 켠 채 종료해 다음 측정까지 참조수를 지속 탈기합니다. 1회 소요 약 37~44분.
+
+**포트 지정:** 첫 번째 명령행 인자로 포트를 넘길 수 있고, 없으면 스크립트 내 `PORT` 상수(현재 `COM15`)를 씁니다.
+
+```bash
+# 콘솔에서 출력을 보며 실행 (포트 = 스크립트 기본값 COM15)
+python measure_kh_once.py
+
+# 포트 직접 지정
+python measure_kh_once.py COM7
+
+# 콘솔 없이 실행 (스케줄러 방식) — 출력은 C:\dkh\measure_kh.log 로 redirect
+pythonw measure_kh_once.py
+
+# WSL에서 Windows 파이썬으로 수동 실행 (cp949 인코딩 오류 회피용 -X utf8 필수)
+/mnt/c/dkh/python313/python.exe -X utf8 'C:\dkh\work\measure_kh_once.py' 2>&1
+```
+
+> - **포트(COM15)는 블루투스 페어링에 묶입니다.** 평소 유지되지만 장치 삭제 후 재페어링하면 번호가 바뀌므로, 그때 실제 포트를 인자로 넘기거나 `PORT` 상수를 수정합니다.
+> - 측정 포트는 스케줄러 작업과 공유하므로, **정시 측정(05/13/21시)이 진행 중일 때 수동 실행하면 시리얼 충돌**이 납니다.
+> - `pythonw`는 `sys.stdout`이 `None`이라, 스크립트가 모든 출력을 `C:\dkh\measure_kh.log`로 보냅니다(1MB 초과 시 새로 시작).
+
+### Windows 작업 스케줄러 등록 (정시 자동 측정)
+
+`measure_kh_once.py`를 **매일 05:00 / 13:00 / 21:00**(05시부터 8시간 간격, 하루 3회) 자동 실행하는 예입니다. 한 개의 반복 패턴(Repetition) 대신 **고정 시각 Daily 트리거 3개**를 씁니다 — 매일 재무장되어 재부팅 후에도 스케줄이 깨지지 않고, 꺼져 있던 시간대의 측정은 보충하지 않습니다(의도된 동작).
+
+**관리자 PowerShell**에서 실행합니다(한글 경로 문제를 피하기 위해 ASCII 정션 `C:\dkh` 경로 사용):
+
+```powershell
+# 1) 하루 3회 고정 시각 트리거 (05시 + 8h 간격)
+$triggers = @(
+    New-ScheduledTaskTrigger -Daily -At 05:00
+    New-ScheduledTaskTrigger -Daily -At 13:00
+    New-ScheduledTaskTrigger -Daily -At 21:00
+)
+
+# 2) 콘솔 없는 pythonw 로 1회 측정 스크립트 실행
+$action = New-ScheduledTaskAction `
+    -Execute 'C:\dkh\python313\pythonw.exe' `
+    -Argument 'C:\dkh\work\measure_kh_once.py'
+
+# 3) 설정: 배터리·유휴로 중지 금지, 1회 측정 상한 55분, 중복 실행 시 새 인스턴스 무시
+$settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 55) `
+    -MultipleInstances IgnoreNew
+$settings.IdleSettings.StopOnIdleEnd = $false
+
+# 4) 로그인한 대화형 세션의 사용자 토큰으로 실행 (COM 포트는 사용자 세션에 바인딩됨)
+$principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
+
+Register-ScheduledTask -TaskName 'Measure KH' -TaskPath '\tsyi\' `
+    -Trigger $triggers -Action $action -Settings $settings -Principal $principal -Force
+```
+
+설정값의 이유:
+
+| 설정 | 값 | 이유 |
+|------|----|------|
+| `AllowStartIfOnBatteries` / `DontStopIfGoingOnBatteries` | 켬 | 노트북에서 기본값(배터리 시 중지)이 데몬·측정을 로그 없이 강제 종료하는 문제 회피 |
+| `IdleSettings.StopOnIdleEnd` | `$false` | 유휴 종료 시 작업이 중단되지 않도록 |
+| `ExecutionTimeLimit` | 55분 | 1회 측정(폭기 포함 약 37~44분) 여유 + 멈춘 측정 정리 |
+| `MultipleInstances` | `IgnoreNew` | 직전 측정이 진행 중이면 다음 정시 트리거는 스킵 |
+| `LogonType` | `Interactive` | COM(블루투스) 포트가 사용자 세션에 바인딩되어, 로그인된 대화형 세션에서만 접근 가능 |
+
+> **로그인 세션 필요:** 로그아웃하면 세션·토큰이 파괴되어 작업이 죽습니다. 자리를 비울 땐 로그아웃 대신 **잠금(Win+L)** 을 쓰면 세션이 유지되어 계속 동작합니다(절전·디스플레이 OFF는 무방). 자동 복귀가 필요하면 자동 로그인을 권장합니다.
+>
+> 복잡한 PowerShell은 bat에 인라인으로 쓰지 말고 `.ps1`로 분리한 뒤 `register_measure_kh.bat`에서 `powershell -ExecutionPolicy Bypass -File "%~dp0register_measure_kh.ps1"` 한 줄로 호출합니다(한글 경로 + `^` 줄연속 조합 인코딩 오류 회피).
+
 ### 운용 메모
 
 - 에어스톤 이전 직후 첫 사이클은 5L 첫 평형을 위해 폭기를 1~2시간 수동 연장
