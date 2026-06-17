@@ -4,8 +4,8 @@ AquaWiz KH 1회 측정 (V4 — 평형(plateau) 추종 측정)
 HC-06 블루투스 시리얼로 한 번만 측정하고 dkh.dat 에 기록 후 종료.
 
 V4 (2026-06-17): "측정 중 폭기 + 진짜 평형(평탄)까지" 측정.
-  - tank·ref 를 폭기 유지(ron)한 채 반복 측정, **연속 (PLATEAU_N-1)회 Δ ≤ PLATEAU_EPS** 면
-    평형 도달로 보고 종료(plateau 테스트와 동일 기준, 실측 8.100/8.062 깨끗 검증).
+  - tank·ref 를 폭기 유지(ron)한 채 반복 측정, **최근 FLAT_N개 정수 milli-pH 의 max−min ≤ FLAT_SPAN_MPH**
+    면 평형 도달로 보고 종료(윈도우 span; 정수 비교라 float 지터 없고 느린 크리프에 조기 latch 안 됨).
     → 격차(시작 CO₂)에 자동 적응(평탄할 때까지 측정).
     차동에서 ref·tank 가 같은 평형(실내공기 pCO₂)에 도달 → 방 CO₂ 상쇄.
   - [A] tank·ref 동시 폭기 + tank 평탄까지 측정 (이때 ref 는 홀딩 챔버서 함께 폭기 = co-aeration).
@@ -42,10 +42,10 @@ PORT     = 'COM15'
 BAUD     = 9600
 CLEAN_SECS     = 60      # KCl 헹굼 기포 청소(초) — 액체 정지 중에만 폭기(이동 전 airoff)
 
-# ── 평형(평탄) 판정 — measure_until_flat (plateau 테스트와 동일: 연속 Δ ≤ EPS) ──
-PLATEAU_N      = 4       # 연속 (N-1)=3회 Δ≤EPS 면 평형 (plateau 테스트와 동일, 실측 8.100/8.062 깨끗)
-PLATEAU_EPS    = 0.001   # 연속 측정 pH 차 임계 (양자화 1 LSB)
-MEAS_INTERVAL  = 30      # 측정 간 간격(초) — 폭기 지속 (plateau 테스트와 동일)
+# ── 평형(평탄) 판정 — measure_until_flat (정수 milli-pH 윈도우 span; float 비교 지터 회피) ──
+FLAT_N         = 4       # 최근 N개 읽기로 판정
+FLAT_SPAN_MPH  = 2       # 최근 N개 max−min ≤ 2 milli-pH(=0.002) 면 평형. 정수 비교라 지터 없고 크리프에 안 속음
+MEAS_INTERVAL  = 30      # 측정 간 간격(초) — 폭기 지속
 # ── ★무한 대기 방지 상한 ──
 PHASE_MAX_SECS = 2400    # phase(tank/ref)별 최대 측정 시간(초). 초과 시 마지막값+경고
 MEAS_MAX       = 80      # phase별 최대 측정 횟수(백스톱)
@@ -160,7 +160,7 @@ def _motor_ok(lines, idx):
 
 
 # ─────────────────────────────────────────────
-# 평형(plateau) 추종 측정 — 연속 Δ (plateau 테스트와 동일)
+# 평형(plateau) 추종 측정 — 정수 milli-pH 윈도우 span
 # ─────────────────────────────────────────────
 
 def parse_ph(lines, label):
@@ -174,15 +174,14 @@ def parse_ph(lines, label):
 
 def measure_until_flat(ser, what):
     """폭기 켠 채(ron, 호출자가 ON 상태로 진입) what('tank'/'ref')를 반복 측정.
-    plateau 테스트와 동일 기준: 연속 (PLATEAU_N-1)회 Δ ≤ PLATEAU_EPS 면 평형(평탄)으로 보고 종료.
+    최근 FLAT_N개 정수 milli-pH 의 (max−min) ≤ FLAT_SPAN_MPH 면 평형(평탄)으로 보고 종료(윈도우 span).
     펌웨어가 마지막 측정값을 refPH/tankPH 에 보관하므로 최종(평탄) 값이 calkh 에 쓰인다.
 
     ★무한 대기 방지: 경과 PHASE_MAX_SECS 또는 측정 MEAS_MAX 회 초과 시 마지막값+경고로 종료.
       연속 파싱 실패 FAIL_MAX 회 초과 시 실패(ph=None) 반환.
     반환: (ph, n_reads, flat_ok). ph=None 이면 측정 실패(응답 없음/계속 실패)."""
     label = '수조수' if what == 'tank' else '참조수'
-    prev = None
-    stable = 0
+    win = []          # 최근 FLAT_N개 정수 milli-pH
     last_ph = None
     fails = 0
     t0 = time.time()
@@ -197,22 +196,22 @@ def measure_until_flat(ser, what):
             if fails >= FAIL_MAX:
                 print(f"    [실패] {what} 연속 {FAIL_MAX}회 응답 이상 — phase 중단")
                 return last_ph, n, False
-            # 실패는 측정 횟수엔 세되, prev/stable 은 건드리지 않음(다음 정상 측정과 비교)
+            # 실패는 측정 횟수엔 세되, 윈도우엔 미반영
         else:
             fails = 0
             last_ph = ph
             elapsed = int(time.time() - t0)
-            d = abs(ph - prev) if prev is not None else None
-            dstr = f"{d:.3f}" if d is not None else "-"
-            print(f"    [{what}] {n}회 pH:{ph:.3f} Δ:{dstr} 연속:{stable}/{PLATEAU_N-1} ({elapsed}s)")
-            if prev is not None and d <= PLATEAU_EPS:
-                stable += 1
+            win.append(round(ph * 1000))         # 정수 milli-pH (float 비교 지터 회피)
+            if len(win) > FLAT_N:
+                win.pop(0)
+            if len(win) >= FLAT_N:
+                span = max(win) - min(win)       # 정수 mpH
+                print(f"    [{what}] {n}회 pH:{ph:.3f} 최근{FLAT_N}span:{span}mpH ({elapsed}s)")
+                if span <= FLAT_SPAN_MPH:
+                    print(f"    [평탄] {what} {n}회 — 최근{FLAT_N} span={span}mpH≤{FLAT_SPAN_MPH} → 평형 (pH {ph:.3f})")
+                    return ph, n, True
             else:
-                stable = 0
-            prev = ph
-            if stable >= PLATEAU_N - 1:
-                print(f"    [평탄] {what} {n}회 — 연속 {PLATEAU_N-1}회 Δ≤{PLATEAU_EPS} → 평형 (pH {ph:.3f})")
-                return ph, n, True
+                print(f"    [{what}] {n}회 pH:{ph:.3f} (윈도우 {len(win)}/{FLAT_N}, {elapsed}s)")
 
         # ── 무한 대기 방지 ──
         if time.time() - t0 >= PHASE_MAX_SECS:
