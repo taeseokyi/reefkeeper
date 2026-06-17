@@ -73,18 +73,6 @@ struct MotorTimer {
     unsigned long endTime;
 };
 
-struct AirState {
-    bool          active;
-    bool          refTurn;
-    unsigned long totalEnd;
-    unsigned long switchTime;
-    unsigned long period;
-};
-
-struct WaitState {
-    bool          active;
-    unsigned long endTime;
-};
 
 
 // ============================================================
@@ -134,8 +122,6 @@ int       khHistCount = 0;
 
 DateTime   currentTime;
 MotorTimer motorTimers[4];
-AirState   air;
-WaitState  waitState;
 bool       phCalMode = false;
 bool       calphPending = false;
 
@@ -238,9 +224,6 @@ void setup() {
     for (int i = 0; i < KH_HIST_MAX; i++) {
         khHist[i].timestamp[0] = '\0'; khHist[i].dkh = 0.0; khHist[i].valid = false;
     }
-    air.active = false; air.refTurn = true;
-    air.totalEnd = 0;   air.switchTime = 0; air.period = 0;
-    waitState.active = false; waitState.endTime = 0;
 
     BTPRINTLNF("[READY] 명령대기 (help 입력)");
 }
@@ -320,23 +303,6 @@ void loop() {
         }
     }
 
-    // ④ 에어 교대 (millis 오버플로우 안전)
-    if (air.active) {
-        if ((long)(now - air.totalEnd) >= 0) {
-            stopAir(); BTPRINTLNF("[에어] 완료");
-            
-        } else if ((long)(now - air.switchTime) >= 0) {
-            air.refTurn = !air.refTurn;
-            air.switchTime = now + air.period;
-            applyAir();
-        }
-    }
-
-    // ⑤ 대기 타이머 (millis 오버플로우 안전)
-    if (waitState.active && (long)(now - waitState.endTime) >= 0) {
-        waitState.active = false; BTPRINTLNF("[대기] 완료");
-        
-    }
 
 
     // ⑦ 명령 처리
@@ -497,39 +463,10 @@ void motorAllStop() {
 }
 
 // ============================================================
-// 에어 공급
+// 에어/PWM 핀 OFF (airoff 용)
 // ============================================================
-void startAir(long totalSec, long periodSec) {
-    if (totalSec<=0||totalSec>7200)  { BTPRINTLNF("[ERR] 에어시간 1~7200");  return; }
-    if (periodSec<=0||periodSec>totalSec) { BTPRINTLNF("[ERR] 주기 1~총시간");  return; }
-    stopAir();
-    air.active     = true; air.refTurn = true;
-    air.totalEnd   = millis() + (unsigned long)totalSec  * 1000UL;
-    air.switchTime = millis() + (unsigned long)periodSec * 1000UL;
-    air.period     = (unsigned long)periodSec * 1000UL;
-    applyAir();
-    BTPRINTF("[에어] "); BTPRINT(totalSec); BTPRINTF("초/"); BTPRINT(periodSec); BTPRINTLNF("초주기");
-}
-
-void applyAir() {
-    digitalWrite(SOL_REF, LOW); digitalWrite(SOL_TANK, LOW);
-    if (air.refTurn) { digitalWrite(SOL_REF,  HIGH); BTPRINTLNF("[에어] 참조ON"); }
-    else             { digitalWrite(SOL_TANK, HIGH); BTPRINTLNF("[에어] 수조ON"); }
-}
-
 void stopAir() {
-    air.active = false;
     digitalWrite(SOL_REF, LOW); digitalWrite(SOL_TANK, LOW);
-}
-
-// ============================================================
-// 대기
-// ============================================================
-void startWait(long sec) {
-    if (sec<=0||sec>3600) { BTPRINTLNF("[ERR] 대기 1~3600초");  return; }
-    waitState.active  = true;
-    waitState.endTime = millis() + (unsigned long)sec * 1000UL;
-    BTPRINTF("[대기] "); BTPRINT(sec); BTPRINTLNF("초");
 }
 
 
@@ -575,17 +512,7 @@ void executeOneCmd(const char* rawCmd) {
         if (strcmp(cmd, pfS)==0)     { motorStopNow(mdef[i].idx,mdef[i].pa,mdef[i].pb);  return; }
     }
 
-    // 에어: air:총초:주기초
-    if (strncmp(cmd,"air:",4)==0) {
-        long tot=0, per=0; char* p2;
-        tot = strtol(cmd+4, &p2, 10);
-        if (*p2==':') per = strtol(p2+1, NULL, 10);
-        startAir(tot, per); return;
-    }
     if (strcmp(cmd,"airoff")==0) { stopAir(); BTPRINTLNF("[에어] OFF");  return; }
-
-    // 대기
-    if (strncmp(cmd,"wait:",5)==0) { startWait(atol(cmd+5)); return; }
 
     // 솔레노이드 직접 (ron/ton=각 핀 ON, roff/toff=각 핀 OFF, airoff=둘 다 OFF)
     if (strcmp(cmd,"ron")==0)       { digitalWrite(SOL_REF,  HIGH); BTPRINTLNF("[SOL] 참조ON"); }
