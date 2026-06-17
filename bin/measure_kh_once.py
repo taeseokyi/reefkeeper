@@ -41,7 +41,7 @@ BAUD     = 9600
 AIR_SECS = 1200         # 탈기 시간(초) — 테스트 시 줄여서 사용
 REF_REAIR_SECS = 300    # V3: ref를 측정 챔버에서 재폭기(초, 5분) — tank와 동일 챔버서 폭기 평형
 CLEAN_SECS    = 60      # V3: KCl 헹굼 시 기포 청소 dwell(초) — 액체 정지 중에만 폭기(이동 전 airoff)
-STABLE_SECS   = 120     # 채움 후 안정화(초) — tank/ref 동일 (타이밍 대칭). 제품 스펙 응답시간 최대 2분
+STABLE_SECS   = 0       # 채움 후 안정화(초) — tank/ref 동일 (타이밍 대칭). 제품 스펙 응답시간 최대 2분
 CONV_INTERVAL = 45      # 수렴 판정 재측정 간격(초)
 CONV_EPS      = 0.002   # 수렴 기준: 연속 측정 pH 차 (노이즈 0.0005~0.002의 1~4배, ≈0.04 dKH)
 CONV_MAX      = 6       # 최대 측정 횟수
@@ -210,7 +210,7 @@ def run_measurement(ser):
     print("\n[tank] 더러운 헹굼물 배출 → 본수조")
     send_motor(ser, 1, 'm1b:72')
     print("\n[tank] 본수조수 채움 (측정용 → 측정 챔버)")
-    send_motor(ser, 1, 'm1f:60')
+    send_motor(ser, 1, 'm1f:70')
 
     # ── ref 준비: 위즈수조 → 홀딩 챔버 ──
     print("\n[ref] 참조수 → 홀딩 챔버")
@@ -238,7 +238,7 @@ def run_measurement(ser):
     send(ser, 'airoff', stop_pattern='OFF')
     send(ser, 'ton', stop_pattern='수조ON')
     print("\n[tank] 수조수 배출 → 본수조")
-    send_motor(ser, 1, 'm1b:72')
+    send_motor(ser, 1, 'm1b:82')
     # 헹굼 생략: 널테스트라 수조수↔참조수 성분차 극히 작음.
     # ※ 정상운영(수조 KH ≠ 참조수) 복귀 시 여기에 측정 챔버 헹굼 복원 필수 (tank→ref 캐리오버 방지).
     print("\n[ref] 홀딩 챔버 참조수 → 측정 챔버")
