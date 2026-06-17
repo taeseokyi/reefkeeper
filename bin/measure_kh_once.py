@@ -23,6 +23,11 @@ dkh.dat 형식 (한 줄에 하나):
   HH ref_pH tank_pH ref_kh tank_kh temp
   14 7.823 7.412 8.523 7.901 25.3
   15 0.000 0.000 0.000 0.000 0.0   ← 오류/타임아웃/KCl 소크 실패 시 (에러 표식)
+  - ★에러 래치: 마지막 줄이 에러 표식(값 전부 0)이면, 다음 실행은 *측정하지 않고*
+    에러 표식만 재기록한다(수동으로 마지막 에러 줄을 지우기 전까지). 프로브 보호를
+    위해 오류 상태에서 무인 반복측정을 멈춤.
+  - ★평탄 미도달 표식: 정상이지만 일부 phase 가 평탄(평형) 미도달이면 측정 경도(tank_kh)에
+    음수(-) 부호를 붙인다(값 크기는 유지). 서버가 부호로 "미평탄"을 인지.
 """
 
 import serial
@@ -82,6 +87,26 @@ def log_kh(hour, ref_ph, tank_ph, ref_kh, tank_kh, temp):
     with open(DAT_FILE, 'a') as f:
         f.write(line + '\n')
     print(f"[LOG] {DAT_FILE} ← {line}")
+
+
+def last_dat_is_error():
+    """dkh.dat 마지막(비어있지 않은) 줄이 에러 표식(5개 값 전부 0)인지.
+    파일 없음/빈 파일/파싱 실패면 False(정상 측정 진행)."""
+    try:
+        with open(DAT_FILE) as f:
+            lines = [ln.strip() for ln in f if ln.strip()]
+    except OSError:
+        return False
+    if not lines:
+        return False
+    parts = lines[-1].split()
+    if len(parts) < 6:
+        return False
+    try:
+        vals = [float(x) for x in parts[1:6]]   # ref_pH tank_pH ref_kh tank_kh temp
+    except ValueError:
+        return False
+    return all(v == 0.0 for v in vals)
 
 
 # ─────────────────────────────────────────────
@@ -317,18 +342,24 @@ def run_measurement(ser):
 
         # ── 파싱·출력 ──
         ref_ph_r, tank_ph_r, ref_kh, tank_kh, temp = parse_results(kh_lines)
+        plateau_ok = bool(tank_flat and ref_flat)
+        # ★평탄 미도달이면 측정 경도(tank_kh)에 음수(-) 표식 — 값 크기는 유지(서버가 부호로 인지).
+        #   (전부 0인 '에러 표식'과는 구분됨 → 에러 래치를 트리거하지 않음)
+        if (tank_kh is not None) and (not plateau_ok):
+            tank_kh = -abs(tank_kh)
         print("\n" + "=" * 40)
         print("측정 결과 (V4)")
         print("=" * 40)
         if ref_ph_r  is not None: print(f"  참조수 pH : {ref_ph_r:.3f}")
         if tank_ph_r is not None: print(f"  수조수 pH : {tank_ph_r:.3f}")
         if ref_kh    is not None: print(f"  참조 dKH  : {ref_kh:.3f} dKH")
-        if tank_kh   is not None: print(f"  수조 dKH  : {tank_kh:.3f} dKH")
+        if tank_kh   is not None:
+            print(f"  수조 dKH  : {tank_kh:.3f} dKH" + ("  ← 음수=평탄 미도달 표식" if not plateau_ok else ""))
         if temp      is not None: print(f"  온도      : {temp:.1f} C")
         print(f"  평탄도달 : tank {tank_n}회 {'O' if tank_flat else 'X(상한)'} / "
               f"ref {ref_n}회 {'O' if ref_flat else 'X(상한)'}")
-        if not (tank_flat and ref_flat):
-            print("  ※ 일부 phase 가 평탄 미도달(상한)로 종료 — 값 신뢰도 주의")
+        if not plateau_ok:
+            print("  ※ 평탄 미도달 — 측정 경도(tank_kh) 음수(-) 표식. 값은 유효, 서버가 부호로 인지.")
         if tank_kh is None: print("  dKH 파싱 실패")
         print("=" * 40)
         return (ref_ph_r, tank_ph_r, ref_kh, tank_kh, temp)
@@ -349,6 +380,14 @@ def main():
     print(f"AquaWiz KH 1회 측정 V4 — {port} @ {BAUD}baud")
     print(f"기록 파일: {DAT_FILE}")
     print(f"측정 시작: {now.strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+    # ★에러 래치: 마지막 줄이 에러 표식(전부 0)이면 측정하지 않고 에러 표식만 재기록.
+    #   (수동으로 마지막 에러 줄을 지우기 전까지 매 실행 반복 — 오류 상태 무인 반복측정 방지)
+    if last_dat_is_error():
+        print("[중단] dkh.dat 마지막 줄이 에러 표식(전부 0) — 측정 생략, 에러 표식 재기록.")
+        print("       수동으로 마지막 에러 줄을 제거하기 전까지 매 실행 반복됩니다.")
+        log_kh(hour, 0.0, 0.0, 0.0, 0.0, 0.0)
+        return
 
     result = None
     try:
