@@ -258,6 +258,30 @@ dkh.dat 컬럼: `HH ref_pH tank_pH ref_kh(앵커 8.448) tank_kh temp`
 - **한계(sweet spot):** kLa가 높은 VVM서 포화(기포합체·gas holdup)→τ 무한정 못 줄임. 부작용=거품·튐·**프로브 미세기포 노이즈**(TRIM_N/CLEAN을 넣은 이유)·에어로졸 증발. 너무 세면 노이즈가 정확도 도로 깎음.
 - **검증:** `test_aeration_plateau.py`로 폭기 세기만 올려 재실행(D13 PWM duty↑ 가능 시) → 평탄시간 ~29분→~10분대로 줄고 곡선 여전히 단조·무노이즈면 = 공짜로 드리프트 강건성. 기포 지터 늘면 그게 한계 신호.
 
+## ★해외 상용 AquaWiz 사례 — 외부 검증 (2026-06-18 검색, reef2reef/UltimateReef/BAR)
+
+우리가 독립적으로 도달한 오차 구조가 상용 AquaWiz 커뮤니티 문서와 그대로 겹침. 이 프로젝트 진단 경로의 강한 외부 근거.
+
+1. **최다 보고 오차 = 방 CO₂ 변동 (우리 새벽 문제와 동일).**
+   - 사용자: "방 CO₂가 일정치 않으면 매 측정 튀고 부정확. AquaWiz는 영향 없다 주장하나 실제 영향 있음." 해결="밀폐 통에 넣어 CO₂ 차단하니 변동 멈춤."
+   - **★AquaWiz 공식 응답:** "급격한 CO₂ 변화 시 **약 1시간만** 측정 영향. 줄이는 법 여럿 — 예: **공기 흡입 튜브를 스키머가 쓰는 실외 공기 라인에 연결.**" ⟹ **"~1시간 영향"=우리 17:08 드리프트 케이스, "외기 라인 연결"=우리 레버 (a) 가스기준 고정 그 자체**(제조사 공식 해법이 우리 도출 해법과 동일).
+2. **2번째 오차 = 폭기/기포 품질 (우리 토출량 레버와 동일).** "튜브 이물질로 기포 안 나옴→고치니 정상", "에어스톤 거품 0→RODI 청소 복귀." 종합: **5~7개월 염 침착→기포 작아짐→2 dKH 이상 변동**, 6개월마다 에어 청소 권장. ⟹ "기포 부족=큰 오차" 상용 실측 확인.
+3. **현장 정확도 수치:** 제조사 공칭 ±0.05 dKH(커뮤니티는 과장으로 봄). 실제 Hanna 대비 **≤0.2 dKH**, 무보정 7주 **≤0.75 dKH**. **★AquaWiz 팀: "0.5 dKH 이하 변동이면 excellent, 정확값보다 추세 추적용."** ⟹ **우리 목표 ±0.5/±0.25가 제조사 권장 운용범위와 일치.** 보정주기는 ref↔tank ΔKH 연동(1.0=주간, 0.5=월간).
+4. **함의:** 상용은 영점/보정·청소 주기로 관리하지 **완전평형(V4)까진 안 감** → 우리 V4(진짜 평탄까지)는 한 발 더 나간 접근일 수 있음. 단 상용 운용지혜(외기라인·정기 에어청소·추세 위주)는 차용 가치.
+
+**출처 (직접 인용 원문):**
+- [AquaWiz KH - Readings way off and unstable (Reef2Reef)](https://www.reef2reef.com/threads/aquawiz-kh-readings-way-off-and-unstable.1159272/) — CO₂ 변동 오차 + 밀폐통 해결 + **AquaWiz 공식 "~1시간 영향·외기라인 연결" 응답** + 기포 막힘 사례
+- [Alkalinity controller without reagent! Aquawiz (Reef2Reef)](https://www.reef2reef.com/threads/alkalinity-controller-without-reagent-aquawiz.1073924/) — 원리(폭기+pH차동), 보정주기 ΔKH 연동, 정확도 논쟁
+- [AquaWiz Gen 4 (Blue unit) - Week 2 report (Reef2Reef)](https://www.reef2reef.com/threads/aquawiz-gen-4-blue-unit-week-2-report.1115439/) — Hanna/Trident 대비 정확도, 보정 후 일치, 추세 위주 사용
+- [Aquawiz users thread (Ultimate Reef)](https://www.ultimatereef.net/threads/aquawiz-users-thread.939234/) — 장기 사용자 스레드(드리프트·청소·운용)
+- [Aquawiz KH Controller - Install and Experience (Bay Area Reefers)](https://bareefers.org/forum/threads/aquawiz-kh-controller-install-and-experience.40433/) — 설치·운용 경험
+
+**핵심 직접 인용:**
+- 사용자: *"방 CO₂가 일정치 않으면 매 측정마다 계속 튀고 부정확해진다… 밀폐 플라스틱 통에 넣어 CO₂ 변동을 차단했더니 미친 듯한 변동이 멈췄다."*
+- **AquaWiz 공식:** *"이건 갑작스럽고 급격한 CO₂ 변화 시 약 1시간 동안만 영향을 준다. 줄이는 방법 여러 가지가 있는데, 예를 들어 공기 흡입 튜브를 단백질 스키머가 쓰는 실외 공기 라인에 연결하면 된다."*
+- 기포: *"공기 방울이 튜브 안 이물질 때문에 안 나오고 있었다. 고치니 정상."* / *"에어스톤이 거품을 전혀 안 뿜었다. RODI로 에어라인 청소하니 정상 복귀."*
+- AquaWiz 팀: *"0.5 dKH 이하 변동이면 훌륭하다(excellent). 정확한 값보다 추세 추적용으로 써라."*
+
 ## 평탄 판정 = 정수 milli-pH 윈도우 span (float 지터 + 크리프 조기latch 해결, 2026-06-17)
 
 plateau_run2 분석에서 두 결함 발견 → 두 스크립트(test + measure) 모두 수정:
