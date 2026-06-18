@@ -2,7 +2,7 @@
 
 **고정밀 pH / 경도(dKH) 측정 시스템**
 
-> 관련 문서: [프로젝트 개요 (README)](../README.md) | [자동화 환경 구성](system-setup.md) | [준비물 목록](parts-list.md)
+> 관련 문서: [프로젝트 개요 (README)](../README.md) | [자동화 환경 구성](system-setup.md) | [준비물 목록](parts-list.md) | [측정 대장](measurement-ledger.md)
 
 | 항목 | 내용 |
 |------|------|

@@ -1,6 +1,6 @@
 # AquaWiz 준비물 목록
 
-> 관련 문서: [프로젝트 개요 (README)](../README.md) | [자동화 환경 구성](system-setup.md) | [사용 설명서](user-manual.md)
+> 관련 문서: [프로젝트 개요 (README)](../README.md) | [자동화 환경 구성](system-setup.md) | [사용 설명서](user-manual.md) | [측정 대장](measurement-ledger.md)
 
 ## 디바이스마트
 

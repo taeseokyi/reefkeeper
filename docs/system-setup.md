@@ -1,6 +1,6 @@
 # AquaWiz 자동화 환경 구성
 
-> 관련 문서: [프로젝트 개요 (README)](../README.md) | [사용 설명서](user-manual.md) | [준비물 목록](parts-list.md)
+> 관련 문서: [프로젝트 개요 (README)](../README.md) | [사용 설명서](user-manual.md) | [준비물 목록](parts-list.md) | [측정 대장](measurement-ledger.md)
 
 ## 실물 사진
 
