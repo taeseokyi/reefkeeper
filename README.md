@@ -18,7 +18,7 @@
 ### 주요 특징
 
 - **[±0.07 dKH 정확도](docs/system-setup.md#측정-정확도)** — 16비트 ADC + 64회 오버샘플링 + Nernst 온도 보정, 분해능 ±0.001 dKH
-- **[원버튼 자동 측정](docs/system-setup.md#자동-측정-시퀀스)** — 샘플링 → 폭기(CO2 평형) → pH 측정 → dKH 계산 → 정리까지 15단계 자동 시퀀스
+- **[PC 연동 평형 자동 측정](docs/system-setup.md#자동-측정-시퀀스-pc-측-v4)** — 샘플링 → 폭기(CO2 평형) → tank·ref **진짜 평형(평탄)까지** pH 측정 → dKH 계산 → 정리. 펌웨어가 아닌 PC측 파이썬 스크립트가 평탄(수렴) 판정으로 단계를 제어
 - **[탄산염 화학법](#측정-원리)** — `KH_tank = KH_ref × 10^(-ΔpH)`, 참조수와 동시 탈기로 CO2 변수 제거
 - **[Nernst 온도 보정](docs/system-setup.md#nernst-온도-보정)** — 보정 온도 EEPROM 저장, 15~35°C 전 범위 오차 0%
 - **[블루투스 제어](docs/user-manual.md#14-블루투스-터미널-앱)** — HC-06으로 스마트폰에서 원격 제어/모니터링 (![](docs/images/bt-terminal-icon.png) <a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal" target="_blank">Serial Bluetooth Terminal</a> 앱 추천)
@@ -47,7 +47,7 @@
 
 | 항목 | 성능 | 핵심 기술 |
 |------|------|----------|
-| 측정 분해능 | **±0.001 dKH** | 16비트 ADC (ADS1115) + 64회 오버샘플링 |
+| 측정 분해능 | **±0.001 dKH** | 16비트 ADC (ADS1115) + 64샘플 트림평균(정렬 후 상·하위 16개 버리고 중앙 32개 평균 → 폭기 버블 스파이크 제거) |
 | 시스템 정확도 | **±0.07 dKH (±1.2%)** | Nernst 보정 + 동일 온도 차등 측정 |
 | 온도 보정 오차 | **0%** | 보정 온도 EEPROM 저장, 15~35°C 전 범위 |
 
@@ -91,7 +91,7 @@ Fritzing 소스: <a href="hardware/fritzing/고정밀%20ph%20측정기-bread.fzz
 ```
 D0  (RX)  ← HC-06 TX        D1  (TX)  → HC-06 RX (전압분배기)
 D4~D7     → L298N1 IN1~IN4  D8~D11    → L298N2 IN1~IN4
-D12       → L298N3 IN2 (에어 펌프 양쪽 동시 ON, ron)  D13  → L298N3 IN4 (PWM 속도 제어기 ON, ton)
+D12       → L298N3 IN2 (에어 펌프 ON/OFF, ron/roff)  D13  → L298N3 IN4 (PWM 속도 제어기 ON/OFF, ton/toff)
 A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 ```
 
@@ -129,15 +129,17 @@ A0  (D14) ← DS18B20 DQ      A4/A5     ↔ ADS1115 I2C
 3. 참조 dKH:      setref:8.5
 ```
 
-### 자동 시퀀스 (원버튼 측정)
+### 자동 측정 (PC 연동)
 
+폭기 중 측정을 반복하며 **tank·ref가 진짜 평형(평탄)에 도달할 때까지** 측정해야 하므로(평탄 판정 = 측정값 비교 후 반복 결정), 자동화는 펌웨어가 아닌 **PC측 파이썬 스크립트**가 담당합니다. 펌웨어에는 더 이상 `seq` 매크로가 없습니다.
+
+```bash
+# 1회 측정 후 종료 (Windows 작업 스케줄러 정시 호출용 / 수동 실행 가능)
+python bin/measure_kh_once.py        # 포트 = 스크립트 기본값 COM15
+python bin/measure_kh_once.py COM7   # 포트 직접 지정
 ```
-seq:settime:14|m3b:5|m1f:30|m4f:10|ron|wait:1800|airoff|ref|m4b:10|m2f:10|tank|calkh|m2b:10|m1b:30|m3f:5
-```
 
-각 단계의 상세 설명은 [자동화 환경 구성 — 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스)를 참조하세요. (15단계)
-
-> **팁:** seq 명령은 시리얼 버퍼 크기(128바이트)의 제한이 있습니다. 명령이 길어지면 작업 절차를 나누어 두 번 또는 세 번 순차적으로 실행할 수 있습니다.
+스크립트는 준비(샘플링·헹굼) → **[A] tank·ref 동시 폭기 + tank 평탄까지** → 전이 → **[B] ref 평탄까지** → `calkh` → 정리 순으로 펌웨어 명령을 단계별 전송합니다. 상세 흐름·상수·스케줄러 등록은 [자동화 환경 구성 — 자동 측정 시퀀스](docs/system-setup.md#자동-측정-시퀀스-pc-측-v4)를 참조하세요.
 
 ### 주요 명령어
 
@@ -147,8 +149,8 @@ seq:settime:14|m3b:5|m1f:30|m4f:10|ron|wait:1800|airoff|ref|m4b:10|m2f:10|tank|c
 | pH 보정 | `enterph`, `calph`, `exitph` |
 | 설정 | `settime:HH`, `setref:x`, `settemp:x` |
 | 모터 | `m1f:초`, `m1b:초`, `m1s` (m1~m4) |
-| 에어/PWM | `ron` (에어 양쪽 ON), `ton` (PWM 제어기 ON), `airoff` (양쪽 OFF) |
-| 시퀀스 | `seq:cmd1\|cmd2\|...`, `seqstop` |
+| 에어/PWM | `ron`/`roff` (D12 에어 ON/OFF), `ton`/`toff` (D13 PWM 제어기 ON/OFF), `airoff` (둘 다 OFF) |
+| 정지 | `m1s`~`m4s` (개별), `stop` (전체 모터+핀 OFF) |
 
 전체 명령어 및 상세 설명은 [사용 설명서](docs/user-manual.md)를 참조하세요.
 
