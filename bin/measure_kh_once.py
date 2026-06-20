@@ -38,13 +38,13 @@ import sys
 import os
 from datetime import datetime
 
-PORT     = 'COM15'
+PORT     = 'COM9'
 BAUD     = 9600
-CLEAN_SECS     = 60      # KCl 헹굼 기포 청소(초) — 액체 정지 중에만 폭기(이동 전 airoff)
 
 # ── 평형(평탄) 판정 — measure_until_flat (정수 milli-pH 윈도우 span; float 비교 지터 회피) ──
 FLAT_N         = 4       # 최근 N개 읽기로 판정
-FLAT_SPAN_MPH  = 2       # 최근 N개 max−min ≤ 2 milli-pH(=0.002) 면 평형. 정수 비교라 지터 없고 크리프에 안 속음
+FLAT_SPAN_MPH  = 2       # 최근 N개 max−min ≤ 2 mpH (흔들림 폭). 정수 비교라 float 지터 없음
+FLAT_NET_MPH   = 1       # ★net 게이트(2026-06-20 라이브 검증): 최근 N개 양끝 |win[-1]-win[0]| ≤ 1 mpH (단조 드리프트 꼬리 조기 latch 차단)
 MEAS_INTERVAL  = 30      # 측정 간 간격(초) — 폭기 지속
 # ── ★무한 대기 방지 상한 ──
 PHASE_MAX_SECS = 2400    # phase(tank/ref)별 최대 측정 시간(초). 초과 시 마지막값+경고
@@ -205,10 +205,11 @@ def measure_until_flat(ser, what):
             if len(win) > FLAT_N:
                 win.pop(0)
             if len(win) >= FLAT_N:
-                span = max(win) - min(win)       # 정수 mpH
-                print(f"    [{what}] {n}회 pH:{ph:.3f} 최근{FLAT_N}span:{span}mpH ({elapsed}s)")
-                if span <= FLAT_SPAN_MPH:
-                    print(f"    [평탄] {what} {n}회 — 최근{FLAT_N} span={span}mpH≤{FLAT_SPAN_MPH} → 평형 (pH {ph:.3f})")
+                span = max(win) - min(win)       # 흔들림 폭 (정수 mpH)
+                net  = abs(win[-1] - win[0])      # ★양끝 차 = 방향성 드리프트 (정수 mpH)
+                print(f"    [{what}] {n}회 pH:{ph:.3f} 최근{FLAT_N}span:{span}mpH net:{net}mpH ({elapsed}s)")
+                if span <= FLAT_SPAN_MPH and net <= FLAT_NET_MPH:
+                    print(f"    [평탄] {what} {n}회 — span={span}≤{FLAT_SPAN_MPH} AND net={net}≤{FLAT_NET_MPH} → 평형 (pH {ph:.3f})")
                     return ph, n, True
             else:
                 print(f"    [{what}] {n}회 pH:{ph:.3f} (윈도우 {len(win)}/{FLAT_N}, {elapsed}s)")
@@ -280,48 +281,48 @@ def _safe_cleanup(ser):
 def run_measurement(ser):
     completed = False
     try:
-        # ── 준비: KCl 배출 → 헹굼물 채움 → 기포 청소(정지 중) → 배출 → 측정수 채움 → ref 홀딩 ──
+        # ── 준비: KCl 배출 → 측정수 채움 ──
+        #    ★KCl 잔막 헹굼/기포청소 제거(사용자 2026-06-20): KCl 은 중성이고, 측정 중 폭기가
+        #      잔막을 제거하며, 차동(tank·ref 동일 챔버/프로브)이라 잔류 효과는 공통모드로 상쇄.
+        #    ★ref→홀딩 이동도 prep 에서 제거 → tank 측정 후 전이로 이동(5L 평형 후 떠오기 위함).
         send(ser, 'airoff', stop_pattern='OFF')
         send(ser, 'ton', stop_pattern='수조ON')
         print("\n[준비] KCl 배출 (측정 챔버)")
         send_motor(ser, 3, 'm3b:68')
-        print("\n[tank] 측정 챔버 헹굼물 채움")
-        send_motor(ser, 1, 'm1f:60')
-        print(f"\n[tank] 기포 청소 {CLEAN_SECS}초 (KCl 잔막 — 액체 정지 중 폭기)")
-        send(ser, 'ron', stop_pattern='참조ON')
-        time.sleep(CLEAN_SECS)
-        send(ser, 'airoff', stop_pattern='OFF')          # ★액체 이동 전 airoff
-        send(ser, 'ton', stop_pattern='수조ON')
-        print("\n[tank] 더러운 헹굼물 배출 → 본수조")
-        send_motor(ser, 1, 'm1b:72')
         print("\n[tank] 본수조수 채움 (측정용 → 측정 챔버)")
         send_motor(ser, 1, 'm1f:70')
-        print("\n[ref] 참조수 → 홀딩 챔버")
-        send_motor(ser, 4, 'm4f:60')
 
-        # ── [A] 양쪽 동시 폭기 + tank 평탄(평형)까지 측정 (ref 는 홀딩서 함께 폭기) ──
+        # ── [A] 측정챔버(tank) + 5L 위즈수조(앵커) 동시 폭기 + tank 평탄까지 측정 ──
+        #    ★5L 위즈수조 폭기가 헤드스페이스 pCO₂를 강하게 앵커링(5L 버퍼≫30mL) → tank·ref 공통 기준.
+        #    (ref 는 이 폭기로 5L이 평형 도달한 *뒤*, tank 측정 직후 떠온다 — 아래 전이. 에어스톤은 홀딩→5L 이전.)
         send(ser, 'airoff', stop_pattern='OFF')
-        print("\n[폭기] ON (측정챔버 tank + 홀딩 ref 동시) — tank 평탄까지 측정")
+        print("\n[폭기] ON (측정챔버 tank + 5L 위즈수조 앵커 동시) — tank 평탄까지 측정")
         send(ser, 'ron', stop_pattern='참조ON')
         tank_ph, tank_n, tank_flat = measure_until_flat(ser, 'tank')
         if tank_ph is None:
             raise RuntimeError("tank 측정 실패(응답 없음)")
 
-        # ── 전이(무대기, 최대한 조임): tank 완전배출 → ref 이송 ──
+        # ── 전이: tank 완전배출 → ref 를 *지금* 5L서 떠와 측정챔버로 ──
+        #    ★tank 측정 내내 5L 위즈수조가 폭기·평형됐으므로, 그 직후 ref 를 떠야 평형 근처 참조수 사용.
+        #    (홀딩서 폭기 없이 대기시킬 이유 없음 → ref 이동을 prep 가 아니라 tank 측정 후로 옮김.)
         send(ser, 'airoff', stop_pattern='OFF')          # ★액체 이동 전 airoff
         send(ser, 'ton', stop_pattern='수조ON')
         print("\n[tank] 수조수 완전 배출 → 본수조 (오염방지, 단축 불가)")
         send_motor(ser, 1, 'm1b:82')
+        print("\n[ref] 참조수 5L → 홀딩 (tank 측정 중 5L 폭기로 평형 도달)")
+        send_motor(ser, 4, 'm4f:60')
         print("\n[ref] 홀딩 → 측정 챔버")
         send_motor(ser, 2, 'm2f:60')
 
-        # ── [B] ref 폭기 + 평탄(평형)까지 측정 (co-aeration 이라 평형 근처서 시작 → 빨리) ──
+        # ── [B] ref 폭기 + 평탄(평형)까지 측정 (헤드스페이스가 5L 위즈수조 폭기로 앵커링돼 있어
+        #    tank 와 같은 pCO₂로 빠르게 수렴. ref=5L 물이라 평형 근처서 시작 → 빨리). net 게이트로 진짜 평탄까지. ──
         send(ser, 'airoff', stop_pattern='OFF')
         send(ser, 'ron', stop_pattern='참조ON')
-        print("\n[폭기] ON — ref 평탄까지 측정")
+        print("\n[폭기] ON — ref 평탄까지 측정 (측정챔버 + 5L 위즈수조 앵커)")
         ref_ph, ref_n, ref_flat = measure_until_flat(ser, 'ref')
         if ref_ph is None:
             raise RuntimeError("ref 측정 실패(응답 없음)")
+        send(ser, 'airoff', stop_pattern='OFF')   # ★에어=측정 중에만: ref 측정 종료 즉시 OFF → 이후 calkh·정리 이동은 전부 에어 OFF(액체 이동 규칙)
 
         # ── KH 계산 (펌웨어 저장 refPH/tankPH = 각 phase 마지막 평탄값) ──
         print("\n[ref] KH 계산")

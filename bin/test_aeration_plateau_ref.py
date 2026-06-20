@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """
-폭기 평형(plateau) 테스트 — "완전 폭기 상태에서는 pH가 움직이지 않는다" 검증.
+폭기 평형(plateau) 테스트 — ★참조수(ref) 버전.
 
-측정 챔버에 본수조수를 채우고 ron으로 *계속 폭기*하면서, 일정 간격으로 tank pH를
-반복 측정해 시간-pH 곡선을 기록한다. 최근 PLATEAU_N개 정수 milli-pH 의 max−min ≤ PLATEAU_SPAN_MPH
-이면 평형 도달로 보고 종료(= pH가 더는 안 움직임). 평형 도달 시간이 곧
-measure_kh_once 의 폭기/재폭기 시간을 정하는 근거.
+test_aeration_plateau.py(=tank/측정챔버 본수조수)의 ref 대응판.
+측정 챔버에 **참조수**(5L 김치통 → 홀딩 → 측정챔버)를 채우고 ron 으로 계속 폭기하며
+일정 간격으로 pH 를 반복 측정해 시간-pH 곡선을 기록한다.
+최근 PLATEAU_N개 정수 milli-pH 의 span ≤ PLATEAU_SPAN_MPH **AND** net(양끝차) ≤ PLATEAU_NET_MPH
+이면 진짜 평형으로 보고 종료(net 게이트 = 단조 드리프트 꼬리 조기 latch 차단).
 
-펌웨어 변경/플래시 불필요 — 기존 명령(ron/tank/airoff/m1·m3)만 사용.
-폭기 중 측정이라 절대 pH엔 흐름 오프셋 포함(트림평균 펌웨어면 노이즈↓). 추세만 본다.
+목적: tank 버전이 같은 폐루프에서 7.850 에 평탄해진 것과 비교 —
+  · ref 도 ~7.85 → 헤드스페이스 천장 공통(차동 상쇄 OK)
+  · ref 가 ~7.92 → tank·ref 가 같은 루프서 갈라짐(널 깨짐/헤드스페이스 비공통 = 새벽 dip 진짜 원인)
 
-실행:  python test_aeration_plateau.py [COM포트]
-       (WSL에서 Windows파이썬: /mnt/c/dkh/python313/python.exe -X utf8 test_aeration_plateau.py)
-중단:  Ctrl+C — 정리 단계(시료 배출 + KCl 용액 채움)까지 수행 후 종료
+배관(사용자 지정): 채움 m4f:60(참조수→홀딩) → m2f:60(홀딩→측정챔버),
+                  배출 역순 m2b:68 → m4b:68, KCl 소크 백(m3b) 먼저·끝나면 소크(m3f).
+액체 이동 전 반드시 airoff→ton(수조ON), 폭기는 ron(참조ON). (production measure_kh_once 와 동일)
+
+실행:  /mnt/c/dkh/python313/python.exe -X utf8 test_aeration_plateau_ref.py [COM포트]
+중단:  Ctrl+C — 정리(시료 배출 + KCl 채움)까지 수행 후 종료
 """
 
 import serial
@@ -22,18 +27,19 @@ import sys
 import os
 from datetime import datetime
 
-PORT = 'COM15'
+PORT = 'COM9'
 BAUD = 9600
 
-DO_PREP       = True    # True면 KCl 배출 후 측정수 채움(테스트라 헹굼·기포청소 생략). False면 챔버 현 상태로 측정
-FILL_SECS     = 70      # 본수조수 측정용 채움(긴 호스 +10s, measure_kh_once V3 와 동일)
-LOG_INTERVAL  = 30      # pH 재측정 간격(초)
-MAX_DURATION  = 3600    # 최대 폭기·기록 시간(초)
+DO_PREP           = True   # True면 KCl 배출 후 참조수 채움(테스트라 헹굼·기포청소 생략)
+FILL_HOLD_SECS    = 60     # m4f: 참조수 → 홀딩
+FILL_CHAMBER_SECS = 60     # m2f: 홀딩 → 측정 챔버
+LOG_INTERVAL      = 30     # pH 재측정 간격(초)
+MAX_DURATION      = 3600   # 최대 폭기·기록 시간(초)
 PLATEAU_N        = 4    # 최근 N개 읽기로 판정 (윈도우)
-PLATEAU_SPAN_MPH = 2    # 최근 N개 max−min ≤ 2 milli-pH(=0.002) (흔들림 폭). 정수 비교(float 지터 회피)
+PLATEAU_SPAN_MPH = 2    # 최근 N개 max−min ≤ 2 milli-pH (흔들림 폭). 정수 비교(float 지터 회피)
 PLATEAU_NET_MPH  = 1    # ★net 게이트: 최근 N개 양끝 |win[-1]-win[0]| ≤ 1 mpH (단조 드리프트 꼬리 차단)
 
-CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'aeration_plateau.csv')
+CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'aeration_plateau_ref.csv')
 
 
 def read_until(ser, stop, timeout=20.0):
@@ -71,7 +77,7 @@ def motor(ser, idx, cmd):
 
 
 def measure_ph(ser):
-    """tank 1회 측정 → (pH, V, T). 폭기 켠 상태에서 호출."""
+    """tank 1회 측정 → (pH, V, T). 폭기 켠 상태에서 호출. (펌웨어 'tank' 명령이 현재 측정챔버 pH 읽음)"""
     lines = send(ser, 'tank', stop='[OK]', timeout=20)
     ph = v = t = None
     for ln in lines:
@@ -81,14 +87,15 @@ def measure_ph(ser):
     return ph, v, t
 
 
-def cleanup(ser):
-    """모든 종료 경로(정상/Ctrl+C/오류)에서 호출 — 시료 배출 후 KCl 용액 채움(프로브 소크), airoff.
-    프로브를 절대 KCl 없이 두지 않기 위함."""
+def cleanup_ref(ser):
+    """모든 종료 경로(정상/Ctrl+C/오류)에서 호출 — 참조수 배출(역순) 후 KCl 용액 채움(프로브 소크), airoff.
+    프로브를 절대 KCl 없이 두지 않기 위함. (production measure_kh_once 정리와 동일)"""
     try:
         send(ser, 'airoff', stop='OFF')
         send(ser, 'ton', stop='수조ON')
-        print("\n[정리] 시료 배출 → 본수조")
-        motor(ser, 1, 'm1b:82')
+        print("\n[정리] 참조수 배출 → 홀딩 → 위즈수조 (역순)")
+        motor(ser, 2, 'm2b:68')
+        motor(ser, 4, 'm4b:68')
         print("[정리] KCl 용액 공급(프로브 소크 복원)")
         motor(ser, 3, 'm3f:60')
         send(ser, 'airoff', stop='OFF')
@@ -98,7 +105,7 @@ def cleanup(ser):
 
 def main():
     port = sys.argv[1] if len(sys.argv) > 1 else PORT
-    print(f"폭기 평형 테스트 — {port} @ {BAUD}baud, 간격 {LOG_INTERVAL}s, 최대 {MAX_DURATION}s")
+    print(f"폭기 평형 테스트 [참조수] — {port} @ {BAUD}baud, 간격 {LOG_INTERVAL}s, 최대 {MAX_DURATION}s")
     print(f"평형 판정: 최근 {PLATEAU_N}개 span ≤ {PLATEAU_SPAN_MPH}mpH AND net ≤ {PLATEAU_NET_MPH}mpH (정수, net=양끝차=드리프트)")
     print(f"CSV: {CSV_FILE}\n")
 
@@ -108,19 +115,21 @@ def main():
             time.sleep(2)
             ser.reset_input_buffer()
 
-            # ── 준비: KCl 배출 → 측정수 채움 (테스트라 헹굼·기포청소 생략) ──
+            # ── 준비: KCl 배출 → 참조수 채움 (m4f 홀딩 → m2f 측정챔버) ──
             if DO_PREP:
                 send(ser, 'airoff', stop='OFF')
                 send(ser, 'ton', stop='수조ON')
-                print("[준비] KCl 배출")
+                print("[준비] KCl 배출(소크 백)")
                 motor(ser, 3, 'm3b:68')
-                print("[준비] 본수조수 채움(측정용)")
-                motor(ser, 1, f'm1f:{FILL_SECS}')
+                print("[준비] 참조수 → 홀딩")
+                motor(ser, 4, f'm4f:{FILL_HOLD_SECS}')
+                print("[준비] 홀딩 → 측정 챔버")
+                motor(ser, 2, f'm2f:{FILL_CHAMBER_SECS}')
 
             # ── 폭기 ON, 시간-pH 기록 ──
             send(ser, 'airoff', stop='OFF')
             send(ser, 'ron', stop='참조ON')
-            print("[폭기] ON — 시간별 pH 기록 시작\n")
+            print("[폭기] ON — 참조수 시간별 pH 기록 시작\n")
             print(f"{'t(s)':>6} {'pH':>7} {'ΔpH':>7} {'V(mV)':>9} {'T':>5}")
 
             with open(CSV_FILE, 'w') as f:
@@ -174,7 +183,7 @@ def main():
         except KeyboardInterrupt:
             print("\n[중단] 사용자 인터럽트 — 정리 후 종료")
         finally:
-            cleanup(ser)   # ★어떤 경로로 끝나든(정상/Ctrl+C/오류) KCl 용액 채움(프로브 소크)
+            cleanup_ref(ser)   # ★어떤 경로로 끝나든(정상/Ctrl+C/오류) 참조수 배출 + KCl 소크
 
         print(f"\n완료. CSV 저장: {CSV_FILE}  (평형도달={'O' if plateaued else 'X'})")
 
