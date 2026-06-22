@@ -1,0 +1,743 @@
+\documentclass[11pt]{article}
+
+% ---- arXiv 스타일 프리프린트 (XeLaTeX + 한글) ----
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{authblk}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{textcomp}
+\usepackage{mhchem}
+\usepackage{siunitx}
+\sisetup{detect-all}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{kotex}
+\usepackage{fontspec}
+\setmainhangulfont{NanumMyeongjo}
+\setsanshangulfont{NanumGothic}
+\usepackage[hidelinks]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.15}
+
+% 편의 매크로
+\newcommand{\dpH}{\ensuremath{\Delta\mathrm{pH}}}
+\newcommand{\dkh}{\ensuremath{\,\mathrm{dKH}}}
+\newcommand{\co}{\ensuremath{\mathrm{CO_2}}}
+\newcommand{\pco}{\ensuremath{p_{\mathrm{CO_2}}}}
+\newcommand{\at}{\ensuremath{A_\mathrm{T}}}
+
+\title{\bfseries 해수 탄산알칼리니티 측정을 위한 저가형 단일프로브\\
+차동 pH 폭기 모니터: 계통오차 분해와 밀폐 공통 헤드스페이스\\
+평형화를 통한 0.25\,dKH 이하 정확도 달성}
+
+\author[1]{nowforyou\thanks{교신: \texttt{taeseokyi@gmail.com}}}
+\affil[1]{REEF FAMILY}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+탄산알칼리니티(이하 ``KH'', 단위 \dkh)는 산호 어항에서 가장 제어가 중요한
+수질 인자이지만, 저렴한 연속 모니터는 드물고 시약 적정은 번거롭다. 본 논문은
+시료를 대기 \co{}와 평형에 이를 때까지 폭기한 뒤 도달한 평형 pH로부터
+알칼리니티를 추정하는 무시약(reagent-free) 개방형 모니터를 기술한다. \emph{단일}
+pH 프로브로 어항 시료(``tank'')와 알칼리니티가 알려진 참조수(``ref'')를 연달아
+측정한다. dKH가 두 pH의 \emph{차}로 계산되므로
+($\mathrm{KH_{tank}} = \mathrm{KH_{ref}}\cdot 10^{\dpH}$), 프로브의 절대
+드리프트와 실내 \co{} 변동은 공통모드 신호로서 상쇄된다. 9일간의 계측 캠페인
+(5개 펌웨어/방법 버전에 걸친 28회 측정)에서 무보정 오차 $-0.92\dkh$가 지속적으로
+관찰되었으며, 우리는 이를 영점 보정으로 지우는 대신 \emph{분해}하였다. 세 가지
+개입---(i) 진짜 가스 평형까지 가는 평탄 추종 측정, (ii) 시료ㆍ참조수ㆍ펌프 흡입이
+공유하는 단일 \emph{밀폐 공통 헤드스페이스}, (iii) 헤드스페이스 \pco{}를 고정하는
+능동 폭기 5\,L 참조수 앵커---이 새벽 \co{} 오차와 일주기 증발 교란을 붕괴시켰고
+측정 산포를 $\mathrm{SD}=\pm0.08\dkh$ (목표 $\pm0.25\dkh$의 약 1/3)로 줄였다.
+이어진 널 실험(두 용기에 동일한 물, 참값 $\dpH=0$)이 잔차를 국소화하였다:
+\emph{완전 널}에서 $\dpH=-0.003$, $\mathrm{dKH}=8.387$, 즉 계측 오프셋은 단
+$-0.06\dkh$에 불과했다. 남은 $-0.86\dkh$는 수일 된, 소부피, 개방 상태의 tank
+분취액에서 일어난 알칼리니티 손실(\co{} 과포화에 의한 \ce{CaCO3} 석출/생물막)로
+추적되었다---이는 측정 결함이 아니라 시료 취급 아티팩트다. 같은 노화 분취액으로 하루
+뒤 널을 재측정하니 전자장치를 건드리지 않았는데도 널이 $-0.06$에서 $-0.22\dkh$로
+무너지는 것을 관찰하여, 이 귀속을 시간 영역에서 확증하였다. 따라서 본 장치는 영점
+보정 없이 $\pm0.25\dkh$ 목표를 달성하며, 영점 보정은 불필요한 것으로 판정되었다.
+우리가 독립적으로 도출한 오차 구조(실내 \co{} 민감도, 기포 품질 의존성, 해법으로서의
+밀폐)는 상용 제품의 보고된 거동을 그대로 재현하여, 진단과 해법 양쪽에 외부 검증을
+제공한다.
+\end{abstract}
+
+\noindent\textbf{키워드:} 산호 어항; 탄산알칼리니티; 총알칼리니티; \co{} 평형화;
+차동 pH; 저가 계측; 공통모드 제거; \ce{CaCO3} 석출.
+
+% =====================================================================
+\section{서론}
+% =====================================================================
+경산호를 비롯한 석회화 생물은 탄산칼슘을 침착시키며 탄산알칼리니티를 끊임없이
+소모한다. 닫힌 산호 어항에서 이 알칼리니티 감소는 빠르며(흔히
+$0.5$--$1.5\dkh\,\mathrm{day^{-1}}$), $\sim1\dkh$를 넘는 변동은 산호 조직 스트레스와
+연관된다. 알칼리니티(\at{}, 취미가들은 보통 독일식 도 단위의 ``KH''로 표기,
+$1\dkh \approx 0.357\,\mathrm{meq\,L^{-1}}$)는 따라서 \emph{자주} 측정할 가치가
+가장 큰 인자다.
+
+접근 가능한 선택지는 연속 사용에 부족하다. 수동 시약 적정(예: 상용 드롭 키트)은
+정확하지만 노동집약적이고 이산적이다. 색도 로봇은 적정을 자동화하지만 시약을
+소모하고 비싸다. 직접 전위차 pH 단독은 \emph{알칼리니티 측정이 아니다}. 해수 pH는
+\at{}와 \pco{}에 함께 의존하고, 어항 \pco{}는 하루 동안 크게 변하기 때문이다(실내
+환기, 광합성, 호흡).
+
+무시약 대안은 다음 사실을 이용한다: 시료를 \pco{}가 주변 공기와 평형에 이를 때까지
+폭기하면, 평형 pH는 고정된 온도ㆍ염분에서 알칼리니티의 일가 함수가 된다. 상용
+제품(AquaWiz)이 이 원리로 만들어져 취미가들이 사용하지만, 커뮤니티 보고는 실내
+\co{} 변동과 폭기/기포 품질에 결부된 반복적 부정확성을 기록한다. 본 논문의 기여는
+원리 자체가 아니라 \emph{정량적 진단}이다: 작동하는 DIY 제작물에서 출발해 9일
+캠페인을 계측하고, $-0.92\dkh$의 원시 오차를 드러내며, 널 실험으로써(구성상) 그
+거의 전부가 장치 한계가 아니라 시료 취급 아티팩트임을 보인다---진짜 계측 오프셋을
+$-0.06\dkh$로 줄이고 무보정으로 $\pm0.25\dkh$ 목표를 달성한다. 그 과정에서 임의의
+단일프로브 차동 pH 알칼리니티 모니터에 일반화될 것으로 기대되는 일련의 설계 규칙
+(밀폐 공통 헤드스페이스; 진짜 평형까지의 평탄 추종; 능동 폭기 참조수 앵커; 이중
+게이트 평탄 판정)을 확립한다.
+
+% =====================================================================
+\section{측정 원리}\label{sec:principle}
+% =====================================================================
+
+\subsection{폭기가 평형 pH를 알칼리니티의 프록시로 만든다}
+고정된 온도 $T$와 염분 $S$에서 해수 탄산계는 자유도가 둘이다;
+$\{\at{}, \mathrm{DIC}, \pco{}, \mathrm{pH}\}$ 중 둘을 고정하면 나머지가 정해진다.
+실내 공기를 과량으로 폭기하면 용존 \co{}가 기상과의 헨리 법칙 평형
+$[\co{}]_{aq}=K_H\,\pco{}$로 구동되어 $\pco{}(\mathrm{water}) \to
+\pco{}(\mathrm{air})$가 된다. \pco{}가 대기에 의해 고정되면, 평형 pH는
+알칼리니티의 일가 함수가 된다:
+\begin{equation}
+\mathrm{pH_{eq}} = f(\at{},\,\pco{},\,T,\,S).
+\label{eq:pheq}
+\end{equation}
+\pco{}, $T$, $S$가 공통이면 $\mathrm{pH_{eq}}$를 움직일 수 있는 \emph{유일한}
+변수는 \at{}이다. 따라서 측정된 평형 pH는 알칼리니티의 프록시가 된다.
+
+\subsection{차동이 실내 \co{}를 상쇄하는 이유}
+본 장치는 \pco{}의 절대값에 결코 의존하지 않는다. 참조수와 tank 시료를 \emph{같은}
+대기 천장까지 폭기하고(최종 설계에서는 하나의 공유 헤드스페이스에 대해 둘을 동시
+폭기, \ref{sec:methods}절), 두 평형 pH의 \emph{차}를 보고한다. 절대 \pco{} 항이
+두 시료에 공통이므로 차에서 상쇄된다: 실내 \co{} 변동은 떨어져 나가는 공통모드
+신호다. 차감 후 남는 것은 진짜 알칼리니티 차에 전극 잡음($\pm0.005$--$0.01$\,pH)을
+더한 것이다. 이것이 이 방법의 핵심 견고성 논거이며, (두 개의 정합 프로브가 아닌)
+\emph{단일} 프로브를 쓰는 이유다: 단일 센서의 느린 비대칭 전위와 기준액 접합부
+드리프트는 두 측정에 동일하게 실려 \dpH{}에서 상쇄된다.
+
+\subsection{과폭기는 불가능하고, 오직 \emph{불충분} 폭기만이 오차를 낳는다}
+식~\eqref{eq:pheq}는 $\pco{}(\mathrm{air})$에서 단단한 천장을 갖는다: 물이 대기
+평형에 도달하면 추가 폭기는 pH를 더 올릴 수 없다. 따라서 ``과폭기'' 실패 모드는
+존재하지 않는다. 오차는 오직 \emph{불충분}을 통해 들어온다: 한 용기에 잔류 \co{}가
+남으면 그쪽 pH가 부당하게 눌려 거짓 \dpH{}가 나타난다. 차동의 전제는 바로 ref와
+tank가 같은 \pco{}를 공유한다는 것이다; 대칭이 깨지면 상쇄가 깨진다. 이것이 고정
+시간이 아니라 진짜 평탄까지 측정하는 동기다(\ref{sec:methods}절).
+
+\subsection{완전 평형에서의 부피 무관성}
+식~\eqref{eq:pheq}에는 부피 항이 없다(헨리 법칙은 시강성질). 따라서 큰 부피
+불일치---최종 널에서 $100\,\mathrm{mL}$ tank 물 대 $5\,\mathrm{L}$ 참조수---조차
+두 용기가 \emph{완전} 평형에 도달하기만 하면 차동 오차는 \emph{0}이다. 익숙한
+``대칭을 위한 등부피'' 규칙은 부피가 다르면 일차 접근 곡선
+$C(t)-C^\ast = (C_0-C^\ast)\,e^{-t/\tau}$의 다른 지점에 놓이는 \emph{부분} 평형에서만
+적용된다. 진짜 요건은 단지 (a) 둘 다 완전 평형, (b) \pco{}와 $T$ 정합뿐이다. 더 큰
+부피가 율속이며, 시간상수는
+\begin{equation}
+\tau \;\propto\; \frac{V}{K_H\,Q_\mathrm{gas}}\,\beta
+\;\sim\; \frac{1}{\mathrm{VVM}}\,\beta,
+\label{eq:tau}
+\end{equation}
+이다. 여기서 $\mathrm{VVM}=Q_\mathrm{gas}/V$는 단위 액 부피당 분당 기체 부피이고
+$\beta$는 해수 화학 인자다(미량 $[\co{}]_{aq}$만 탈기 가능하며 Revelle 완충이 $\tau$를
+$\sim8$--$15\times$ 키운다). 식~\eqref{eq:tau}는 뒤에서 논의할 ``폭기를 키워 측정을
+단축'' 레버와, 율속이 되는 참조수를 소형화한 선택의 근거다.
+
+\subsection{차동 dKH 산출식}
+펌웨어(Arduino Nano / ATmega328P; pH는 DFRobot Gravity 프로브 + ADS1115 16비트 ADC)는
+단일 프로브를 디지털화하여 참조수, 이어서 tank pH를 읽고 다음을 계산한다:
+\begin{equation}
+\boxed{\;\mathrm{KH_{tank}} \;=\; \mathrm{KH_{ref}}\cdot 10^{-(\mathrm{pH_{ref}}-\mathrm{pH_{tank}})}
+\;=\; \mathrm{KH_{ref}}\cdot 10^{\dpH}\;}
+\label{eq:dkh}
+\end{equation}
+여기서 $\dpH \equiv \mathrm{pH_{tank}}-\mathrm{pH_{ref}}$이고
+$\mathrm{KH_{ref}}=8.448\dkh$는 EEPROM에 저장된 \emph{앵커} 상수다(증발 보충 후
+\texttt{calref} 명령으로 설정; 매 측정값이 \emph{아님}---이 때문에 로그의 참조수
+열은 항상 상수 8.448로 찍힌다). 식~\eqref{eq:dkh}는 \dpH{}에만 의존하며 절대 pH는
+정확히 상쇄된다. 미분하면,
+\begin{equation}
+\frac{d\,\mathrm{KH_{tank}}}{d\,\dpH}\bigg|_{\dpH=0}
+= \mathrm{KH_{ref}}\ln 10 \approx 19.45\;\dkh\,\mathrm{pH^{-1}},
+\label{eq:sens}
+\end{equation}
+즉 상쇄되지 못한 $0.01$\,pH 차가 $\approx0.19\dkh$로 사상된다. 이 높은 민감도가
+상쇄와 평탄 판정 둘 다를 중요하게 만든다. 온도 보정은 매 측정마다 Nernst 관계
+$\mathrm{pH_{corr}}=7.0+(\mathrm{pH_{raw}}-7.0)\,(273.15+T_\mathrm{cal})/(273.15+T_\mathrm{meas})$로
+적용되며, 15--35\,\textcelsius에서 명목상 0 오차다. 각 pH 읽기는 64 샘플의
+절사평균(상하 16개씩 버리고 가운데 32개 평균)으로 폭기 기포 스파이크를 배제한다.
+
+% =====================================================================
+\section{장치}\label{sec:apparatus}
+% =====================================================================
+제작물(표~\ref{tab:bom}, 그림~\ref{fig:device})은 4개의 양방향 연동펌프, 2개의 USB
+에어펌프, 단일 pH 프로브, 1-Wire 온도 센서를 둘러싼 폐쇄 유체 루프이며, Arduino
+Nano가 9600\,baud 블루투스(HC-06) 시리얼로 호스트 PC와 통신한다.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Latex[length=1.8mm]},
+  vessel/.style={draw, rounded corners=2pt, fill=blue!6, align=center},
+  pump/.style={draw, circle, fill=yellow!35, font=\scriptsize\bfseries, inner sep=0.4pt, minimum size=5.5mm},
+  flow/.style={<->, thick, blue!55!black},
+  air/.style={-{Latex[length=1.6mm]}, densely dotted, red!65!black, thick},
+  wire/.style={-{Latex[length=1.6mm]}, gray!55!black},
+]
+\draw[dashed, rounded corners=7pt, gray!65, line width=0.9pt] (0.1,-3.05) rectangle (10.9,1.95);
+\node[anchor=north east, gray!55!black, font=\scriptsize] at (10.8,1.88) {밀폐 공통 헤드스페이스 ($\approx$4\,L)};
+\node[draw, rounded corners=2pt, fill=gray!10, align=center] (mcu) at (4.9,2.75)
+  {Arduino Nano $+$ HC-06\,/\,ADS1115 pH\,/\,DS18B20};
+\node[vessel, minimum width=15mm, minimum height=20mm, fill=cyan!10] (aq) at (-2.2,-0.6) {본수조\\(어항)};
+\node[vessel, minimum width=14mm, minimum height=14mm] (hold) at (1.9,0.7) {홀딩};
+\node[vessel, minimum width=21mm, minimum height=21mm] (meas) at (4.9,-0.7) {측정\\챔버};
+\node[vessel, minimum width=16mm, minimum height=19mm] (ref) at (8.9,-0.4) {참조수\\1\,L\\\scriptsize($+$온도)};
+\node[vessel, minimum width=15mm, minimum height=11mm, fill=green!8] (kcl) at (4.9,-2.45) {3\,M KCl};
+\node[draw, rounded corners=1pt, fill=red!9, font=\scriptsize, align=center] (airp) at (8.9,-2.45) {에어펌프 (\texttt{ron})};
+\draw[line width=1pt] ([xshift=-3mm]meas.north) -- ++(0,5mm) coordinate (pp);
+\node[font=\scriptsize, anchor=south] at (pp) {pH 프로브};
+\draw[flow] (aq.east) -- (hold.west);
+\node[pump] at ($(aq.east)!0.5!(hold.west)$) {M1};
+\draw[flow] (hold.south) -- (meas.north west);
+\node[pump] at ($(hold.south)!0.5!(meas.north west)$) {M2};
+\draw[flow] (ref.west) -- (meas.east);
+\node[pump] at ($(ref.west)!0.5!(meas.east)$) {M4};
+\draw[flow] (kcl.north) -- (meas.south);
+\node[pump] at ($(kcl.north)!0.5!(meas.south)$) {M3};
+\draw[air] (airp.north) -- (ref.south);
+\draw[air] (airp.west) to[out=180,in=-90] (meas.south east);
+\draw[wire] (pp) to[out=90,in=-90] (mcu.south);
+\end{tikzpicture}
+\caption{밀폐 폐루프 모니터 개념도. 측정 챔버의 단일 pH 프로브가 tank 분취액과
+참조수를 차례로 읽는다; 4개의 양방향 연동펌프(M1--M4)가 본수조ㆍ홀딩ㆍ측정 챔버ㆍ
+참조수 저장조ㆍKCl 보관 사이로 액체를 옮긴다; 2개의 에어펌프(\texttt{ron})가 참조수와
+챔버를 동시 폭기한다. 참조수ㆍ챔버ㆍ펌프 흡입이 하나의 밀폐 헤드스페이스($\approx$4\,L)를
+공유하여 시료와 참조수가 동일한 $p_{\mathrm{CO_2}}$를 보고 증발이 억제된다; 컨트롤러는
+바깥에 있다. 측정 사이 프로브는 3\,M KCl(M3)에 담겨 보관된다.}
+\label{fig:device}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{부품 목록(현재 제작물).}
+\label{tab:bom}
+\footnotesize
+\begin{tabular}{@{}p{0.26\linewidth} p{0.50\linewidth} c@{}}
+\toprule
+서브시스템 & 부품 & 수량 \\
+\midrule
+마이크로컨트롤러 & Arduino Nano V3.0 (ATmega328P) & 1 \\
+pH 프로브 & DFRobot Gravity pH V2 (SEN0161-V2), 단일 유리전극 & 1 \\
+ADC & DFRobot Gravity I\textsuperscript{2}C ADS1115 (16비트) & 1 \\
+온도 & DS18B20 방수(1-Wire), 5\,L 참조수에 삽입 & 1 \\
+통신 & HC-06 블루투스, 9600\,baud & 1 \\
+펌프 & NKP-DC-B06B 12\,V 연동, 양방향 (M1--M4) & 4 \\
+모터 드라이버 & L298 2\,A 모듈(펌프 2 + 에어 1) & 3 \\
+에어펌프 & USB 5\,V, 동시 스위칭(\texttt{ron}) & 2 \\
+참조수 저장조 & 5\,L 밀폐 용기(``위즈 수조'') & 1 \\
+챔버 & 200\,mL 비커: 홀딩, 측정, 3\,M KCl & 3 \\
+프로브 보관 & 3\,M KCl ($\approx$22\,\% w/v) & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{유체 배관 토폴로지(현재).} 모든 펌프는 양방향이다($\mathtt{f}$=정방향,
+$\mathtt{b}$=역방향):
+\begin{itemize}[nosep,leftmargin=1.4em]
+\item \textbf{M1}: 본수조 $\leftrightarrow$ \emph{홀딩} 비커;
+\item \textbf{M2}: 홀딩 $\leftrightarrow$ \emph{측정} 챔버;
+\item \textbf{M3}: 3\,M KCl 비커 $\leftrightarrow$ 측정 챔버(프로브 소크/보관);
+\item \textbf{M4}: 5\,L 참조수 $\leftrightarrow$ 측정 챔버.
+\end{itemize}
+tank 시료를 중간 홀딩 비커로 경유시키면 참조수 측정 동안 tank를 임시
+\emph{파킹}할 수 있어 위상 간 지연을 최소화한다(\ref{sec:methods}절). 가동 시간은
+$\mathtt{mXf{:}NN}$ / $\mathtt{mXb{:}NN}$의 정수(초)로 인코딩되며, 호스를 완전히
+비우기 위해 역방향이 정방향보다 $\sim$8--10\,s 길다(현재 값
+$\mathtt{m1f{:}70/m1b{:}82}$, $\mathtt{m2f{:}60/m2b{:}68}$,
+$\mathtt{m3f{:}60/m3b{:}68}$, $\mathtt{m4f{:}60/m4b{:}70}$; 5\,L 호스가 가장 길어
+\texttt{m4b:70}).
+
+\paragraph{제어 명령.} 에어와 모터 인에이블은 독립 라인이다: \texttt{ron}은 \emph{두}
+에어펌프를 켠다(액체가 정지한 동안에만 사용---기포 청소와 측정); \texttt{ton}은 PWM
+모터 제어기를 켠다(어떤 펌프든 돌기 전에 \emph{필수}); \texttt{airoff}는 둘 다 끈다.
+\texttt{airoff}가 PWM 제어기도 끄므로, 모든 액체 이동은
+\texttt{airoff}\,$\rightarrow$\,\texttt{ton} 순으로 선행되어야 한다는 핵심 불변식이
+따른다; 모터 직전의 마지막 에어 명령은 반드시 \texttt{ton}이어야 한다. 측정
+프리미티브는 \texttt{tank} / \texttt{ref}(한 pH 읽기 샘플링ㆍ저장)와
+\texttt{calkh}(식~\eqref{eq:dkh} 적용)이다. (펌웨어는 이전 하드웨어 개정의 솔레노이드
+시절 핀 이름을 유지하나, 핀 동작은 기술한 대로다.)
+
+\paragraph{밀폐 공통 헤드스페이스(필수).} 5\,L 참조수, 측정 챔버, 펌프 흡입이
+\emph{하나의} 밀폐 헤드스페이스를 공유한다. 이는 선택적 개선이 아니다: (i) 측정
+순간 tank와 ref가 동일한 \pco{}를 보게 보장하고(차동의 전제), (ii) 실내 \co{} 변동을
+원천 차단하며, (iii) 증발을 억제한다. 최종 구성에서 헤드스페이스는 $\approx$4\,L,
+참조수 $\approx$1\,L, tank 분취액 $100\,\mathrm{mL}$이며; 참조수 \emph{안에} 둔
+에어스톤이 공유 \pco{}를 수 분 내 능동적으로 고정한다(``앵커'',
+\ref{sec:methods}절). 분리되거나 격리된 헤드스페이스는 명시적으로 금지된다---두
+헤드스페이스는 독립적으로 드리프트하여 상쇄를 파괴한다.
+
+% =====================================================================
+\section{방법}\label{sec:methods}
+% =====================================================================
+
+\subsection{2-위상 평탄 추종 사이클(V4)}
+평탄 판정은 호스트 측 결정 루프이므로 PC 스크립트가 펌웨어를 단계별로 구동한다.
+사이클은 \textbf{tank 먼저, 그다음 ref}를 측정하여, 5\,L 참조수가 tank 위상 내내
+동시 폭기되고 자기 차례에 빠르게 수렴하게 한다:
+\begin{enumerate}[nosep,leftmargin=1.6em]
+\item \emph{준비:} \texttt{m3b}(챔버에서 KCl 배출)
+$\rightarrow$ \texttt{m1f}(본수조 $\to$ 홀딩)
+$\rightarrow$ \texttt{m2f}(홀딩 $\to$ 챔버).
+\item \emph{위상 A:} \texttt{ron}; 평탄까지 30\,s마다 \texttt{tank} 측정(챔버 tank +
+5\,L 동시 폭기).
+\item \emph{전이:} \texttt{m2b}로 tank 분취액을 홀딩에 파킹; \texttt{m4f}로 참조수를
+챔버에 도입.
+\item \emph{위상 B:} \texttt{ron}; 평탄까지 \texttt{ref} 측정(이미 평형 근처라 빠름).
+\item \texttt{calkh}; 이후 정리: \texttt{m4b}(참조수 5\,L 회수), \texttt{m1b}(파킹된
+tank 본수조 복귀), \texttt{m3f}(KCl 소크 복원), \texttt{airoff}(프로브 KCl에 안착).
+\end{enumerate}
+
+\subsection{이중 게이트 평탄 판정}
+읽기값은 부동소수 경계 지터를 피하기 위해 정수 milli-pH(mpH)로 보관한다. 평탄은
+슬라이딩 윈도우에서 \emph{두} 게이트가 모두 성립할 때만 선언된다(표~\ref{tab:plateau}):
+짧은 \emph{span} 게이트(최근 4개, $\mathrm{max}-\mathrm{min}\le 2$\,mpH)는 잡음을
+배제하고, 더 긴 \emph{net} 게이트(최근 8개, $|w_{-1}-w_{0}|\le 1$\,mpH)는 span
+게이트만으로는 수렴으로 오인하는 느린 단조 지수 꼬리를 배제한다. 더 긴 net 룩백
+(8 대 4; ``B1'')은 tank가 일찍 등반을 멈추는 조기 latch에 대한 해결책이었다. 위상별
+벽시계ㆍ읽기수 상한($\mathtt{PHASE\_MAX}=7200\,\mathrm{s}$, $\mathtt{MEAS\_MAX}=240$)과
+연속 실패 상한($\mathtt{FAIL\_MAX}=5$)이 루프를 묶어 무한 대기를 막는다.
+
+\begin{table}[t]
+\centering
+\caption{평탄 추종 파라미터(\texttt{measure\_until\_flat}).}
+\label{tab:plateau}
+\footnotesize
+\begin{tabular}{@{}llp{0.5\linewidth}@{}}
+\toprule
+상수 & 값 & 의미 \\
+\midrule
+\texttt{FLAT\_SPAN\_N}  & 4 & span 윈도우(지터 게이트) \\
+\texttt{FLAT\_SPAN\_MPH}& 2 & 최근 4개: $\max-\min\le 2$\,mpH \\
+\texttt{FLAT\_NET\_N}   & 8 & net 룩백(드리프트 게이트; B1) \\
+\texttt{FLAT\_NET\_MPH} & 1 & 최근 8개: $|w_{-1}-w_0|\le 1$\,mpH \\
+\texttt{MEAS\_INTERVAL} & 30\,s & 읽기 간격(폭기 지속) \\
+\texttt{PHASE\_MAX\_SECS}& 7200\,s & 위상별 상한(2\,h; 총 4\,h) \\
+\texttt{MEAS\_MAX}      & 240 & 위상별 읽기 상한 \\
+\texttt{FAIL\_MAX}      & 5 & 허용 연속 파싱 실패 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+그림~\ref{fig:plateau}는 실측 접근 곡선 한 쌍이다. 갓 챔버에 들어온 tank는 느린
+일차 꼬리로 천장을 향해 등반하고, net 게이트가 진짜 평탄이 될 때까지(8점 net
+드리프트가 1\,mpH로 떨어지는 $\sim$624\,s에 latch) 붙잡는다. 반면 tank 위상 내내
+5\,L에서 동시 폭기된 참조수는 이미 평형 상태라 $\sim$2.5\,min에 latch된다---tank를
+먼저 측정하는 것이 빠른 이유이자, span 게이트만으로는($\sim$300\,s 부근에서 충족)
+tank를 조기 latch했을 이유를 직접 보여 준다.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.86\linewidth, height=6.2cm,
+  xlabel={경과 시간 (s)}, ylabel={pH (평형 접근)},
+  xmin=-20,xmax=660, ymin=7.825, ymax=7.915,
+  grid=both, major grid style={gray!18}, minor grid style={gray!8},
+  legend style={at={(0.63,0.55)},anchor=center, fill=white, fill opacity=0.85,
+    text opacity=1, draw=gray!40, font=\footnotesize}, legend cell align=left,
+  tick label style={font=\footnotesize}, label style={font=\small},
+]
+\addplot[blue!70!black, mark=*, mark size=1.1pt, thick] coordinates {
+(0,7.829)(38,7.832)(77,7.834)(116,7.836)(156,7.838)(195,7.840)(234,7.841)
+(273,7.843)(312,7.844)(351,7.845)(390,7.846)(429,7.847)(468,7.848)(507,7.849)
+(546,7.849)(585,7.850)(624,7.850)};
+\addlegendentry{tank (챔버 시료)}
+\addplot[red!75!black, mark=square*, mark size=1.1pt, thick, dashed] coordinates {
+(0,7.906)(38,7.909)(77,7.909)(117,7.909)(156,7.909)};
+\addlegendentry{ref (동시폭기 5\,L)}
+\node[anchor=west,font=\scriptsize,blue!50!black] at (axis cs:430,7.843) {net 게이트 latch @624\,s};
+\draw[blue!50!black,->,>=stealth] (axis cs:560,7.844) -- (axis cs:620,7.849);
+\end{axis}
+\end{tikzpicture}
+\caption{실측 평탄 추종 곡선(밀폐, net 게이트 실행). tank 시료(실선)는 느린 지수
+꼬리를 등반하며 이중 게이트 판정(최근 4개 span $\le 2$\,mpH \emph{및} 최근 8개 net
+$\le 1$\,mpH)이 충족될 때만 latch된다; 동시폭기된 참조수(점선)는 이미 평형 근처라
+빠르게 latch된다. 두 계열의 pH가 다른 것은 기저 시료가 다르기 때문이며(이 실행은 널
+캠페인 이전), 각자의 \emph{평탄} 값만이 식~\eqref{eq:dkh}에 들어간다.}
+\label{fig:plateau}
+\end{figure}
+
+\subsection{로깅과 오류 처리}
+완료된 측정마다 \texttt{HH ref\_pH tank\_pH 8.448 tank\_kh temp} 한 줄이
+\texttt{dkh.dat}에 추가된다. 두 가지 구분되는 표식이 비정상 결과를 인코딩한다:
+하드 실패(타임아웃, 시리얼 손실, KCl 소크 미확인) 시의 \emph{전부 0} 줄---이는
+추가로 \emph{래치}되어, 사람이 지울 때까지 이후 실행이 측정을 거부하고 표식만
+재기록하여 무인 펌프 반복 구동으로부터 프로브를 보호한다; 그리고 위상이 평탄 미도달로
+상한에 걸렸을 때의 \emph{음수} \texttt{tank\_kh}(크기는 보존, 부호만 반전)---서버가
+이를 ``평탄 미도달''로 읽되 래치는 트리거하지 않는다. \texttt{finally} 블록은 임의의
+비정상 종료 시 비상 정리(에어 오프, 챔버 배출, KCl 소크 복원)를 실행한다.
+
+\subsection{널 테스트 프로토콜}
+진단의 중추는 \emph{널 테스트}다: 참조수와 tank 용기를 \emph{같은} 물로 채워 진짜
+알칼리니티 차를 0으로 만들면 정답은 정확히 $\dpH=0$, $\mathrm{dKH}=8.448$이다. 두
+변형을 쓴다. \emph{부분 널}에서는 소부피 tank 분취액만 신선 해수로 교체하고 노화된
+5\,L 참조수는 유지하여, \dpH{} 변화가 tank 물의 기여를 분리하게 한다. \emph{완전
+널}에서는 tank 챔버에도 참조수를 넣어 물의 차이를 \emph{구성상} 0으로 만들어 남는
+\dpH{}가 순수 계측 기인임이 되게 한다.
+
+\subsection{개정 이력과 한 번에 하나씩 변경 원칙}
+제작물은 5개 개정을 거쳤다(표~\ref{tab:versions}). 변경은 한 번에 하나의 인과 축으로만
+이루어져 각 캠페인이 단일 메커니즘을 시험하게 했다; 두 상수를 함께 바꾼 경우
+(예: 안정화 윈도우와 수렴 밴드)에는 둘이 두 개의 독립 변수가 아니라 \emph{같은}
+인과 축(응답 완전성)임을 근거로 정당화하였다.
+
+\begin{table}[t]
+\centering
+\caption{방법/펌웨어 개정. ``ron 유지''=측정 간 지속 폭기.}
+\label{tab:versions}
+\footnotesize
+\begin{tabular}{@{}llp{0.56\linewidth}@{}}
+\toprule
+개정 & 기간 & 이전 대비 변경 \\
+\midrule
+V0 & 6/14--6/15 & 첫 대칭 제작; 참조수를 5\,L에서 컵으로 분취; 고정 1200\,s 폭기. \\
+V1 & 6/15--6/16 & 측정 간 지속 폭기 추가(\texttt{ron} 유지). \\
+V2 & 6/16--6/17 & 참조수를 소량 직접 폭기 분취로(홀딩 $\to$ 챔버); 측정 시 폭기 OFF. \\
+V3 & 6/17 & 측정 \emph{중} 폭기(tank/ref를 같은 \pco{}에 고정); 경로 대칭화; KCl 헹굼 기포 청소(이후 폐기). \\
+V4 & 6/17$\to$ & \textbf{평탄 추종}으로 진짜 평형까지(고정 시간 없음); 2-위상 tank-먼저-ref; 무한대기 방지 상한; 비상 정리. 이후: \emph{밀폐 공통 헤드스페이스}, \emph{5\,L 능동 앵커}, 이중 게이트(B1) 판정. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+\section{결과}\label{sec:results}
+% =====================================================================
+표~\ref{tab:data}가 전체 캠페인이다. 전 구간에서 $\dpH<0$은 tank가 참조수보다 더
+산성으로 읽혔음을(겉보기 알칼리니티가 더 낮음) 뜻하며, 식~\eqref{eq:dkh}에 의해 원시
+오차는 $\mathrm{dKH}-8.448 = 8.448\,(10^{\dpH}-1)$이다.
+
+\begin{table}[p]
+\centering
+\caption{전체 측정 캠페인(28회). ``abs pH''는 공통모드 수준(하루 안에서만 실내 \co{}
+프록시). 구성 약어: S=밀폐 헤드스페이스, A=5\,L 능동 앵커, N=net 게이트, B1=net 룩백 8;
+PN=부분 널, CN=완전 널.}
+\label{tab:data}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}r l l r r r r r p{0.30\linewidth}@{}}
+\toprule
+\# & 일시 & 구성 & pH$_\mathrm{ref}$ & pH$_\mathrm{tank}$ & \dpH{} & dKH & $T$ & 조건 \\
+\midrule
+1 & 06-14 20:12 & V0 & 7.959 & 8.021 & $+0.062$ & 9.741 & 26.7 & 첫 수동 대칭 측정 \\
+2 & 06-14 21:00 & V0 & 7.997 & 8.072 & $+0.075$ & 10.054& 26.2 & --- \\
+3 & 06-15 05:00 & V0 & 8.057 & 8.077 & $+0.020$ & 8.843 & 26.4 & 새벽인데 $+$; 창문 열림(환기), 저 \co{} \\
+4 & 06-15 13:00 & V1 & 8.050 & 8.042 & $-0.008$ & 8.293 & 27.0 & 첫 지속 폭기 \\
+5 & 06-15 21:00 & V1 & 8.109 & 8.091 & $-0.018$ & 8.109 & 27.3 & 깨끗한 저 \co{} 점 \\
+6 & 06-16 05:00 & V1 & 7.810 & 7.751 & $-0.059$ & 7.362 & 27.5 & 새벽 닫힘방 \co{} 급등(양 abs pH $\sim$0.3 하락) \\
+7 & 06-16 13:00 & V1b& 8.091 & 8.063 & $-0.028$ & 7.922 & 27.7 & 윈도우/밴드 강화 \\
+-- & 06-16 21:00 & --- & \multicolumn{5}{c}{\emph{실패(0.000; 정전, 포트 세마포)}} & \\
+8 & 06-16 21:21 & V2 & 8.042 & 8.021 & $-0.021$ & 8.039 & 28.6 & 첫 V2(수동) \\
+9 & 06-17 05:00 & V2 & 7.997 & 7.939 & $-0.058$ & 7.386 & 27.8 & V2 새벽 검증 \emph{실패}; V1으로 회귀 \\
+10& 06-17 13:00 & V3 & 8.109 & 8.091 & $-0.018$ & 8.095 & 28.2 & 첫 V3; ref 미평형(5 읽기) \\
+11& 06-17 21:00 & V4 & 8.113 & 8.071 & $-0.042$ & 7.669 & --- & 첫 V4 + 절사평균 펌웨어; 깨끗한 평탄 \\
+12& 06-18 05:00 & V4 & 7.738 & 7.695 & $-0.043$ & 7.657 & --- & \textbf{결정적:} 새벽 $-0.043\approx$ 저녁 $-0.042$, abs pH 0.4 스윙에도 $\Rightarrow$ \co{}-수준 무관 \\
+13& 06-18 13:00 & V4 & 8.081 & 8.055 & $-0.026$ & 7.950 & 28.3 & \#11과 같은 저 \co{}인데 $-0.026$; dKH $+0.29$ 점프 $\Rightarrow$ baseline 비상수(증발, 개방 200\,mL 5일째) \\
+14& 06-19 05:00 & V4+S & 7.976 & 7.968 & $-0.008$ & 8.283 & 28.1 & \textbf{밀폐 검증\,\textcircled{1}}: 새벽 dip 붕괴 $-0.05\!\to\!-0.008$; 평탄 33$\to$4 읽기 \\
+15& 06-19 13:00 & V4+S & 7.957 & 7.947 & $-0.010$ & 8.255 & 28.6 & \textbf{밀폐 검증\,\textcircled{2}}: 새벽$\to$낮 점프 $+0.29\!\to\!-0.03$($\sim$10$\times$); 증발 제거 \\
+16& 06-19 21:00 & V4+S & 7.969 & 7.968 & $-0.001$ & 8.421 & 26.8 & 거의 완벽한 널(원시오차 $-0.027$, 최소); 단 \#14/15 대비 $+0.166$ $\Rightarrow$ offset 완벽 상수 아님; 냉방 과도($-1.8$\,\textcelsius) \\
+17& 06-20 05:00 & V4+S & 7.922 & 7.871 & $-0.051$ & 7.521 & 27.7 & 새벽 dip 재출현; tank 11$\times$ 단조=조기 latch(진짜 평탄 아님); 냉방이 kinetics 둔화 \\
+18& 06-20 15:00 & V4+SAN& 7.975 & 7.929 & $-0.046$ & 7.602 & 27.2 & 첫 5\,L 앵커; tank \emph{진짜} 평탄(34$\times$, 21.6\,min)인데도 $-0.046$ $\Rightarrow$ \textbf{실제 gap}, latch 아티팩트 아님 \\
+19& 06-20 18:11 & V4+S,2$\times$& 7.979 & 7.924 & $-0.055$ & 7.443 & 26.4 & 통제실험; 2$\times$ 폭기가 등반 반감(1296$\to$711\,s)하나 \dpH{} 불변 $\Rightarrow$ kinetics \emph{아님} \\
+20& 06-20 18:57 & V4+S,2$\times$& 7.975 & 7.931 & $-0.044$ & 7.636 & 26.7 & ref-먼저 + 호스 스왑; gap 지속 $\Rightarrow$ 순서/경로/미평형 모두 기각 \\
+21& 06-20 19:50 & V4+S & 7.975 & 7.926 & $-0.049$ & 7.539 & 26.9 & 재현 \\
+22& 06-20 20:29 & V4+SA& 7.977 & 7.921 & $-0.056$ & 7.426 & 26.9 & tank-먼저+파킹; ref 역대최速(4$\times$); tank 조기 latch(7.921) $\Rightarrow$ B1 동기 \\
+23& 06-20 21:00 & V4+SA,B1& 7.979 & 7.926 & $-0.053$ & 7.474 & 27.0 & \textbf{B1 성공}: tank 25$\times$/945\,s 진짜 평탄; \#22가 $\sim$5\,mpH 미달이었음 확인; gap(7번째) \\
+24& 06-21 05:00 & V4+SA,B1& 7.974 & 7.928 & $-0.046$ & 7.594 & 26.7 & 새벽이 저녁 군집과 일치 $\Rightarrow$ 시간대 의존성 배제(gap, 8번째) \\
+25& 06-21 06:00 & V4+S,PN& 7.973 & 7.963 & $-0.010$ & $-8.255$ & 26.7 & \textbf{부분 널}: tank만 신선; tank pH $+37$\,mpH, \dpH{} $-0.05\!\to\!-0.010$; tank 미평탄(옛 상한) $\Rightarrow$ 하한값 \\
+26& 06-21 13:00 & V4+S,PN& 7.964 & 7.956 & $-0.008$ & 8.298 & 27.2 & \textbf{부분 널, 완전평형}: dKH 8.298, 원시오차 $-0.15$; 좋은 군집 복귀; 4\,h 상한 검증 \\
+27& 06-21 19:00 & V4+S,CN& 7.960 & 7.957 & $-0.003$ & 8.387 & 27.4 & \textbf{완전 널}: 양쪽=참조수; 원시오차 $-0.061$=순수 계측 오프셋; 100\,mL 대 5\,L 상쇄 \\
+28& 06-22 09:00 & V4+S,CN& 7.959 & 7.948 & $-0.011$ & 8.226 & 27.4 & \textbf{노화 완전 널}($\sim$14\,h, $100\,\mathrm{mL}$ 노출 분취액): 널이 원시오차 $-0.22$로 붕괴; tank 진짜 평탄 59$\times$(긴 폭기가 석출 유발) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{새벽 \co{} 오차와 그 진단}
+가장 먼저 분명해진 병리는 \dpH{}의 새벽 붕괴였다(\#6, $-0.059$; 오차 $-1.09\dkh$).
+결정적 단서는 공통모드였다: 밤사이 \emph{양} 절대 pH가 $\sim0.3$ 떨어져(ref
+$8.109\!\to\!7.810$, tank $8.091\!\to\!7.751$) 낮의 상승 추세를 뒤집은 것---폭기수를
+산성화하는 닫힌방 \co{} 축적의 지문이다. 자연 실험이 이를 확인했다: 환기한 단 한 밤
+(\#3, 창문 열림)에 절대 pH가 높게 유지되고 \dpH{}는 정상인 $+0.020$이었던 반면, 닫힌
+밤들은 $-0.058/-0.059$였다. 중요하게도, 실내 \co{}는 차동이 \emph{상쇄해야 할} 바로
+그 공통모드 변수다; 그것이 \dpH{}로 누출되었다는 것은 환기로 없앨 환경 문제가 아니라
+ref/tank 대칭이 깨졌다는 신호였다.
+
+\subsection{평탄 추종과 위상 간 드리프트 충돌}
+진짜 평탄까지 측정(V4)하니 \co{}-\emph{수준} 의존성이 사라졌다: \#11/\#12가 절대
+pH 0.4 스윙을 가로질러 $\dpH=-0.042$, $-0.043$을 주었다. 그러나 첫 V4 실행은 경쟁
+실패를 드러냈다: 31분짜리 tank 측정에서 pH가 정점까지 올랐다 \emph{내려가}(측정 중
+실내 \co{} 드리프트), 단일 프로브가 각 용기를 우연히 샘플링한 시점에 따라 정해지는
+값에서 latch되었다. 이 \emph{위상 간 드리프트}는 대략
+\begin{equation}
+\epsilon_\mathrm{drift} \;\approx\; \Delta t_{\mathrm{tank{-}ref}}\times \frac{dC}{dt},
+\label{eq:drift}
+\end{equation}
+이며, 단일 프로브에서 근본 충돌을 일으킨다: 완전 평형은 긴 측정을 요하지만, 긴
+측정은 tank--ref 샘플링 간격 $\Delta t$를 넓혀 드리프트를 키운다. $dT/dt$를 쓴 같은
+형태가 \#16을 설명한다---냉방 과냉($-1.8$\,\textcelsius{} 측정 중)이 $+0.166\dkh$ 변동과
+일치했다.
+
+\subsection{밀폐가 두 교란을 붕괴시킨다}
+단일 \emph{밀폐 공통 헤드스페이스}가 이 충돌을 원천에서 해결한다. ref와 tank가 하나의
+공기 상자를 공유하게 강제함으로써, 공통 \pco{}를 우연이 아닌 본질로 만들고, 실내
+\co{} 변동을 차단하며, (보너스로) 개방 tank 분취액을 농축하던 증발을 억제한다. 효과는
+즉각적이었다(\#14/\#15): 새벽 dip이 $-0.05$에서 $-0.008$로 붕괴; 새벽$\to$낮 dKH
+점프가 $\sim$10$\times$ 축소(개방 $+0.29$ $\to$ 밀폐 $-0.03$); 평탄 시간이 $\sim$33
+읽기($\sim$50\,min)에서 $\sim$4($\sim$5\,min)로 격감---이것이 다시
+식~\eqref{eq:drift}의 $\Delta t$를 붕괴시켜 위상 간 드리프트를 구조적으로 제거한다.
+무보정 오차는 $-0.78$에서 $\sim-0.18\dkh$로 떨어졌다.
+
+\subsection{능동 앵커와 실제 gap의 지속}
+밀폐만으로는 느린 헤드스페이스 드리프트가 남았다. 수동 공유 공기 부피는 표면 확산
+(수십 분)으로만 재평형하기 때문이다. 참조수 \emph{안에} 에어스톤을 두면(``앵커'')
+공유 \pco{}를 수 분 내 능동 고정한다; 부피 감사가 지배 위계를 확인한다(시료
+$\sim$3\,\si{\micro mol} $\ll$ 헤드스페이스 $\sim$65\,\si{\micro mol} $\ll$ 5\,L
+$\sim$500\,\si{\micro mol}). 그런데 앵커와 net 게이트를 갖추고도, tank가 검증된 진짜
+평탄에 도달했을 때조차 $\sim$$-0.046$--$-0.053$ gap이 \emph{지속}되었다(\#18: 34
+읽기, 21.6\,min). 이어진 통제실험 쌍(\#19/\#20)이 네 가지 장치 측 설명을 차례로
+기각했다: 폭기를 2배로 하면 등반 시간은 반감했으나 \dpH{}는 불변(kinetics \emph{아님});
+측정 순서를 뒤집고 호스를 스왑해도 부호가 뒤집히지 않음(순서/웜업/유로 \emph{아님});
+head-start한 tank가 \emph{같은} 평형에 안착(미평형 \emph{아님}). gap은 \emph{물}의
+성질이었다.
+
+\subsection{널 실험이 오차를 국소화한다}
+장치 가설이 소진되었으므로 물을 직접 시험했다. \emph{부분 널}(\#25, tank 챔버만 신선
+해수)이 \dpH{}를 $-0.05$에서 $-0.010$로 붕괴시켰다(tank pH $+37$\,mpH); 완전평형
+(\#26)에서는 $\mathrm{dKH}=8.298$, 원시오차 $-0.15$---좋은 군집으로 복귀. tank에
+신선 물을 넣자 거의 전 오차가 회복되어 노화된 tank 분취액이 지목되었다. \emph{완전
+널}(\#27), \emph{양} 용기에 참조수를 넣어 물 차이를 구성상 0으로 만든 경우,
+$\dpH=-0.003$, $\mathrm{dKH}=8.387$, 원시오차 $\mathbf{-0.061}$을 주었고,
+$100\,\mathrm{mL}$:$5\,\mathrm{L}$ 부피 불일치에도 양쪽이 검증된 진짜 평탄이었다---부피
+무관성의 직접 확인(\ref{sec:principle}절).
+
+\subsection{오차 분해와 정확도}
+두 널이 헤드라인 오차를 분해한다(표~\ref{tab:budget}, 그림~\ref{fig:budget}):
+\begin{equation}
+\underbrace{-0.92\dkh}_{\text{원시}} \;=\;
+\underbrace{-0.86\dkh}_{\substack{\text{노화 tank 알칼리니티 손실}\\(\ce{CaCO3}\text{ 석출/생물막})}}
+\;+\;
+\underbrace{-0.06\dkh}_{\substack{\text{계측 오프셋}\\(\dpH=-3\,\mathrm{mpH})}}.
+\end{equation}
+7점 군집(\#18--24)에서 \emph{정밀도}는 $\dpH = -0.0499\pm0.0048$($\approx$5\,mpH),
+$\mathrm{dKH}=7.531\pm0.084$---목표 $\pm0.25\dkh$의 약 1/3 산포다. 대부분의 오차가
+시료 아티팩트로 규명되고 계측 오프셋이 $-0.06\dkh$(목표의 1/4)에 머물므로, 본
+모니터는 \emph{무보정}으로 $\pm0.25\dkh$를 충족한다; 영점 보정은 불필요로 판정되었고,
+정상(비열화) 산호수라면 무보정 오차는 $\pm0.1\dkh$ 안에 들 것이다.
+
+\begin{table}[t]
+\centering
+\caption{전체 진단 후 오차 예산.}
+\label{tab:budget}
+\footnotesize
+\begin{tabular}{@{}lcl@{}}
+\toprule
+성분 & 크기 & 성격 / 해법 \\
+\midrule
+노화 tank 알칼리니티 손실 & $-0.86\dkh$ & 시료 취급; 신선 분취액 사용 \\
+계측 오프셋 & $-0.06\dkh$ & $\dpH=-3$\,mpH; 보정 가치 미만 \\
+정밀도(1$\sigma$) & $\pm0.08\dkh$ & 전극 잡음 + 잔여 드리프트 \\
+실내 \co{} 의존성 & $\approx 0$ & 밀폐로 제거 \\
+증발 교란 & $\approx 0$ & 밀폐로 제거 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar, bar width=30pt,
+  width=0.82\linewidth, height=5.8cm,
+  symbolic x coords={Raw,Degrade,Offset},
+  xtick=data,
+  xticklabels={원시 오차,노화 tank 열화,계측 오프셋},
+  nodes near coords, nodes near coords align={below},
+  every node near coord/.append style={font=\footnotesize,
+    /pgf/number format/.cd, fixed, fixed zerofill, precision=2},
+  ymin=-1.05, ymax=0.12,
+  ylabel={오차 기여 (dKH)},
+  tick label style={font=\footnotesize}, label style={font=\small},
+  ymajorgrids, major grid style={gray!18},
+  enlarge x limits=0.28,
+]
+\addplot[draw=black, fill=blue!22] coordinates {(Raw,-0.92)(Degrade,-0.86)(Offset,-0.06)};
+\draw[gray] (axis cs:Raw,0) -- (axis cs:Offset,0);
+\end{axis}
+\end{tikzpicture}
+\caption{$-0.92\dkh$ 원시 오차의 분해. 완전 널이 계측 오프셋을 $-0.06\dkh$(목표
+$\pm0.25\dkh$의 1/4)로 격리하고; 부분 널이 남은 $-0.86\dkh$를 노화된 tank 분취액의
+알칼리니티 손실(\ce{CaCO3} 석출/생물막)로 귀속시킨다---측정 결함이 아니라 시료
+아티팩트다.}
+\label{fig:budget}
+\end{figure}
+
+\subsection{널의 시간 의존적 붕괴}
+이 분해는 반증 가능한 예측을 낳는다: 대부분의 오차가 전자장치가 아니라 시료 화학이라면,
+완벽해야 할 널이 시료가 노화될수록 \emph{쇠퇴}해야 한다. 우리는 같은 $100\,\mathrm{mL}$
+분취액으로 다음 날 완전 널을 재측정하여(장치는 손대지 않음) 이를 시험했다
+(그림~\ref{fig:degrade}, \#28). 원시 오차는 0\,h와 2\,h에 $-0.061$, $-0.014\dkh$였다가
+$\sim$14\,h에 $-0.222\dkh$로 떨어졌다($\dpH=-0.011$; tank pH $7.957\!\to\!7.948$,
+더 큰 참조수는 $7.959$ 유지). 이 하락은 $\pm0.08\dkh$ 정밀도를 훨씬 넘고 검증된 진짜
+평탄(tank 59회)에서 도달했으므로, latch 아티팩트가 아니라 진짜 알칼리니티 손실이다.
+소부피ㆍ노출 분취액과 비정상적으로 긴 폭기---탄산칼슘 과포화를 높여 \emph{측정 중}
+\ce{CaCO3} 석출을 일으킴---는 $-0.86\dkh$ 메커니즘의 worst-case이며, 그에 따라 널이
+무너진 반면 계측 오프셋 바닥은 신선 값을 유지했다. 이는 오차 분해의 시간 영역 확증이자
+실무 경고다: 소부피 시료에서 비정상적으로 긴 평탄은 그 자체가 열화 신호다.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.82\linewidth, height=5.6cm,
+  xlabel={첫 완전 널 이후 경과 시간 (h)},
+  ylabel={원시 널 오차 (dKH)},
+  xmin=-1, xmax=15.5, ymin=-0.27, ymax=0.06,
+  grid=both, major grid style={gray!18},
+  tick label style={font=\footnotesize}, label style={font=\small},
+]
+\draw[gray,thick] (axis cs:-1,0) -- (axis cs:15.5,0);
+\draw[green!45!black,dashed] (axis cs:-1,-0.25) -- (axis cs:15.5,-0.25);
+\node[anchor=south west,font=\scriptsize,green!40!black] at (axis cs:-0.8,-0.245) {$\pm0.25\dkh$ 목표 한계};
+\addplot[blue!70!black, mark=*, thick,
+  error bars/.cd, y dir=both, y explicit]
+  coordinates {
+  (0,-0.061) +- (0,0.08)
+  (2,-0.014) +- (0,0.08)
+  (14,-0.222) +- (0,0.08)
+  };
+\node[anchor=north east,font=\scriptsize,blue!45!black,align=right] at (axis cs:13.6,-0.10)
+  {$100\,$mL 분취액,\\ $\sim$14\,h, 긴 폭기};
+\end{axis}
+\end{tikzpicture}
+\caption{완전 널의 시간 의존적 붕괴. \emph{양} 용기에 참조수를 넣어(물 차이 구성상 0)
+원시 오차는 처음 몇 시간 동안 $\pm0.08\dkh$ 정밀도(오차 막대)와 $\pm0.25\dkh$ 목표
+안에 머물다가, 소부피($100\,\mathrm{mL}$)ㆍ노출 tank 분취액이 $\sim$14\,h 노화된 뒤
+$-0.22\dkh$로 떨어진다---긴 평탄 추종 실행(59회)이 폭기 중 \ce{CaCO3} 석출을 더 유발한다.
+전자장치는 그대로이고 시료 알칼리니티만 드리프트하므로, 지배 오차항이 시료 화학임을
+직접 확증한다(그림~\ref{fig:budget} 참조).}
+\label{fig:degrade}
+\end{figure}
+
+% =====================================================================
+\section{고찰}
+% =====================================================================
+\paragraph{진단이 얻어낸 것.} 안정된 $\sim-0.8\dkh$ 오프셋을 보면 영점 보정하려는
+충동이 든다. 이를 자제한 것---보정 상수는 독립 재현 후에만, 그리고 작은 비독립 표본에는
+결코 적용하지 않는다는 방법론 원칙에 따라---이 결정적이었다. 그 오프셋은 알고 보니
+상수인 장치 성질이 \emph{아니었고}(밀폐 군집 전반에서 $\pm0.085\dkh$ 변동했고 결국
+대부분이 열화된 시료수로 판명), 그것을 보정으로 지웠다면 시료 아티팩트를 장치에
+각인시켜 진짜 $-0.06\dkh$ 바닥을 가렸을 것이다.
+
+\paragraph{외부 검증.} 우리가 독립적으로 도출한 오차 구조는 상용 AquaWiz의 보고된
+거동을 그대로 반영하여 외부 지지를 받는다. 커뮤니티 보고는 실내 \co{} 변동을 지배
+오차로, 밀폐 용기를 현장 해법으로 지목한다; 제조사 자체 안내---급격한 \co{} 변화는
+``약 한 시간만 측정에 영향''을 주며 ``공기 흡입관을 스키머의 실외 공기 라인에
+연결''하라---는 우리의 $\sim$1시간 위상 간 드리프트 에피소드와 가스 기준 고정 해법
+양쪽에 부합한다(우리는 실외 라인 대신 밀폐로 구현). 두 번째로 많이 보고된 상용 오차인
+염 침착에 의한 기포 품질 저하($>2\dkh$ 오차, 6개월마다 청소)는 우리의 폭기 충분성
+분석과 일치한다. 보고된 현장 정확도(Hanna 대비 $\le0.2\dkh$; 무보정 7주 $\le0.75\dkh$;
+``$0.5\dkh$ 이하=훌륭, 추세용'')는 우리의 $\pm0.25\dkh$ 결과와 추세 지향 의도를
+괄호친다. 특히 상용 장치는 보정과 청소로 관리할 뿐 진짜 평형 평탄을 추구하지 않는다;
+우리의 평탄 추종 단계가 한 발 더 나간다.
+
+\paragraph{과학적 근거.} 방법의 기반인 동역학 분리는 잘 확립되어 있다: 수용성 \co{}
+수화/탈수 완화는 $\sim$16\,s에 완료되므로\cite{johnson1982} 화학은 결코 율속이 아니다;
+느린 단계는 물리 가스 교환으로, 직접 버블링에서 $\sim$15\,min이며\cite{takahashi}
+우리가 관찰한 평탄 시간과 정합한다. ``\pco{}-평형화와 pH로부터 \at{}''라는 차동 원리는
+$0.5\,\mathrm{mL}$ 소부피까지 $\pm1$--$2\,\si{\micro mol\,kg^{-1}}$ 정밀도로 입증된
+최근 분석화학 근거가 있어\cite{fleger2025}, 소부피 소형화가 옳은 방향임을 지지한다.
+
+\paragraph{한계.} (i) 단일 프로브에서는 식~\eqref{eq:drift}의 위상 간 드리프트를 0으로
+몰 수 없고 억제만 가능하다(밀폐와 $\Delta t$ 최소화로). (ii) 역사적 지배 오차가 시료
+열화였으므로, 운영 규율---신선하고 충분한 크기의 tank 분취액을 쓰고 보관 대신
+순환---은 부가물이 아니라 장치의 일부다. (iii) 느린 드리프트 하의 긴 평탄은 측정을 수
+시간으로 늘릴 수 있다; 벽시계 상한이 이를 묶지만 외부 스케줄러 한도를 코드의 4시간
+천장 위로 설정해야 한다. (iv) 절대 pH는 하루 안 \co{} 프록시로만 유의하며, \dpH{}만이
+정량적이다.
+
+\paragraph{권장 운영.} 공통 헤드스페이스를 밀폐하고; 참조수를 능동 폭기로 앵커하며;
+이중 게이트 평탄 판정으로 tank-먼저-ref를 측정하고; 신선한 시료수를 쓰며; 에어 경로를
+주기적으로 청소하고; 출력은 추세 계기로 다루되, 보정한다면 ref$\leftrightarrow$tank
+괴리에 연동된 월 주기로 독립 키트 대비 영점만 잡는다.
+
+% =====================================================================
+\section{결론}
+% =====================================================================
+무시약, 단일프로브 차동 pH 폭기 모니터는, 세 설계 규칙---단일 밀폐 공통 헤드스페이스,
+진짜 가스 평형까지의 평탄 추종, 능동 폭기 참조수 앵커---을 지키면 영점 보정 \emph{없이}
+산호 탄산알칼리니티를 $\pm0.25\dkh$보다 잘 측정할 수 있다. 9일 캠페인의 가치는 어떤
+한 수치보다 $-0.92\dkh$ 원시 오차를 \emph{분해}한 데 있었다: 널 실험은 그중 $-0.86\dkh$가
+열화된 시료 분취액의 알칼리니티 손실이고 단 $-0.06\dkh$만이 장치임을 보였다. 차동 설계는
+실내 \co{}와 프로브 드리프트의 공통모드 제거라는 약속을 이행했고; 남은 것은 전자장치의
+오차가 아니라 비커 속 화학이었다. 우리는 이 설계 규칙과 널 분해 방법론이 다른 저가
+알칼리니티 계측에 이전되리라 기대한다.
+
+% ---------------------------------------------------------------
+\section*{재현성}
+펌웨어, 호스트 측정 스크립트(\texttt{measure\_kh\_once.py}), 원시 로그
+(\texttt{dkh.dat}), 전체 측정 대장은 프로젝트 저장소~\cite{repo}에서 이용할 수 있다.
+
+\section*{감사의 글}
+REEF FAMILY 망고미역님과 DIY 모임 참여자 모두의 열정에 힘입어 이 프로젝트를 마무리
+할 수 있게 되었습니다.
+
+% ---------------------------------------------------------------
+\begin{thebibliography}{9}
+\bibitem{repo} nowforyou (REEF FAMILY), ``ReefKeeper: 개방형 차동 pH 폭기
+알칼리니티 모니터(펌웨어, 호스트 스크립트, 측정 대장),'' 프로젝트 저장소,
+\url{https://github.com/taeseokyi/reefkeeper}.
+\bibitem{johnson1982} K.~S.~Johnson, ``Carbon dioxide hydration and dehydration
+kinetics in seawater,'' \emph{Limnol.\ Oceanogr.} \textbf{27}(5), 849--855
+(1982). doi:10.4319/lo.1982.27.5.0849.
+\bibitem{soli} A.~L.~Soli and R.~H.~Byrne, ``CO\textsubscript{2} system
+hydration and dehydration kinetics and the equilibrium CO\textsubscript{2}/H\textsubscript{2}CO\textsubscript{3}
+ratio in aqueous NaCl solution,'' \emph{Mar.\ Chem.} (2002).
+\bibitem{zeebe2001} R.~E.~Zeebe and D.~Wolf-Gladrow, \emph{CO\textsubscript{2}
+in Seawater: Equilibrium, Kinetics, Isotopes}, Elsevier Oceanography Series 65
+(2001).
+\bibitem{takahashi} T.~Takahashi, ``Methods for measurement of
+$p\mathrm{CO_2}$ and total CO\textsubscript{2} in seawater'' (탄산계 방법론;
+직접 버블링 평형화 $\sim$15\,min).
+\bibitem{fleger2025} K.~Fleger, X.~Liu, W.~Berelson, J.~Adkins \emph{et al.},
+``Total alkalinity measurements in small samples based on
+CO\textsubscript{2} equilibration and spectrophotometric pH,''
+\emph{Anal.\ Chim.\ Acta} (2025). doi:10.1016/j.aca.2025.344432.
+\bibitem{roberts2005} (가스 스트리핑 일차 평형화;
+$\ln(C_0/C_t)\propto \phi/V$.) Roberts, \emph{Geophys.\ Res.\ Lett.} (2005).
+\bibitem{egleston2010} C.~S.~Egleston, C.~L.~Sabine, F.~M.~M.~Morel,
+``Revelle (완충) 인자, 해수 탄산계,''
+\emph{Global Biogeochem.\ Cycles} (2010).
+\bibitem{community} 상용 AquaWiz 알칼리니티 모니터에 대한 산호 취미가 커뮤니티 현장
+보고(실내 \co{} 오차, 밀폐 용기 해법, 기포 저하, 제조사 안내): Reef2Reef 스레드
+\#1159272, \#1073924, \#1115439; UltimateReef \#939234; Bay Area Reefers \#40433.
+(출처는 포럼 스레드 식별자로 기록; 인용문은 커뮤니티/제조사 게시물의 번역이므로 공식
+출판 전 원문 대조가 필요하다.)
+\end{thebibliography}
+
+\end{document}
