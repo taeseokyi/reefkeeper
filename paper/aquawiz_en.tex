@@ -501,8 +501,13 @@ $\mathrm{dKH}-8.448 = 8.448\,(10^{\dpH}-1)$.
 \centering
 \caption{Complete measurement campaign (28 runs). ``abs pH'' is the common-mode
 level (a room-\co{} proxy within a single day only). Config abbreviations:
-S = sealed headspace, A = 5\,L active anchor, N = net-gate, B1 = net look-back 8;
-PN = partial null, CN = complete null.}
+S = sealed headspace, A = 5\,L active anchor, N = net-gate, B1 = net look-back 8.
+\textbf{Null staging:} a fresh seawater batch is aliquoted at the start; PN =
+partial null (the $100\,\mathrm{mL}$ tank chamber alone is refilled with that
+fresh aliquot while the aged $5\,\mathrm{L}$ reference is kept, isolating the
+tank-water contribution); CN = complete null (reference water is then transferred
+into the tank chamber as well, so both vessels hold \emph{identical} water and the
+water difference is zero by construction).}
 \label{tab:data}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
@@ -537,7 +542,7 @@ PN = partial null, CN = complete null.}
 24& 06-21 05:00 & V4+SA,B1& 7.974 & 7.928 & $-0.046$ & 7.594 & 26.7 & dawn matches evening cluster $\Rightarrow$ time-of-day dependence ruled out (gap, 8th) \\
 25& 06-21 06:00 & V4+S,PN& 7.973 & 7.963 & $-0.010$ & $-8.255$ & 26.7 & \textbf{partial null}: fresh tank only; tank pH $+37$\,mpH, \dpH{} $-0.05\!\to\!-0.010$; tank not plateaued (old cap) $\Rightarrow$ lower bound \\
 26& 06-21 13:00 & V4+S,PN& 7.964 & 7.956 & $-0.008$ & 8.298 & 27.2 & \textbf{partial null, full eq.}: dKH 8.298, raw err $-0.15$; back in good cluster; 4\,h cap validated \\
-27& 06-21 19:00 & V4+S,CN& 7.960 & 7.957 & $-0.003$ & 8.387 & 27.4 & \textbf{complete null}: both = ref water; raw err $-0.061$ = pure instrument offset; 100\,mL vs.\ 5\,L cancels \\
+27& 06-21 19:00 & V4+S,CN& 7.960 & 7.957 & $-0.003$ & 8.387 & 27.4 & \textbf{complete null}: reference water into tank chamber too $\Rightarrow$ both identical; raw err $-0.061$ = pure instrument offset; $100\,$mL vs.\ 5\,L cancels \\
 28& 06-22 09:00 & V4+S,CN& 7.959 & 7.948 & $-0.011$ & 8.226 & 27.4 & \textbf{aged complete null} ($\sim$14\,h, $100\,\mathrm{mL}$ exposed aliquot): null decayed to raw err $-0.22$; tank true plateau 59$\times$ (long aeration drives precipitation) \\
 \bottomrule
 \end{tabular}
