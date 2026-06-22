@@ -193,7 +193,6 @@ tank 측정 내내 5L 위즈수조를 *동시 폭기*해 ref 가 5L서 co-aerati
 | 스크립트 | 동작 |
 |----------|------|
 | `bin/measure_kh_once.py` | **V4** — 1회 측정 후 종료 (Windows 작업 스케줄러 정시 실행용) |
-| `bin/measure_kh_loop.py` | 매 정시(HH:00) 무한 반복 (구 방식, 고정 폭기시간) |
 | `bin/test_aeration_plateau.py` | tank 단일 평형곡선 진단 (V4와 동일 평탄 기준, 종료 시 KCl 소크) |
 
 **V4 (`measure_kh_once.py`) 주요 상수:**
