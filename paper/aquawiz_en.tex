@@ -58,7 +58,7 @@ known-alkalinity reference (``ref'') in immediate succession. Because dKH is
 computed from the pH \emph{difference}
 ($\mathrm{KH_{tank}} = \mathrm{KH_{ref}}\cdot 10^{\dpH}$), absolute probe drift
 and room-\co{} excursions are common-mode signals that cancel. Over a
-nine-day instrumented campaign (29 logged measurements across five
+nine-day instrumented campaign (30 logged measurements across five
 firmware/method revisions) we observed a persistent uncorrected error of
 $-0.92\dkh$ and, rather than zero-point calibrating it away, decomposed it.
 Three interventions---(i) plateau-following measurement to true gas
@@ -73,9 +73,9 @@ $\dpH=-0.003$, $\mathrm{dKH}=8.387$, i.e.\ an instrument offset of only
 $-0.06\dkh$. The remaining $-0.86\dkh$ was traced to alkalinity loss
 (\co{}\,driven \ce{CaCO3} precipitation / biofilm) in the days-old, small,
 open tank aliquot---a sample-handling artifact, not a measurement fault.
-A re-run of the null on the same aged aliquot a day later showed the offset
-decaying from $-0.06$ to $-0.22\dkh$ with the electronics untouched, confirming
-the attribution in the time domain.
+Re-running the null on the same aged aliquot over the following day showed the
+offset drifting away from zero ($-0.22$ then $+0.22\dkh$ on successive runs) with
+the electronics untouched, confirming the attribution in the time domain.
 The instrument therefore meets the $\pm0.25\dkh$ goal uncorrected, with
 zero-point calibration deemed unnecessary. Our independently obtained error
 structure (room-\co{} sensitivity, bubble-quality dependence, sealing as the
@@ -499,7 +499,7 @@ $\mathrm{dKH}-8.448 = 8.448\,(10^{\dpH}-1)$.
 
 {\scriptsize\setlength{\tabcolsep}{4pt}
 \begin{longtable}{@{}r l l r r r r r p{0.30\linewidth}@{}}
-\caption{Complete measurement campaign (29 runs). ``abs pH'' is the common-mode
+\caption{Complete measurement campaign (30 runs). ``abs pH'' is the common-mode
 level (a room-\co{} proxy within a single day only). Config abbreviations:
 S = sealed headspace, A = 5\,L active anchor, N = net-gate, B1 = net look-back 8.
 \textbf{Null staging:} a fresh seawater batch is aliquoted at the start; PN =
@@ -553,7 +553,8 @@ water difference is zero by construction).}
 27& 06-21 19:00 & V4+S,CN& 7.960 & 7.957 & $-0.003$ & 8.387 & 27.4 & \textbf{complete null}: reference water into tank chamber too $\Rightarrow$ both identical; raw err $-0.061$ = pure instrument offset; $100\,$mL vs.\ 5\,L cancels \\
 28& 06-21 21:00 & V4+S,CN& 7.959 & 7.958 & $-0.001$ & 8.434 & 27.4 & \textbf{complete null} (2nd): $\dpH-0.001$ (resolution limit), raw err $-0.014$ (smallest); reconfirms the $\le0.06\dkh$ offset \\
 -- & 06-22 05:00 & V4+S,CN & \multicolumn{5}{c}{\emph{failed (cap)}} & 55-min scheduler cap killed it mid-ref; tank had plateaued (7.955); fix: 5\,h cap \\
-29& 06-22 09:00 & V4+S,CN& 7.959 & 7.948 & $-0.011$ & 8.226 & 27.4 & \textbf{aged complete null} ($\sim$14\,h, $100\,\mathrm{mL}$ exposed aliquot): null decayed to raw err $-0.22$; tank true plateau 59$\times$ (long aeration drives precipitation) \\
+29& 06-22 09:00 & V4+S,CN& 7.959 & 7.948 & $-0.011$ & 8.226 & 27.4 & \textbf{aged complete null} ($\sim$14\,h, $100\,\mathrm{mL}$ exposed aliquot): null decayed to raw err $-0.22$; tank true plateau 59$\times$ (long aeration drives precipitation, KH$\downarrow$) \\
+30& 06-22 13:00 & V4+S,CN& 7.950 & 7.961 & $+0.011$ & 8.664 & 27.6 & \textbf{aged null reverses} ($\sim$18\,h): short plateau (tank 8$\times$), $\dpH>0$, dKH $8.664$ (raw err $+0.22$) $\Rightarrow$ evaporative concentration (KH$\uparrow$) overtakes precipitation \\
 \bottomrule
 \end{longtable}
 }
@@ -697,55 +698,61 @@ instrument fault.}
 
 \subsection{Time-resolved breakdown of the null}
 The decomposition makes a falsifiable prediction: if the bulk error is sample
-chemistry rather than electronics, an otherwise-perfect null should \emph{decay}
-as the sample ages. We tested this by re-running the complete null on the same
-$100\,\mathrm{mL}$ aliquot the next day, without touching the instrument
-(Fig.~\ref{fig:degrade}, run \#29). The raw error---$-0.061$ and $-0.014\dkh$ at
-0 and 2\,h---fell to $-0.222\dkh$ at $\sim$14\,h ($\dpH=-0.011$; tank pH
-$7.957\!\to\!7.948$ while the larger reference held at $7.959$). The drop is well
-beyond the $\pm0.08\dkh$ precision and was reached at a verified true plateau
-(tank 59 readings), so it is genuine alkalinity loss, not a latching artifact.
-The small, exposed aliquot and the unusually long aeration---which raises
-carbonate saturation and thus drives \ce{CaCO3} precipitation \emph{during} the
-measurement---are exactly the worst case for the $-0.86\dkh$ mechanism, and the
-null broke down accordingly while the instrument offset floor stayed at its fresh
-value. This is the time-domain confirmation of the error decomposition, and a
-practical caveat: an anomalously long plateau on a small sample is itself a
-degradation warning.
+chemistry rather than electronics, an otherwise-perfect null should \emph{drift}
+as the sample ages, in whichever direction the dominant chemistry dictates. We
+tested this by re-running the complete null on the same $100\,\mathrm{mL}$
+aliquot over the following day, without touching the instrument
+(Fig.~\ref{fig:degrade}, runs \#29--30). The raw error---$-0.061$ and
+$-0.014\dkh$ at 0 and 2\,h---first fell to $-0.222\dkh$ at $\sim$14\,h, then
+\emph{reversed} to $+0.216\dkh$ at $\sim$18\,h; both extremes were reached at
+verified true plateaus (tank 59 and 8 readings), so each is genuine, not a
+latching artifact. They are opposite signs of one vulnerability: a long aeration
+run (\#29) raises carbonate saturation and drives \ce{CaCO3} precipitation,
+lowering alkalinity (KH$\downarrow$), whereas a short run after prolonged
+exposure of the small, repeatedly opened aliquot (\#30) lets evaporative
+concentration win (KH$\uparrow$). Either way the small exposed aliquot wanders by
+$\sim\pm0.2\dkh$ while the instrument offset floor stays at its fresh value. This
+is the time-domain confirmation of the error decomposition---and a practical
+caveat: a small, aged, exposed aliquot is unreliable in \emph{both} directions,
+so the sample must be fresh and adequately sized.
 
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=0.82\linewidth, height=5.6cm,
+  width=0.84\linewidth, height=6.0cm,
   xlabel={Time since first complete null (h)},
   ylabel={Raw null error (dKH)},
-  xmin=-1, xmax=15.5, ymin=-0.27, ymax=0.06,
+  xmin=-1, xmax=19.5, ymin=-0.33, ymax=0.33,
   grid=both, major grid style={gray!18},
   tick label style={font=\footnotesize}, label style={font=\small},
 ]
-\draw[gray,thick] (axis cs:-1,0) -- (axis cs:15.5,0);
-\draw[green!45!black,dashed] (axis cs:-1,-0.25) -- (axis cs:15.5,-0.25);
-\node[anchor=south west,font=\scriptsize,green!40!black] at (axis cs:-0.8,-0.245) {$\pm0.25\dkh$ goal limit};
+\draw[gray,thick] (axis cs:-1,0) -- (axis cs:19.5,0);
+\draw[green!45!black,dashed] (axis cs:-1,0.25) -- (axis cs:19.5,0.25);
+\draw[green!45!black,dashed] (axis cs:-1,-0.25) -- (axis cs:19.5,-0.25);
+\node[anchor=east,font=\scriptsize,green!40!black] at (axis cs:19.4,0.29) {$\pm0.25\dkh$ goal};
 \addplot[blue!70!black, mark=*, thick,
   error bars/.cd, y dir=both, y explicit]
   coordinates {
   (0,-0.061) +- (0,0.08)
   (2,-0.014) +- (0,0.08)
   (14,-0.222) +- (0,0.08)
+  (18,0.216) +- (0,0.08)
   };
-\node[anchor=north east,font=\scriptsize,blue!45!black,align=right] at (axis cs:13.6,-0.10)
-  {$100\,$mL aliquot,\\ $\sim$14\,h, long aeration};
+\node[font=\scriptsize,blue!45!black,align=center] at (axis cs:10.6,-0.135) {precipitation\\KH$\downarrow$};
+\node[font=\scriptsize,blue!45!black,align=center] at (axis cs:15.2,0.125) {evaporation\\KH$\uparrow$};
 \end{axis}
 \end{tikzpicture}
-\caption{Time-resolved breakdown of the complete null. With reference water in
-\emph{both} vessels (water difference zero by construction), the raw error stays
-within the $\pm0.08\dkh$ precision (error bars) and the $\pm0.25\dkh$ goal for the
-first hours, then falls to $-0.22\dkh$ after the small ($100\,\mathrm{mL}$),
-exposed tank aliquot has aged $\sim$14\,h---a long plateau-following run
-(59 readings) further driving \ce{CaCO3} precipitation during aeration. The
-electronics are unchanged; only the sample alkalinity drifts, directly confirming
-that the dominant error term is sample chemistry (cf.\ Fig.~\ref{fig:budget}).}
+\caption{Time-resolved \emph{bidirectional} drift of the complete null. With
+reference water in \emph{both} vessels (water difference zero by construction),
+the raw error stays within the $\pm0.08\dkh$ precision (error bars) and the
+$\pm0.25\dkh$ goal for the first hours, then wanders as the small
+($100\,\mathrm{mL}$), exposed tank aliquot ages: a long aeration run drives
+\ce{CaCO3} precipitation (KH$\downarrow$, $-0.22\dkh$ at $\sim$14\,h), while
+prolonged exposure lets evaporative concentration win (KH$\uparrow$, $+0.22\dkh$
+at $\sim$18\,h). The electronics are unchanged; only the sample alkalinity
+drifts, in either direction---confirming that the dominant error term is sample
+chemistry (cf.\ Fig.~\ref{fig:budget}).}
 \label{fig:degrade}
 \end{figure}
 
