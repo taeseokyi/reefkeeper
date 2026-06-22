@@ -138,52 +138,30 @@
   <!-- Separator -->
   <line x1="30" y1="430" x2="830" y2="430" stroke="#ccc" stroke-width="1"/>
 
-  <!-- Section: 에어 호스 (3-way 솔레노이드 직렬 연결) -->
-  <text x="50" y="460" font-size="14" font-weight="bold" fill="#455A64">에어 호스 (3-way 솔레노이드 밸브 직렬 연결)</text>
+  <!-- Section: 에어 (ron — 2개 에어펌프 동시 ON, 솔레노이드 없음) -->
+  <text x="50" y="460" font-size="14" font-weight="bold" fill="#455A64">에어 (ron — 2개 에어펌프 동시 ON, 솔레노이드 없음)</text>
 
-  <!-- 기포기 -->
-  <rect x="50" y="475" width="105" height="45" rx="8" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
-  <text x="102" y="503" text-anchor="middle" font-size="13" font-weight="bold" fill="#0288D1">기포기</text>
+  <!-- 에어펌프 ×2 (L298N3) -->
+  <rect x="50" y="478" width="130" height="48" rx="8" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+  <text x="115" y="500" text-anchor="middle" font-size="12" font-weight="bold" fill="#0288D1">에어펌프 ×2</text>
+  <text x="115" y="516" text-anchor="middle" font-size="9" fill="#0288D1">L298N3 · ron(D12)</text>
 
-  <!-- 기포기 → SOL1 -->
-  <line x1="155" y1="490" x2="233" y2="490" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
+  <!-- → 위즈 탱크 -->
+  <line x1="180" y1="492" x2="420" y2="492" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
+  <rect x="422" y="479" width="165" height="26" rx="6" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="504" y="496" text-anchor="middle" font-size="11" fill="#1565C0">위즈 탱크 (5L, 앵커)</text>
 
-  <!-- SOL1 -->
-  <rect x="235" y="477" width="70" height="26" rx="6" fill="#0288D1"/>
-  <text x="270" y="494" text-anchor="middle" font-size="10" fill="white" font-weight="bold">SOL1</text>
-  <text x="248" y="516" text-anchor="middle" font-size="9" fill="#0288D1">D12</text>
-
-  <!-- SOL1 ON → pH 측정 비이커 -->
-  <line x1="305" y1="484" x2="423" y2="484" stroke="#0288D1" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-air)"/>
-  <text x="364" y="478" text-anchor="middle" font-size="9" fill="#0288D1" font-weight="bold">ON</text>
-
-  <rect x="425" y="472" width="130" height="26" rx="6" fill="#FFCDD2" stroke="#C62828" stroke-width="1.5"/>
-  <text x="490" y="489" text-anchor="middle" font-size="11" fill="#C62828">pH 측정 비이커</text>
-  <text x="490" y="508" text-anchor="middle" font-size="9" fill="#C62828">Air1 (참조수 탈기)</text>
-
-  <!-- SOL1 OFF → SOL2 (직렬 연결) -->
-  <line x1="270" y1="503" x2="270" y2="530" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
-  <text x="285" y="520" font-size="9" fill="#0288D1" font-weight="bold">OFF</text>
-
-  <!-- SOL2 -->
-  <rect x="235" y="532" width="70" height="26" rx="6" fill="#0288D1"/>
-  <text x="270" y="549" text-anchor="middle" font-size="10" fill="white" font-weight="bold">SOL2</text>
-  <text x="270" y="570" text-anchor="middle" font-size="9" fill="#0288D1">D13</text>
-
-  <!-- SOL2 ON → 수조물 비이커 -->
-  <line x1="305" y1="540" x2="423" y2="540" stroke="#0288D1" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-air)"/>
-  <text x="364" y="534" text-anchor="middle" font-size="9" fill="#0288D1" font-weight="bold">ON</text>
-
-  <rect x="425" y="527" width="130" height="26" rx="6" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/>
-  <text x="490" y="544" text-anchor="middle" font-size="11" fill="#1565C0">수조물 비이커</text>
-  <text x="490" y="563" text-anchor="middle" font-size="9" fill="#1565C0">Air2 (수조수 탈기)</text>
+  <!-- → 측정 비이커 -->
+  <line x1="180" y1="512" x2="420" y2="538" stroke="#0288D1" stroke-width="2" marker-end="url(#arr-air)"/>
+  <rect x="422" y="525" width="165" height="26" rx="6" fill="#FFCDD2" stroke="#C62828" stroke-width="1.5"/>
+  <text x="504" y="542" text-anchor="middle" font-size="11" fill="#C62828">측정 비이커</text>
 
   <!-- 설명 박스 -->
-  <rect x="580" y="472" width="235" height="70" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1"/>
-  <text x="697" y="490" text-anchor="middle" font-size="10" fill="#795548">3-way 솔레노이드 직렬 연결</text>
-  <text x="697" y="505" text-anchor="middle" font-size="10" fill="#795548">SOL1 ON → pH 비이커 (참조수 폭기)</text>
-  <text x="697" y="520" text-anchor="middle" font-size="10" fill="#795548">SOL1 OFF → SOL2 ON → 수조물 비이커</text>
-  <text x="697" y="535" text-anchor="middle" font-size="10" fill="#795548">(5초 주기 교대 공급)</text>
+  <rect x="605" y="478" width="228" height="74" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1"/>
+  <text x="719" y="497" text-anchor="middle" font-size="10" fill="#795548">ron = 두 에어펌프 동시 ON</text>
+  <text x="719" y="513" text-anchor="middle" font-size="10" fill="#795548">위즈 탱크(앵커) + 측정 비이커 동시 폭기</text>
+  <text x="719" y="529" text-anchor="middle" font-size="10" fill="#795548">D12=ron(에어) · D13=ton(PWM 모터)</text>
+  <text x="719" y="545" text-anchor="middle" font-size="10" fill="#795548">3-way 솔레노이드·교대 공급 제거됨</text>
 
   <!-- Legend -->
   <line x1="640" y1="390" x2="670" y2="390" stroke="#666" stroke-width="2.5"/>
