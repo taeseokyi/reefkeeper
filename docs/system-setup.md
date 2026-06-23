@@ -194,6 +194,9 @@ tank 측정 내내 5L 위즈수조를 *동시 폭기*해 ref 가 5L서 co-aerati
 |----------|------|
 | `bin/measure_kh_once.py` | **V4** — 1회 측정 후 종료 (Windows 작업 스케줄러 정시 실행용) |
 | `bin/test_aeration_plateau.py` | tank 단일 평형곡선 진단 (V4와 동일 평탄 기준, 종료 시 KCl 소크) |
+| `bin/firmware_sim.py` | 소켓 가상 포트 펌웨어 시뮬레이터 (회귀 테스트용, WSL 전용) |
+| `bin/test_measure_sim.py` | 통합 회귀 테스트 (8 시나리오/38 검증) — [상세](bt-reconnect-and-testing.md#3-시뮬레이터-회귀-검증-배포-전-필수) |
+| `bin/bt_health.py` | (보조) HC-06 BT 링크 드롭률·RTT 모니터 |
 
 **V4 (`measure_kh_once.py`) 주요 상수:**
 
@@ -207,6 +210,12 @@ tank 측정 내내 5L 위즈수조를 *동시 폭기*해 ref 가 5L서 co-aerati
 | `PHASE_MAX_SECS` | 7200 | phase(tank/ref)별 최대 측정시간(초)=2h, 초과 시 마지막값+경고 |
 | `MEAS_MAX` | 240 | phase별 최대 측정 횟수(백스톱)=7200/30 |
 | `FAIL_MAX` | 5 | 연속 측정 파싱 실패 허용 → 초과 시 phase 실패 |
+| `SEND_RETRY_MAX` | 3 | RF 순단 시 명령 재시도 횟수 |
+| `KEEPALIVE_SECS` | 12 | 유휴 keepalive 간격(초) — HC-06 ~20초 유휴 드롭 예방 |
+| `MEAS_READ_TIMEOUT` | 20 | 측정 1회 `[OK]` 대기 상한(초) |
+| `LINK_PING_TIMEOUT` | 3 | `ensure_link`/`reconnect` 핑 응답 대기 상한(초) |
+
+> RF 순단(블루투스) 대응 상수(`SEND_RETRY_MAX`·`KEEPALIVE_SECS`·`RECONNECT_TRIES` 등)와 그 동작은 [블루투스 통신 안정화 & 시뮬레이터 검증](bt-reconnect-and-testing.md)에서 자세히 다룹니다.
 
 > 폭기 시간은 **고정값이 아니라 평형(평탄)까지 적응**합니다(구 `AIR_SECS`/`STABLE`/`CONV_EPS` 폐기). 측정 펌프초: tank 채움(본수조→홀딩) `m1f:70`·완전 배출(홀딩→본수조) `m1b:82`, 이송(홀딩↔측정챔버) `m2f:60`/`m2b:68`, 참조수(5L↔측정챔버) `m4f:60`/`m4b:70`(긴 호스라 역방향 +10), KCl `m3b:68`/`m3f:60`.
 
@@ -320,6 +329,27 @@ Register-ScheduledTask -TaskName 'Measure KH' -TaskPath '\tsyi\' `
 - 측정 중 방 CO₂ **드리프트**(저녁 환기 변동 등)는 개방 셋업에서 tank·ref를 다른 평형에서
   latch시켜 오차를 만들 수 있었으나, **밀폐 공통 헤드스페이스가 이 원인을 구조적으로 제거**합니다
   (외부 공기 차단 → 헤드스페이스 pCO₂ 고정 + 평형 즉시 도달로 측정 시간차 붕괴). 상세 검증은 [측정 대장](measurement-ledger.md) 참조
+
+### 블루투스 통신 안정화 & 시뮬레이터 검증
+
+측정은 HC-06 블루투스 SPP(COM9)로 통신하는데, 이 RF 링크가 간헐적으로 끊긴다(주로 **명령을 보내려는 순간 이미 끊겨 있음**). 이에 대응해 `measure_kh_once.py`의 `send()`는 다음을 보장한다.
+
+1. **송신 전 연결 확인**(`ensure_link` = `status` 핑) — 모든 명령은 보내기 전 링크 생존을 확인
+2. 끊겼으면 **재연결**(`reconnect` = 포트 `close→open` + 펌웨어 응답 확인)
+3. 보낸 뒤 연결 문제(예외·응답 미수신)면 **재연결 후 재시도**(`SEND_RETRY_MAX`회)
+4. **모터는 재시도 시 먼저 정지(`mNs`) 후 재송신** — 펌프 중복 구동 방지
+5. (예방) 유휴 구간 **keepalive** — 12초마다 빈 줄로 ~20초 유휴 드롭 차단
+
+호스트측으로는 Wi-Fi/BT 네트워크 장치 비활성화·USB 선택적 절전 OFF로 2.4GHz 간섭·포트 절전을 줄인다.
+
+**회귀 검증(배포 전 필수):** 소켓 가상 펌웨어 시뮬레이터로 정상·예외 상황을 검증한다.
+
+```bash
+cd bin && python3 test_measure_sim.py     # WSL, 8 시나리오/38 검증 — 전부 PASS여야 배포
+```
+
+> 증상·호스트 조치·4계층 동작·상수·시뮬레이터/테스트 구성(시나리오 표)·배포 안전성은
+> **[블루투스 통신 안정화 (RF 순단 대응) 및 시뮬레이터 회귀 검증](bt-reconnect-and-testing.md)** 에 상세히 정리되어 있다.
 
 ## 온도 환경
 
