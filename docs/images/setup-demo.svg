@@ -74,9 +74,28 @@
   <rect x="378" y="166" width="204" height="20" rx="5" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1.2"/>
   <text x="480" y="180" text-anchor="middle" font-size="10" font-weight="bold" fill="#6A1B9A">★밀폐 공통 헤드스페이스 (필수)</text>
 
-  <!-- ===== 펌프 + 분배기 ===== -->
+  <!-- ===== 기포기(에어 펌프) ×2 — 헤드스페이스 박스 내부 ===== -->
+  <!-- 기포기1: 위즈 탱크 직접 폭기 -->
   <g filter="url(#sh)">
-    <rect x="260" y="55" width="310" height="58" rx="6" fill="#ECEFF1" stroke="#78909C" stroke-width="2"/>
+    <rect x="312" y="398" width="34" height="20" rx="4" fill="#E1F5FE" stroke="#0288D1" stroke-width="1.3"/>
+    <circle cx="323" cy="408" r="6" fill="white" stroke="#0288D1" stroke-width="0.9"/>
+    <circle cx="323" cy="408" r="3" fill="#B3E5FC"/>
+  </g>
+  <circle cx="340" cy="400" r="2.5" fill="#4FC3F7" opacity="0.8"/>
+  <circle cx="346" cy="392" r="2" fill="#4FC3F7" opacity="0.6"/>
+  <circle cx="351" cy="386" r="1.6" fill="#4FC3F7" opacity="0.5"/>
+  <text x="356" y="412" font-size="8" fill="#0277BD" font-weight="bold">기포기1 · 위즈 탱크 직접 폭기</text>
+
+  <!-- 기포기2: pH 측정 비이커 폭기 (비이커 내부 에어스톤) -->
+  <rect x="428" y="360" width="26" height="7" rx="2" fill="#0288D1" opacity="0.85"/>
+  <circle cx="434" cy="352" r="2.2" fill="#4FC3F7" opacity="0.8"/>
+  <circle cx="440" cy="345" r="1.8" fill="#4FC3F7" opacity="0.6"/>
+  <circle cx="446" cy="350" r="1.6" fill="#4FC3F7" opacity="0.5"/>
+  <text x="441" y="388" text-anchor="middle" font-size="8" fill="#0277BD" font-weight="bold">기포기2 · pH 비이커 폭기</text>
+
+  <!-- ===== 펌프 ===== -->
+  <g filter="url(#sh)">
+    <rect x="260" y="55" width="216" height="58" rx="6" fill="#ECEFF1" stroke="#78909C" stroke-width="2"/>
     <g>
       <rect x="270" y="63" width="42" height="42" rx="3" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
       <circle cx="291" cy="84" r="11" fill="#CFD8DC" stroke="#607D8B" stroke-width="1"/>
@@ -101,14 +120,8 @@
       <circle cx="441" cy="84" r="4" fill="#455A64"/>
       <text x="441" y="108" text-anchor="middle" font-size="7" fill="#2E7D32" font-weight="bold">M4</text>
     </g>
-    <rect x="478" y="67" width="22" height="34" rx="3" fill="#0288D1" stroke="#01579B" stroke-width="1"/>
-    <text x="489" y="88" text-anchor="middle" font-size="7" fill="white" font-weight="bold">S1</text>
-    <rect x="506" y="67" width="22" height="34" rx="3" fill="#0288D1" stroke="#01579B" stroke-width="1"/>
-    <text x="517" y="88" text-anchor="middle" font-size="7" fill="white" font-weight="bold">S2</text>
-    <rect x="536" y="67" width="24" height="34" rx="3" fill="#E1F5FE" stroke="#0288D1" stroke-width="1"/>
-    <text x="548" y="88" text-anchor="middle" font-size="6" fill="#0277BD" font-weight="bold">AIR</text>
   </g>
-  <text x="415" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#546E7A">펌프 + 에어 분배기</text>
+  <text x="367" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#546E7A">펌프</text>
 
   <!-- ===== 제어기 ===== -->
   <g filter="url(#sh)">
@@ -140,14 +153,7 @@
   </g>
   <text x="820" y="193" text-anchor="middle" font-size="11" font-weight="bold" fill="#546E7A">제어기</text>
 
-  <!-- ===== 기포기 ===== -->
-  <g filter="url(#sh)">
-    <rect x="42" y="450" width="95" height="55" rx="8" fill="#E1F5FE" stroke="#0288D1" stroke-width="1.5"/>
-    <circle cx="89" cy="473" r="14" fill="white" stroke="#0288D1" stroke-width="1"/>
-    <circle cx="89" cy="473" r="7" fill="#B3E5FC"/>
-    <text x="89" y="500" text-anchor="middle" font-size="8" fill="#0277BD">에어펌프</text>
-  </g>
-  <text x="89" y="444" text-anchor="middle" font-size="9" font-weight="bold" fill="#0277BD">기포기</text>
+  <!-- (기포기는 헤드스페이스 박스 내부로 이동) -->
 
   <!-- ===== DC 어댑터 ===== -->
   <g filter="url(#sh)">
@@ -173,19 +179,14 @@
   <!-- M4: 위즈탱크(참조수) ↔ pH 비이커 -->
   <path d="M441,113 L441,168 Q441,178 455,178 L460,178 L460,255" fill="none" stroke="#2E7D32" stroke-width="2" opacity="0.7"/>
 
-  <!-- 기포기 → S1 → S2 (직렬) -->
-  <path d="M137,473 Q180,473 180,200 Q180,75 478,75" fill="none" stroke="#90CAF9" stroke-width="2" stroke-dasharray="5,3"/>
-
-  <!-- S1 → pH 비이커 에어 -->
-  <path d="M489,101 L489,150 Q489,170 460,180 L450,255" fill="none" stroke="#90CAF9" stroke-width="1.5" stroke-dasharray="4,2"/>
-  <!-- S2 → 위즈 탱크(참조수) 직접 폭기 -->
-  <path d="M517,101 L517,150 Q517,166 500,166 L300,166 Q293,166 293,184 L293,400 Q293,408 312,408 L345,408" fill="none" stroke="#90CAF9" stroke-width="1.5" stroke-dasharray="4,2"/>
-  <circle cx="345" cy="400" r="2.5" fill="#90CAF9" opacity="0.7"/>
-  <circle cx="352" cy="392" r="2" fill="#90CAF9" opacity="0.5"/>
-  <text x="430" y="410" text-anchor="middle" font-size="8" fill="#2E7D32" font-weight="bold">위즈 탱크 직접 폭기</text>
+  <!-- ===== 기포기 제어선 (제어기 → 기포기1·기포기2) ===== -->
+  <!-- 제어기 → 기포기1 (위즈 탱크 직접 폭기) -->
+  <path d="M730,235 Q695,235 695,142 L302,142 L302,408 L312,408" fill="none" stroke="#0288D1" stroke-width="1.6" stroke-dasharray="5,3"/>
+  <!-- 제어기 → 기포기2 (pH 측정 비이커 폭기) -->
+  <path d="M730,225 Q702,225 702,150 L441,150 L441,360" fill="none" stroke="#0288D1" stroke-width="1.6" stroke-dasharray="5,3"/>
 
   <!-- 제어기 → 펌프 (전선) -->
-  <path d="M730,250 Q700,250 700,150 Q700,80 570,80" fill="none" stroke="#455A64" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <path d="M730,250 Q700,250 700,150 Q700,80 478,80" fill="none" stroke="#455A64" stroke-width="1.5" stroke-dasharray="6,3"/>
   <!-- 제어기 → 온도센서 -->
   <path d="M730,310 Q710,310 710,305 L630,305 L628,305" fill="none" stroke="#E65100" stroke-width="1" stroke-dasharray="4,2"/>
   <!-- 제어기 → pH 프로브 -->
@@ -207,8 +208,8 @@
   <text x="75" y="618" font-size="8" fill="#555">M3: KCL ↔ pH 비이커 (프로브 보관)</text>
   <line x1="42" y1="632" x2="68" y2="632" stroke="#2E7D32" stroke-width="2" opacity="0.7"/>
   <text x="75" y="636" font-size="8" fill="#555">M4: 위즈 탱크(참조수) ↔ pH 비이커</text>
-  <line x1="42" y1="650" x2="68" y2="650" stroke="#90CAF9" stroke-width="2" stroke-dasharray="4,2"/>
-  <text x="75" y="654" font-size="8" fill="#555">에어 호스 (D12 ron — 위즈 탱크·측정 비이커 동시 폭기)</text>
+  <line x1="42" y1="650" x2="68" y2="650" stroke="#0288D1" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="75" y="654" font-size="8" fill="#555">기포기 제어선 (D12 ron — 기포기1·기포기2 동시 ON)</text>
 
   <!-- 공식 -->
   <rect x="410" y="545" width="340" height="80" rx="6" fill="#263238" opacity="0.95"/>
