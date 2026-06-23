@@ -9,13 +9,14 @@ measure_kh_once.py 통합 회귀 테스트 (firmware_sim 소켓 가상 포트)
 ★측정/BT 로직 변경 시 배포 *전* 항상 실행해 전부 PASS 확인(언제든 재실행 가능).
 실행: cd bin && python3 test_measure_sim.py     (WSL python3 — pyserial 3.5)
 
-총 9 시나리오 / 43 검증:
-  ── 정상/회복 5 시나리오(30 검증) ──
+총 10 시나리오 / 49 검증:
+  ── 정상/회복 6 시나리오(36 검증) ──
     [1] 클린 calkh           (9) 전체 흐름·정확히 8회째 평탄·dKH·모터8종·재연결0
-    [2] 측정 중 드롭         (6) 송신 전 연결확인이 다음 측정 전 재연결, 정확도 유지
+    [2] 측정 중 드롭(after)  (6) 송신 전 연결확인이 다음 측정 전 재연결, 정확도 유지
     [3] 모터 드롭→정지·재송신(5) 재시도 시 mNs 정지 후 재송신(순서 m1f→m1s→m1f)
     [4] calref(--setref)     (5) ref dKH 역산 경로 동일 견고성
     [9] 측정 in-send 재시도  (5) 측정 read 중 드롭→send 내부 재연결+재송신 성공(tank 9회)
+    [10] calref 도중 드롭     (6) setref 재연결+재송신 후 역산 완주(setref 2회)
   ── 예외 4 시나리오(13 검증) ──
     [5] 완전 통신 두절(kill) (3) main 이 잡는 예외로 우아하게 종료(크래시·행 없음)
     [6] 깨진 응답(pH 누락)   (3) 파싱 실패→FAIL_MAX phase 실패(연결문제 아님)
@@ -264,6 +265,23 @@ def scenario_inmeasure_retry():
     check("'[RF]' 재시도 로그", '[RF]' in out)
 
 
+def scenario_calref_drop():
+    print("\n[10] calref(--setref) 도중 드롭 → setref 재연결+재송신 후 ref dKH 역산 완주")
+    # setref 는 calref 모드 고유 명령(첫 단계). 응답 전 드롭→send 재시도로 재연결+재송신→성공.
+    expect_new_ref = DEFAULT_REF_DKH * (10 ** (-(TANK_PH - REF_PH)))   # ≈ 8.765
+    drops = [{'pat': 'setref', 'nth': 1, 'when': 'before'}]
+    result, out, sim = run(lambda ser: mk.run_measurement(ser, tank_dkh=8.448), drops=drops)
+    check("결과 튜플 완성", result is not None and all(v is not None for v in result),
+          f"result={result}")
+    if result:
+        check("새 refDKH ≈ 8.765(회복)", abs(result[2] - expect_new_ref) < 0.01, f"got {result[2]}")
+    check("setref 재송신(2회=드롭+재송신)", sim.received.count('setref:8.448') == 2,
+          f"got {sim.received.count('setref:8.448')}")
+    check("재연결 발생(연결 ≥2)", sim.connection_count >= 2, f"got {sim.connection_count}")
+    check("'calref' 끝까지 수신", 'calref' in sim.received)
+    check("'[RF]' 재시도 로그", '[RF]' in out)
+
+
 def main():
     print("=" * 56)
     print("measure_kh_once 통합 테스트 (firmware_sim)")
@@ -275,6 +293,7 @@ def main():
     scenario_motor_retry_stop()
     scenario_calref()
     scenario_inmeasure_retry()
+    scenario_calref_drop()
     print("\n── 예외 시나리오 ──")
     scenario_total_loss()
     scenario_garbled_measure()
