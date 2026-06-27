@@ -48,7 +48,7 @@ reefcore-checker-<mac6>/sensor|select|switch|number/<엔티티>/state
 **측정 스크립트가 `dkh.dat` 에 기록한 직후** `publish_to_reefcore()` 로 한 번 발행한다(측정당 정확히 1회).
 
 - **best-effort**: 자격 미설정·paho 미설치·연결 실패 등 어떤 오류도 측정을 중단시키지 않는다.
-- **dKH ≤ 0 은 발행 안 함** — `0`=측정 에러, 음수=평탄 미도달(V4 규약).
+- **값 `None`(값 없음)만 발행 제외, 나머지는 전부 발행** — `0`=측정 에러, 음수=평탄 미도달(V4 규약)도 **그대로 발행해 부호·0 자체가 상태를 전달**한다(reefCore 가 dkh.dat 와 동일 규약을 반영). 게이트는 `_publishable(tank_kh)`(=`tank_kh is not None`). calkh 에러 경로(`else`)도 `0.0` 을 발행한다. ※ reefCore 백엔드가 음수/0 dKH 를 파싱·저장할 수 있어야 의미가 있다(부호=상태).
 - 발행은 **`retain=False`**·`qos=1`, 고유 client_id(`reefwiz-bridge`)라 체커 세션을 끊지 않는다.
   - ⚠️ **`retain=False` 가 중요하다.** 이 토픽은 단순 상태가 아니라 "수신 시 측정 레코드를 생성"하는 이벤트 토픽이라, `retain=True` 면 브로커가 보관한 옛 측정값을 **백엔드 재접속 때마다 재전달 → 유령 중복 레코드**를 만들 수 있다. 백엔드는 상시 접속(`/debug/state` 의 `mqtt_connected:true`)이라 `retain=False` 여도 발행이 정상 도달한다(2026-06-25 실측: retain=False 발행 후 `/debug/state` 의 '최근 측정값' 토픽이 즉시 갱신됨). 과거 `retain=True` 로 남았던 retained 메시지는 빈 retained 발행으로 클리어 완료.
 
