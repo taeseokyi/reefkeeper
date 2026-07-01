@@ -285,12 +285,16 @@
         document.getElementById("plateauWrap").style.display = "none";
         return;
       }
-      const fmtFlat = (arr, flatN) =>
-        flatN ? flatN + "회(" + arr.find((p) => p.n === flatN).elapsed + "s)" : "미도달";
+      const fmtPhase = (arr, flatN) => {
+        if (flatN) return flatN + "회(" + arr.find((p) => p.n === flatN).elapsed + "s) 평탄";
+        if (arr.length === 0) return d.completed ? "미실행" : "대기중";
+        return arr.length + "회" + (d.completed ? " · 상한 도달(미도달)" : " · 진행 중");
+      };
       metaEl.textContent =
         d.run_started + " · " + (d.mode === "calref" ? "calref" : "calkh") +
-        " · tank " + fmtFlat(d.tank, d.tank_flat_n) +
-        " / ref " + fmtFlat(d.ref, d.ref_flat_n) + " 평탄 도달";
+        (d.completed ? "" : " · ⏳측정 진행 중") +
+        " · tank " + fmtPhase(d.tank, d.tank_flat_n) +
+        " / ref " + fmtPhase(d.ref, d.ref_flat_n);
 
       const mkPointColors = (arr, flatN, baseColor) =>
         arr.map((p) => (p.n === flatN ? "#1f9e4d" : baseColor));
