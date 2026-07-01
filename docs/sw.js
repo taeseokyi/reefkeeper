@@ -1,10 +1,11 @@
-const CACHE = "aquawiz-v1";
+const CACHE = "aquawiz-v2";
 const SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./vendor/chart.umd.min.js",
 ];
 
 self.addEventListener("install", (event) => {

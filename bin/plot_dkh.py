@@ -105,6 +105,17 @@ def write_latest_json(rows, path):
     print(f"저장: {path}")
 
 
+def write_series_json(rows, path):
+    """대시보드 인터랙티브 차트용 — 그린 구간 그대로를 배열로 내보낸다."""
+    series = [
+        {"hh": hh, "ref_kh": ref_kh, "tank_kh": tank_kh, "temp": temp, "is_flat": is_flat}
+        for hh, ref_kh, tank_kh, temp, is_flat in rows
+    ]
+    with open(path, "w") as f:
+        json.dump(series, f, ensure_ascii=False)
+    print(f"저장: {path}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("dat_file", nargs="?", default="/mnt/c/dkh/work/dkh.dat",
@@ -115,6 +126,8 @@ if __name__ == "__main__":
                      help="마지막 N건만 그린다(옵션, 모바일 대시보드용 요약 차트)")
     ap.add_argument("--mobile", action="store_true",
                      help="작은 화면에 맞춘 큰 글씨·고정 비율로 렌더링")
+    ap.add_argument("--series-json", default=None,
+                     help="그려진 구간(--recent 적용분)을 배열 JSON으로 출력(옵션, 인터랙티브 차트용)")
     args = ap.parse_args()
 
     rows = load(args.dat_file)
@@ -122,3 +135,5 @@ if __name__ == "__main__":
     plot(plot_rows, args.out, mobile=args.mobile)
     if args.json:
         write_latest_json(rows, args.json)
+    if args.series_json:
+        write_series_json(plot_rows, args.series_json)

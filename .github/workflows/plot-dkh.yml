@@ -30,15 +30,15 @@ jobs:
           sudo apt-get install -y fonts-nanum
           pip install matplotlib
 
-      - name: 그래프·최신값 렌더링
+      - name: 그래프·최신값·시리즈 렌더링
         run: |
           python3 bin/plot_dkh.py data/dkh.dat -o docs/images/dkh_trend.png --json docs/dkh_latest.json
-          python3 bin/plot_dkh.py data/dkh.dat -o docs/images/dkh_trend_mobile.png --recent 30 --mobile
+          python3 bin/plot_dkh.py data/dkh.dat -o docs/images/dkh_trend_mobile.png --recent 60 --mobile --series-json docs/dkh_series.json
 
       - name: 변경분 커밋
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/images/dkh_trend.png docs/images/dkh_trend_mobile.png docs/dkh_latest.json
+          git add docs/images/dkh_trend.png docs/images/dkh_trend_mobile.png docs/dkh_latest.json docs/dkh_series.json
           git diff --cached --quiet || git commit -m "chore: dKH 그래프·최신값 자동 갱신"
           git push
