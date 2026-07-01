@@ -1,0 +1,42 @@
+name: dKH 그래프 렌더링
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "data/dkh.dat"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plot-dkh
+  cancel-in-progress: false
+
+jobs:
+  plot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 폰트·의존성 설치
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y fonts-nanum
+          pip install matplotlib
+
+      - name: 그래프 렌더링
+        run: python3 bin/plot_dkh.py data/dkh.dat -o docs/images/dkh_trend.png
+
+      - name: 변경분 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/images/dkh_trend.png
+          git diff --cached --quiet || git commit -m "chore: dKH 그래프 자동 갱신"
+          git push
