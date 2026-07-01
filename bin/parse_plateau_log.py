@@ -41,9 +41,12 @@ def parse_last_run(text):
     for m in FLAT_RE.finditer(body):
         flat_at[m.group(1)] = int(m.group(2))
 
+    completed = "[LOG] " in body  # log_kh() 가 항상 찍는 줄 — 성공/실패(에러 표식) 무관하게 "이 실행은 끝났다"는 신호
+
     return {
         "run_started": run_started,
         "mode": mode,
+        "completed": completed,
         "tank": tank,
         "ref": ref,
         "tank_flat_n": flat_at["tank"],
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         text = f.read()
 
     result = parse_last_run(text) or {
-        "run_started": None, "mode": None, "tank": [], "ref": [],
+        "run_started": None, "mode": None, "completed": False, "tank": [], "ref": [],
         "tank_flat_n": None, "ref_flat_n": None,
     }
     with open(args.out, "w") as f:

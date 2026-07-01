@@ -64,14 +64,14 @@ def sync_plateau():
     if not result or not (result["tank"] or result["ref"]):
         return False
 
-    prev_run = None
+    prev = None
     if os.path.exists(PLATEAU_DST):
         try:
             with open(PLATEAU_DST) as f:
-                prev_run = json.load(f).get("run_started")
+                prev = json.load(f)
         except (OSError, ValueError):
-            prev_run = None
-    if result["run_started"] == prev_run:
+            prev = None
+    if result == prev:
         return False
 
     os.makedirs(os.path.dirname(PLATEAU_DST), exist_ok=True)
@@ -80,7 +80,28 @@ def sync_plateau():
     return True
 
 
+def sync_with_remote():
+    """GitHub Actions(plot-dkh.yml)가 렌더링 결과를 origin에 직접 push하므로,
+    이 로컬 저장소를 먼저 최신으로 맞추지 않으면 다음 로컬 커밋이 origin과
+    갈라져 이후 push가 전부 실패한다(2026-07-01 밤 실제 발생, 약 7시간 방치).
+    건드리는 파일이 서로 겹치지 않아(로컬=data/dkh.dat·dkh_plateau.json,
+    Actions=images/*·dkh_latest.json·dkh_series.json) rebase 충돌은 나지 않는 게 정상."""
+    fetch = run_git("fetch", "origin", "master")
+    if fetch.returncode != 0:
+        log.warning("fetch 실패(네트워크?): %s", fetch.stderr.strip())
+        return False
+    rebase = run_git("rebase", "origin/master")
+    if rebase.returncode != 0:
+        log.error("rebase 실패, 수동 확인 필요: %s", rebase.stderr.strip())
+        run_git("rebase", "--abort")
+        return False
+    return True
+
+
 def main():
+    if not sync_with_remote():
+        return  # 이번 사이클은 포기 — 로컬 상태는 안전하게 보존, 다음 사이클에 재시도
+
     changed_dat = sync_dat()
     changed_plateau = sync_plateau()
 
