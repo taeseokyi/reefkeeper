@@ -9,6 +9,7 @@ dkh.dat 형식(공백 구분, 한 줄에 하나): HH ref_pH tank_pH ref_kh tank_
     타임스탬프와 대조해야 한다(이 파일만으로는 복원 불가).
 """
 import argparse
+import json
 import sys
 
 import matplotlib
@@ -37,11 +38,12 @@ def load(path):
     return rows
 
 
-def plot(rows, out_path):
+def plot(rows, out_path, mobile=False):
     if not rows:
         print("표시할 데이터가 없습니다(전부 에러 표식이거나 파일이 비어있음).", file=sys.stderr)
         sys.exit(1)
 
+    total = len(rows)
     idx = list(range(len(rows)))
     hh = [r[0] for r in rows]
     ref_kh = [r[1] for r in rows]
@@ -50,35 +52,57 @@ def plot(rows, out_path):
     flat_idx = [i for i, r in enumerate(rows) if r[4]]
     not_flat_idx = [i for i, r in enumerate(rows) if not r[4]]
 
-    fig, ax1 = plt.subplots(figsize=(max(8, len(rows) * 0.12), 5))
+    if mobile:
+        fig, ax1 = plt.subplots(figsize=(6.4, 4.6), dpi=200)
+        fs_tick, fs_label, fs_legend, fs_title = 11, 12, 10, 13
+        marker_s, not_flat_s = 26, 45
+    else:
+        fig, ax1 = plt.subplots(figsize=(max(8, total * 0.12), 5), dpi=150)
+        fs_tick, fs_label, fs_legend, fs_title = 8, 10, 8, 11
+        marker_s, not_flat_s = 18, 30
 
     ax1.plot(idx, tank_kh, "-", color="tab:blue", linewidth=1, alpha=0.6, zorder=1)
     ax1.scatter([idx[i] for i in flat_idx], [tank_kh[i] for i in flat_idx],
-                color="tab:blue", label="tank dKH (평탄)", zorder=2, s=18)
+                color="tab:blue", label="tank dKH (평탄)", zorder=2, s=marker_s)
     if not_flat_idx:
         ax1.scatter([idx[i] for i in not_flat_idx], [tank_kh[i] for i in not_flat_idx],
-                    color="tab:red", marker="x", label="tank dKH (평탄 미도달)", zorder=3, s=30)
+                    color="tab:red", marker="x", label="tank dKH (평탄 미도달)", zorder=3, s=not_flat_s)
     ax1.plot(idx, ref_kh, "--", color="tab:gray", linewidth=1, label="ref dKH(앵커)")
 
-    ax1.set_ylabel("dKH")
-    ax1.set_xlabel("측정 순번 (파일에 날짜가 없어 순번 기준; 눈금=HH시)")
+    ax1.set_ylabel("dKH", fontsize=fs_label)
+    xlabel = "최근 측정 (눈금=HH시)" if mobile else "측정 순번 (파일에 날짜가 없어 순번 기준; 눈금=HH시)"
+    ax1.set_xlabel(xlabel, fontsize=fs_label)
+    ax1.tick_params(axis="both", labelsize=fs_tick)
 
-    step = max(1, len(rows) // 20)
+    n_ticks = 6 if mobile else 20
+    step = max(1, len(rows) // n_ticks)
     ax1.set_xticks(idx[::step])
-    ax1.set_xticklabels([f"{hh[i]:02d}" for i in idx[::step]], rotation=45, fontsize=8)
+    ax1.set_xticklabels([f"{hh[i]:02d}" for i in idx[::step]], rotation=45, fontsize=fs_tick)
 
     ax2 = ax1.twinx()
     ax2.plot(idx, temp, ":", color="tab:orange", linewidth=1, alpha=0.7, label="온도(°C)")
-    ax2.set_ylabel("온도 (°C, 밀폐챔버 내부)")
+    ax2.set_ylabel("온도 (°C, 밀폐챔버 내부)", fontsize=fs_label)
+    ax2.tick_params(axis="y", labelsize=fs_tick)
 
     h1, l1 = ax1.get_legend_handles_labels()
     h2, l2 = ax2.get_legend_handles_labels()
-    ax1.legend(h1 + h2, l1 + l2, loc="best", fontsize=8)
+    ax1.legend(h1 + h2, l1 + l2, loc="best", fontsize=fs_legend)
 
-    ax1.set_title(f"KH 측정 대장 (dkh.dat) — {len(rows)}건")
+    title = f"최근 dKH 추세 (최근 {total}건)" if mobile else f"KH 측정 대장 (dkh.dat) — {total}건"
+    ax1.set_title(title, fontsize=fs_title)
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path, dpi=fig.dpi)
     print(f"저장: {out_path}")
+
+
+def write_latest_json(rows, path):
+    hh, ref_kh, tank_kh, temp, is_flat = rows[-1]
+    with open(path, "w") as f:
+        json.dump({
+            "hh": hh, "ref_kh": ref_kh, "tank_kh": tank_kh,
+            "temp": temp, "is_flat": is_flat, "count": len(rows),
+        }, f, ensure_ascii=False)
+    print(f"저장: {path}")
 
 
 if __name__ == "__main__":
@@ -86,7 +110,15 @@ if __name__ == "__main__":
     ap.add_argument("dat_file", nargs="?", default="/mnt/c/dkh/work/dkh.dat",
                      help="dkh.dat 경로 (기본: Windows 원본, WSL에서 /mnt/c 경유)")
     ap.add_argument("-o", "--out", default="dkh_trend.png", help="출력 PNG 경로")
+    ap.add_argument("--json", default=None, help="최신 측정값 JSON 출력 경로(옵션, 대시보드용)")
+    ap.add_argument("--recent", type=int, default=None,
+                     help="마지막 N건만 그린다(옵션, 모바일 대시보드용 요약 차트)")
+    ap.add_argument("--mobile", action="store_true",
+                     help="작은 화면에 맞춘 큰 글씨·고정 비율로 렌더링")
     args = ap.parse_args()
 
     rows = load(args.dat_file)
-    plot(rows, args.out)
+    plot_rows = rows[-args.recent:] if args.recent else rows
+    plot(plot_rows, args.out, mobile=args.mobile)
+    if args.json:
+        write_latest_json(rows, args.json)

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AquaWiz — dKH 대시보드</title>
+<meta name="description" content="산호 수조 dKH 자동 측정 결과 대시보드">
+<meta name="theme-color" content="#0d5a66">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  :root {
+    --teal: #0d5a66;
+    --teal-dark: #093f48;
+    --teal-light: #12808f;
+    --bg: #f2f7f7;
+    --card: #ffffff;
+    --ink: #16323a;
+    --muted: #6b8790;
+    --danger: #c0392b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+      "Malgun Gothic", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding-bottom: 2.5rem;
+  }
+  header.hero {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+    color: #fff;
+    padding: 2.2rem 1.25rem 2.6rem;
+    text-align: center;
+    border-radius: 0 0 28px 28px;
+  }
+  header.hero img.logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+  header.hero h1 { margin: 0.6rem 0 0.2rem; font-size: 1.6rem; letter-spacing: -0.02em; }
+  header.hero p.tagline { margin: 0; opacity: 0.9; font-size: 0.92rem; }
+
+  main {
+    max-width: 640px;
+    margin: -1.6rem auto 0;
+    padding: 0 1rem;
+  }
+
+  section.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 0.9rem 0.5rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(13, 90, 102, 0.12);
+  }
+  .stat-card .label { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .stat-card .value { display: block; font-size: 1.25rem; font-weight: 700; color: var(--teal-dark); }
+  .stat-card .value.not-flat { color: var(--danger); }
+
+  p.updated {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin: 0 0 1.1rem;
+  }
+
+  section.graph-card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 0.8rem;
+    box-shadow: 0 6px 18px rgba(13, 90, 102, 0.12);
+    margin-bottom: 1.2rem;
+  }
+  section.graph-card img.graph {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+  }
+
+  nav.doc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  nav.doc-links a {
+    background: var(--card);
+    color: var(--teal-dark);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.85rem 0.9rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(13, 90, 102, 0.08);
+    display: flex;
+    align-items: center;
+  }
+  nav.doc-links a:active { transform: scale(0.98); }
+
+  footer {
+    text-align: center;
+    margin-top: 1.6rem;
+    font-size: 0.8rem;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <img class="logo" src="icons/icon-192.png" alt="">
+    <h1>AquaWiz</h1>
+    <p class="tagline">산호 수조 dKH 자동 측정 대시보드</p>
+  </header>
+
+  <main>
+    <section class="stats">
+      <div class="stat-card"><span class="label">수조 dKH</span><span class="value" id="tankKh">–</span></div>
+      <div class="stat-card"><span class="label">기준(ref)</span><span class="value" id="refKh">–</span></div>
+      <div class="stat-card"><span class="label">온도</span><span class="value" id="temp">–</span></div>
+    </section>
+    <p class="updated" id="updated">최신값 불러오는 중…</p>
+
+    <section class="graph-card">
+      <img class="graph" src="images/dkh_trend_mobile.png" alt="dKH 추세 그래프">
+    </section>
+
+    <nav class="doc-links">
+      <a href="measurement-ledger.html">📒 측정 대장</a>
+      <a href="user-manual.html">📘 사용 설명서</a>
+      <a href="system-setup.html">🛠️ 자동화 구성</a>
+      <a href="parts-list.html">🧰 준비물 목록</a>
+      <a href="reefcore-integration.html">🔗 reefCore 연동</a>
+      <a href="bt-reconnect-and-testing.html">📶 블루투스 재연결</a>
+      <a href="notes/README.html">🧪 연구 노트</a>
+      <a href="https://github.com/taeseokyi/reefwiz">💻 GitHub 저장소</a>
+    </nav>
+  </main>
+
+  <footer>
+    <a href="https://github.com/taeseokyi/reefwiz">github.com/taeseokyi/reefwiz</a>
+  </footer>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+
+  fetch("dkh_latest.json", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((d) => {
+      document.getElementById("tankKh").textContent = d.tank_kh.toFixed(3);
+      document.getElementById("refKh").textContent = d.ref_kh.toFixed(3);
+      document.getElementById("temp").textContent = d.temp.toFixed(1) + "°C";
+      const tankEl = document.getElementById("tankKh");
+      if (!d.is_flat) tankEl.classList.add("not-flat");
+      document.getElementById("updated").textContent =
+        "최근 측정 " + d.hh + "시" + (d.is_flat ? "" : " · 평탄 미도달");
+    })
+    .catch(() => {
+      document.getElementById("updated").textContent = "최신값을 불러오지 못했습니다";
+    });
+</script>
+</body>
+</html>
